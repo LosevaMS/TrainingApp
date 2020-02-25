@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/list_fragment">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/ex1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_ex1"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            android:textStyle="normal"
+            android:translationX="14dp"
+            android:translationY="10dp"/>
+        <TextView
+            android:id="@+id/final_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:translationY="45dp"
+            android:translationX="14dp"
+            android:textSize="24sp"
+            android:textColor="#000000"
+            android:textStyle="normal">
+        </TextView>
+        <Button
+            android:id="@+id/add_btn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/add_btn_style"
+            android:selectAllOnFocus="false"
+            android:shadowDx="0"
+            android:text="@string/add_btn_circle"
+            android:textColor="#FFFFFF"
+            android:textSize="30sp"
+            android:translationX="300dp"
+            android:translationY="445dp" />
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
