@@ -1,7 +1,9 @@
 package com.example.globusproject;
 
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,20 +25,29 @@ public class ListFragment extends Fragment {
 
     private Button add_program_button;
     private TextView final_text;
+    private EditText userInput;
 
+    DBHelper dbHelper;
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        setRetainInstance(true);
         return inflater.inflate(R.layout.fragment_list,container,false);
     }
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setRetainInstance(true);
 
         BottomNavigationView navBar = getActivity().findViewById(R.id.nav_view);
         navBar.setVisibility(View.VISIBLE);
 
-        final NavController navController = Navigation.findNavController(view);
+        /*final NavController navController = Navigation.findNavController(view);
         TextView ex1 = view.findViewById(R.id.ex1);
         ex1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,14 +56,18 @@ public class ListFragment extends Fragment {
 
             }
         });
-
+*/
         add_program_button = view.findViewById(R.id.add_btn);
-        final_text = view.findViewById(R.id.final_text);
+        //final_text = view.findViewById(R.id.final_text);
 
         add_program_button.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
+
+                SQLiteDatabase database = dbHelper.getWritableDatabase();
+
+                ContentValues contentValues = new ContentValues();
 
                 LayoutInflater li = LayoutInflater.from(requireContext());
                 View promptsView = li.inflate(R.layout.dialog_add_program, null);
@@ -61,7 +76,7 @@ public class ListFragment extends Fragment {
 
                 mDialogBuilder.setView(promptsView);
 
-                final EditText userInput = promptsView.findViewById(R.id.input_text);
+                userInput = promptsView.findViewById(R.id.input_text);
 
                 mDialogBuilder
                         .setCancelable(false)
@@ -79,7 +94,10 @@ public class ListFragment extends Fragment {
                                 });
                 AlertDialog alertDialog = mDialogBuilder.create();
                 alertDialog.show();
+                contentValues.put(DBHelper.ProgramEntry.PROG_NAME, final_text.toString());
+                database.insert(DBHelper.ProgramEntry.TABLE_PROGRAMS, null, contentValues);
             }
         });
+        onSaveInstanceState(savedInstanceState);
     }
 }
