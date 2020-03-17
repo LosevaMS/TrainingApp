@@ -1,34 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:id="@+id/list_fragment">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="407dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="60dp" />
 
-        <Button
-            android:id="@+id/add_btn"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/add_btn_style"
-            android:selectAllOnFocus="false"
-            android:shadowDx="0"
-            android:text="@string/add_btn_circle"
-            android:textColor="#FFFFFF"
-            android:textSize="30sp"
-            android:translationX="300dp"
-            android:translationY="445dp" />
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="4dp"
-            android:layout_marginLeft="4dp"
-            />
-    </RelativeLayout>
+    <Button
+        android:id="@+id/add_btn"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/add_1"
+        android:translationX="300dp"
+        android:translationY="445dp"/>
 
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</RelativeLayout>
