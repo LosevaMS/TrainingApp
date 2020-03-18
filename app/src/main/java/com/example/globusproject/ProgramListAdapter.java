@@ -23,6 +23,7 @@ import Tables.ProgramTable;
 
 
 public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.ProgramListViewHolder> {
+
     private Context mContext;
     private Cursor mCursor;
     private OnNoteListener mOnNoteListener;
@@ -70,6 +71,8 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
                     Bundle bundle = new Bundle();
                     long id = (long)itemView.getTag();
                     bundle.putLong("prog_id",id);
+                    String name = searchName(id);
+                    bundle.putString("prog_name",name);
                     final NavController navController = Navigation.findNavController(itemView);
                     navController.navigate(R.id.action_navigation_list_to_training, bundle);
                 }
@@ -91,6 +94,20 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
                 }
             }
         };
+
+        public String searchName (long id)
+        {
+            String query = "select name from " + ProgramTable.ProgramEntry.TABLE_PROGRAMS + " WHERE _id = " + id;
+            Cursor c = database.rawQuery(query , null);
+
+            String a = "not found";
+            if (c.moveToFirst());
+            {
+                a = c.getString(c.getColumnIndex("name"));
+            }
+            c.close();
+            return a;
+        }
 
         @Override
         public void onClick(View v) {
