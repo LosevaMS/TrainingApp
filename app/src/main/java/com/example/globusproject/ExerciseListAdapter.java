@@ -2,7 +2,6 @@ package com.example.globusproject;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -11,18 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import Tables.ExercisesTable;
 import Tables.ProgramTable;
 
@@ -57,15 +46,33 @@ public class ExerciseListAdapter extends RecyclerView.Adapter<ExerciseListAdapte
             deleteBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    long id = (long)itemView.getTag();
-                    long prog_id = searchId(id);
-                    database.delete(ExercisesTable.ExercisesEntry.TABLE_EXERCISES,
-                            ExercisesTable.ExercisesEntry._ID + "=" + id, null);
-                    notifyItemRemoved(getAdapterPosition());
-                    swapCursor(getAllItems(prog_id));
+                    AlertDialog.Builder adb = new AlertDialog.Builder(mContext);
+                    adb.setMessage("Удалить упражнение?");
+                    adb.setPositiveButton("Да", myClickListener);
+                    adb.setNegativeButton("Нет",myClickListener);
+                    adb.create();
+                    adb.show();
                 }
             });
         }
+
+        DialogInterface.OnClickListener myClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which){
+                    case Dialog.BUTTON_POSITIVE:
+                        long id = (long)itemView.getTag();
+                        long prog_id = searchId(id);
+                        database.delete(ExercisesTable.ExercisesEntry.TABLE_EXERCISES,
+                                ExercisesTable.ExercisesEntry._ID + "=" + id, null);
+                        notifyItemRemoved(getAdapterPosition());
+                        swapCursor(getAllItems(prog_id));
+                        break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        break;
+                }
+            }
+        };
 
         public long searchId (long id)
         {

@@ -11,10 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -54,16 +50,6 @@ public class ListFragment extends Fragment implements ProgramListAdapter.OnNoteL
         BottomNavigationView navBar = getActivity().findViewById(R.id.nav_view);
         navBar.setVisibility(View.VISIBLE);
 
-        /*final NavController navController = Navigation.findNavController(view);
-        TextView ex1 = view.findViewById(R.id.ex1);
-        ex1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                navController.navigate(R.id.action_navigation_list_to_training);
-
-            }
-        });
-*/
         DBHelper dbHelper = new DBHelper(requireContext());
         database = dbHelper.getWritableDatabase();
 

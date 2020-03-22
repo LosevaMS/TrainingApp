@@ -10,11 +10,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import androidx.cardview.widget.CardView;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,19 +33,20 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
         mOnNoteListener = onNoteListener;
     }
     public class ProgramListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        //public TextView program_name_item,item_rectangle, delete_item, edit_item, play_item;
+
         public TextView program_name_item;
         public ImageView delete_item,edit_item,play_item;
+        public CardView cardView;
 
         OnNoteListener onNoteListener;
 
         public ProgramListViewHolder(final View itemView, OnNoteListener onNoteListener) {
             super(itemView);
             program_name_item = itemView.findViewById(R.id.program_name_item);
-            //item_rectangle = itemView.findViewById(R.id.item_rectangle);
             delete_item = itemView.findViewById(R.id.delete_item);
             edit_item = itemView.findViewById(R.id.edit_item);
             play_item = itemView.findViewById(R.id.play_item);
+            cardView = itemView.findViewById(R.id.cv);
 
             this.onNoteListener = onNoteListener;
             itemView.setOnClickListener(this);
@@ -77,6 +77,14 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
                     navController.navigate(R.id.action_navigation_list_to_training, bundle);
                 }
             });
+
+            cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            });
+
         }
         DialogInterface.OnClickListener myClickListener = new DialogInterface.OnClickListener() {
             @Override

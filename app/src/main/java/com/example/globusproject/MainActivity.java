@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
 
     NavController navController;
     DBHelper dbHelper;
-
+    Training training;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,5 +34,4 @@ public class MainActivity extends AppCompatActivity {
         navController.navigateUp();
         return super.onSupportNavigateUp();
     }
-
 }
