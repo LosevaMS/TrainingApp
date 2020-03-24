@@ -3,11 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:card_view="http://schemas.android.com/tools"
     android:layout_marginStart="11dp"
     android:layout_marginEnd="11dp"
+    android:layout_marginTop="5dp"
     android:layout_marginBottom="5dp"
-    android:layout_marginTop="7dp"
-    >
+    android:clipToPadding="false"
+    android:clipChildren="false"
+    android:background="@drawable/shadow_background_1">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cv"
@@ -15,7 +18,12 @@
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
         app:cardBackgroundColor="#FFFFFF"
-        app:cardCornerRadius="2dp">
+        android:elevation="8dp"
+        android:clipToPadding="false"
+        android:clipChildren="false"
+        card_view:cardElevation="10dp"
+        card_view:cardPreventCornerOverlap="false"
+        >
 
         <RelativeLayout
             android:layout_width="wrap_content"

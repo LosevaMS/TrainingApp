@@ -21,13 +21,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import Tables.ProgramTable;
 
 
 public class ListFragment extends Fragment implements ProgramListAdapter.OnNoteListener {
 
-    private Button add_program_button;
+    private FloatingActionButton add_program_button;
     private EditText userInput;
     private SQLiteDatabase database;
     private ProgramListAdapter programListAdapter;
@@ -154,7 +155,7 @@ public class ListFragment extends Fragment implements ProgramListAdapter.OnNoteL
     @Override
     public void onNoteClick(int position) {
         final NavController navController = Navigation.findNavController(requireView());
-                navController.navigate(R.id.action_navigation_list_to_training);
+                navController.navigate(R.id.action_navigation_list_to_edit_training);
 
     }
 

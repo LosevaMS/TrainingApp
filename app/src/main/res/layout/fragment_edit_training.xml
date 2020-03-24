@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/exercise_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Название тренировки"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="20dp"
+        android:textSize="12sp" />
+
+    <EditText
+        android:layout_width="363dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/exercise_title"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:id="@+id/edit_exercise_name"
+        />
+    <TextView
+        android:id="@+id/exercises_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Список упражнений"
+        android:layout_below="@id/edit_exercise_name"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="20dp"
+        android:textSize="12sp" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview2"
+        android:layout_width="407dp"
+        android:layout_height="600dp"
+        android:layout_below="@id/exercises_list"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="60dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_exercise_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/recyclerview2"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="-40dp"
+        android:src="@drawable/ic_add"
+        app:backgroundTint="#2C98F0"
+        app:borderWidth="0dp"
+        app:elevation="6dp"
+        app:fabSize="normal"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/ok_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/recyclerview2"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="-40dp"
+        android:layout_toStartOf="@+id/add_exercise_btn"
+        android:layout_toLeftOf="@+id/add_exercise_btn"
+        android:src="@drawable/ic_done"
+        app:backgroundTint="#2C98F0"
+        app:borderWidth="0dp"
+        app:elevation="6dp"
+        app:fabSize="normal" />
+
+</RelativeLayout>

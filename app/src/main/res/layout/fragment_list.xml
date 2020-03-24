@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:id="@+id/list_fragment">
@@ -11,14 +12,26 @@
         android:layout_height="match_parent"
         android:layout_marginStart="4dp"
         android:layout_marginEnd="4dp"
-        android:layout_marginBottom="60dp" />
+        android:layout_marginBottom="60dp"
+        android:layout_marginTop="4dp"/>
 
-    <Button
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/recyclerview"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="11dp"
+        android:layout_marginTop="11dp"
+        android:layout_marginEnd="11dp"
+        android:layout_marginBottom="11dp"
+        android:src="@drawable/ic_add"
+        app:backgroundTint="#2C98F0"
+        app:borderWidth="0dp"
+        app:elevation="6dp"
         android:id="@+id/add_btn"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@drawable/add_1"
-        android:translationX="300dp"
-        android:translationY="445dp"/>
+        app:fabSize="normal"/>
+
 
 </RelativeLayout>

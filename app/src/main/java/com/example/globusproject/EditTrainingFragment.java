@@ -21,20 +21,21 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import Tables.ExercisesTable;
 import Tables.ProgramTable;
 
 import static android.view.View.GONE;
 
-public class Training extends Fragment implements ExerciseListAdapter.OnNoteListener{
+public class EditTrainingFragment extends Fragment implements ExerciseListAdapter.OnNoteListener{
 
     private EditText userInput, userInput2;
     private SQLiteDatabase database;
     private ExerciseListAdapter exerciseListAdapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_training,container,false);
+        return inflater.inflate(R.layout.fragment_edit_training,container,false);
     }
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
@@ -42,8 +43,8 @@ public class Training extends Fragment implements ExerciseListAdapter.OnNoteList
         navBar.setVisibility(GONE);
 
         userInput = view.findViewById(R.id.edit_exercise_name);
-        Button add_exercise_button = view.findViewById(R.id.add_exercise_btn);
-        Button okBtn = view.findViewById(R.id.ok_btn);
+        FloatingActionButton add_exercise_button = view.findViewById(R.id.add_exercise_btn);
+        FloatingActionButton okBtn = view.findViewById(R.id.ok_btn);
 
         DBHelper dbHelper = new DBHelper(requireContext());
         database = dbHelper.getWritableDatabase();
@@ -68,7 +69,7 @@ public class Training extends Fragment implements ExerciseListAdapter.OnNoteList
                 database.update(ProgramTable.ProgramEntry.TABLE_PROGRAMS, cv, "name = ?", new String[]{arg2});
                 exerciseListAdapter.swapCursor(getAllItems(arg1));
                 final NavController navController = Navigation.findNavController(requireView());
-                navController.navigate(R.id.action_training_to_navigation_list);
+                navController.navigate(R.id.action_edit_training_to_navigation_list);
             }
         });
 

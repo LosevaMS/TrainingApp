@@ -11,6 +11,9 @@
         android:label="Программы тренировок"
         tools:layout="@layout/fragment_list" >
         <action
+            android:id="@+id/action_navigation_list_to_edit_training"
+            app:destination="@id/edit_training" />
+        <action
             android:id="@+id/action_navigation_list_to_training"
             app:destination="@id/training" />
     </fragment>
@@ -28,9 +31,21 @@
     </fragment>
 
     <fragment
+        android:id="@+id/edit_training"
+        android:name="com.example.globusproject.EditTrainingFragment"
+        android:label="Тренировка"
+        tools:layout="@layout/fragment_edit_training" >
+        <action
+            android:id="@+id/action_edit_training_to_navigation_list"
+            app:destination="@id/navigation_list" />
+    </fragment>
+
+    <fragment
         android:id="@+id/training"
-        android:name="com.example.globusproject.Training"
-        tools:layout="@layout/fragment_training" >
+        android:name="com.example.globusproject.TrainingFragment"
+        android:label=" "
+        tools:layout="@layout/fragment_training">
+
         <action
             android:id="@+id/action_training_to_navigation_list"
             app:destination="@id/navigation_list" />

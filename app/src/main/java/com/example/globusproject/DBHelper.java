@@ -10,11 +10,14 @@ import Tables.ProgramTable.*;
 
 import static Tables.ApproachesTable.ApproachesEntry.APP_COUNT;
 import static Tables.ApproachesTable.ApproachesEntry.APP_EX_ID;
+import static Tables.ApproachesTable.ApproachesEntry.APP_PROG_ID;
+import static Tables.ApproachesTable.ApproachesEntry.APP_DATE;
 import static Tables.ApproachesTable.ApproachesEntry.APP_WEIGHT;
 import static Tables.ApproachesTable.ApproachesEntry.TABLE_APPROACHES;
 import static Tables.ExercisesTable.ExercisesEntry.EX_NAME;
 import static Tables.ExercisesTable.ExercisesEntry.EX_PROG_ID;
 import static Tables.ExercisesTable.ExercisesEntry.TABLE_EXERCISES;
+import static Tables.ProgramTable.ProgramEntry.TABLE_PROGRAMS;
 import static android.provider.UserDictionary.Words.APP_ID;
 
 public class DBHelper  extends SQLiteOpenHelper{
@@ -48,7 +51,7 @@ public class DBHelper  extends SQLiteOpenHelper{
                 ProgramEntry.COLUMN_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
                 ");");*/
         final String SQL_CREATE_GROCERYLIST_TABLE = "CREATE TABLE " +
-                ProgramEntry.TABLE_PROGRAMS + " (" +
+                TABLE_PROGRAMS + " (" +
                 ProgramEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 ProgramEntry.PROG_NAME + " TEXT NOT NULL " +
 
@@ -57,18 +60,19 @@ public class DBHelper  extends SQLiteOpenHelper{
         db.execSQL(SQL_CREATE_GROCERYLIST_TABLE);
         db.execSQL("create table " + TABLE_EXERCISES + "(" + ExercisesEntry._ID
                 + " integer primary key AUTOINCREMENT," + EX_NAME + " text," + EX_PROG_ID + " integer,"
-                + "foreign key("+ EX_PROG_ID+") references "+ ProgramEntry.TABLE_PROGRAMS+"("+ ProgramEntry._ID+")" + ")");
+                + "foreign key("+ EX_PROG_ID+") references "+ TABLE_PROGRAMS+"("+ ProgramEntry._ID+")" + ")");
 
         db.execSQL("create table " + TABLE_APPROACHES + "(" + APP_ID
                 + " integer primary key AUTOINCREMENT,"  + APP_WEIGHT + " integer," + APP_COUNT + " integer,"+ APP_EX_ID + " integer,"
-                + "foreign key("+ APP_EX_ID+") references "+TABLE_EXERCISES+"("+ExercisesEntry._ID+")" + ")");
+                + APP_PROG_ID + " integer," + APP_DATE + " date," + "foreign key("+ APP_EX_ID+") references "+TABLE_EXERCISES+"("+ExercisesEntry._ID+")," +
+                 "foreign key("+ APP_PROG_ID+") references "+TABLE_PROGRAMS+"("+ProgramEntry._ID+")"+ ")");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("drop table if exists " + ApproachesEntry.TABLE_APPROACHES);
         db.execSQL("drop table if exists " + ExercisesEntry.TABLE_EXERCISES);
-        db.execSQL("drop table if exists " + ProgramEntry.TABLE_PROGRAMS);
+        db.execSQL("drop table if exists " + TABLE_PROGRAMS);
 
         onCreate(db);
 

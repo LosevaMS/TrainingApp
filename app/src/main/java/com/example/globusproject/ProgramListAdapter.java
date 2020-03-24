@@ -74,14 +74,19 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
                     String name = searchName(id);
                     bundle.putString("prog_name",name);
                     final NavController navController = Navigation.findNavController(itemView);
-                    navController.navigate(R.id.action_navigation_list_to_training, bundle);
+                    navController.navigate(R.id.action_navigation_list_to_edit_training, bundle);
                 }
             });
-
             cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    Bundle bundle = new Bundle();
+                    long id = (long)itemView.getTag();
+                    bundle.putLong("prog_id",id);
+                    String name = searchName(id);
+                    bundle.putString("prog_name",name);
+                    final NavController navController = Navigation.findNavController(itemView);
+                    navController.navigate(R.id.action_navigation_list_to_training,bundle);
                 }
             });
 
