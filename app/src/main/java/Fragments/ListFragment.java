@@ -1,4 +1,4 @@
-package com.example.globusproject;
+package Fragments;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,9 +19,12 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.globusproject.DBHelper;
+import com.example.globusproject.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import Adapters.ProgramListAdapter;
 import Tables.ProgramTable;
 
 

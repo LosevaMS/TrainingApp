@@ -1,22 +1,23 @@
-package com.example.globusproject;
+package Adapters;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.globusproject.DBHelper;
+import com.example.globusproject.R;
+
 import Tables.ExercisesTable;
+import Tables.ProgramTable;
 
 public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.ExercisesViewHolder> {
     private Context mContext;
@@ -43,6 +44,33 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
             DBHelper dbHelper = new DBHelper(mContext);
             database = dbHelper.getWritableDatabase();
 
+            nameText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle bundle = new Bundle();
+                    long id = (long)itemView.getTag();
+                    bundle.putLong("ex_id",id);
+                    String name = searchName(id);
+                    bundle.putString("ex_name",name);
+                    final NavController navController = Navigation.findNavController(itemView);
+                    navController.navigate(R.id.action_training_to_approach, bundle);
+                }
+            });
+
+        }
+
+        public String searchName (long id)
+        {
+            String query = "select name from " + ExercisesTable.ExercisesEntry.TABLE_EXERCISES + " WHERE _id = " + id;
+            Cursor c = database.rawQuery(query , null);
+
+            String a = "not found";
+            if (c.moveToFirst());
+            {
+                a = c.getString(c.getColumnIndex("name"));
+            }
+            c.close();
+            return a;
         }
 
         public long searchId (long id)

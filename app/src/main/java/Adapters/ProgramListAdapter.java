@@ -1,4 +1,4 @@
-package com.example.globusproject;
+package Adapters;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -17,6 +17,9 @@ import androidx.cardview.widget.CardView;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.globusproject.DBHelper;
+import com.example.globusproject.R;
 
 import Tables.ProgramTable;
 

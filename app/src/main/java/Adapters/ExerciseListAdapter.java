@@ -1,4 +1,4 @@
-package com.example.globusproject;
+package Adapters;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -12,6 +12,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.globusproject.DBHelper;
+import com.example.globusproject.R;
+
 import Tables.ExercisesTable;
 
 public class ExerciseListAdapter extends RecyclerView.Adapter<ExerciseListAdapter.ExerciseViewHolder> {

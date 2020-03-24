@@ -1,4 +1,4 @@
-package com.example.globusproject;
+package Fragments;
 
 
 import android.app.AlertDialog;
@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.example.globusproject.R;
 
 public class HistoryFragment extends Fragment {
 
