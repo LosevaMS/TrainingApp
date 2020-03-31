@@ -1,12 +1,19 @@
 package Fragments;
 
+import android.app.AlertDialog;
+import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,17 +29,26 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.globusproject.DBHelper;
 import com.example.globusproject.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import Adapters.ApproachAdapter;
 import Adapters.ExercisesAdapter;
 import Tables.ApproachesTable;
 import Tables.ExercisesTable;
+import Tables.HistoryTable;
+import Tables.ProgramTable;
 
 public class ApproachFragment extends Fragment implements ApproachAdapter.OnNoteListener{
 
     private SQLiteDatabase database;
-    private ApproachAdapter approachAdapter;
+    private ApproachAdapter approachAdapter1, approachAdapter2;
     private TextView finishText;
+    private EditText inputWeight, inputCount;
+    private FloatingActionButton add_approach_btn;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_approach,container,false);
@@ -49,36 +65,292 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
         DBHelper dbHelper = new DBHelper(requireContext());
         database = dbHelper.getWritableDatabase();
 
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date date1 = new Date();
+        formatter.format(date1);
+
         assert getArguments() != null;
         final long arg1 = getArguments().getLong("ex_id");
-        final String arg2 = getArguments().getString("ex_name");
+        final int arg2 = getArguments().getInt("prog_id");
 
         final RecyclerView recyclerView1 = view.findViewById(R.id.last_approach_recyclerview);
         recyclerView1.setLayoutManager(new LinearLayoutManager(requireContext()));
-        approachAdapter = new ApproachAdapter(requireContext(),getAllItems(arg1),this);
-        recyclerView1.setAdapter(approachAdapter);
+        try {
+            approachAdapter1 = new ApproachAdapter(requireContext(),getPreviousItems(arg1),this);
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+        recyclerView1.setAdapter(approachAdapter1);
 
         final RecyclerView recyclerView2 = view.findViewById(R.id.approach_recyclerview);
         recyclerView2.setLayoutManager(new LinearLayoutManager(requireContext()));
-        approachAdapter = new ApproachAdapter(requireContext(),getAllItems(arg1),this);
-        recyclerView2.setAdapter(approachAdapter);
+        try {
+            approachAdapter2 = new ApproachAdapter(requireContext(),getAllItems(arg1),this);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        recyclerView2.setAdapter(approachAdapter2);
 
-        /*Toast toast = Toast.makeText(requireContext(),
-                arg1 + arg2, Toast.LENGTH_LONG);
+
+
+
+            /*if (date1.getYear() > date2.getYear() && date1.getMonth() > date2.getMonth() && date1.getDay() > date2.getDay()) {
+                Toast toast = Toast.makeText(requireContext(),
+                        "Date1 is after Date2", Toast.LENGTH_LONG);
+                toast.show();
+            } else if (date1.getYear() < date2.getYear() && date1.getMonth() < date2.getMonth() && date1.getDay() < date2.getDay()) {
+                Toast toast = Toast.makeText(requireContext(),
+                        "Date1 is before Date2", Toast.LENGTH_LONG);
+                toast.show();
+            } else if (date1.getYear() == date2.getYear() && date1.getMonth() == date2.getMonth() && date1.getDay() == date2.getDay()) {
+                Toast toast = Toast.makeText(requireContext(),
+                        "Date1 is equal to Date2", Toast.LENGTH_LONG);
+                toast.show();
+            } else {
+                Toast toast = Toast.makeText(requireContext(),
+                        "How to get here?", Toast.LENGTH_LONG);
+                toast.show();
+            }*/
+
+
+       /* Toast toast = Toast.makeText(requireContext(),
+                arg1+ " ", Toast.LENGTH_LONG);
         toast.show();*/
+       add_approach_btn = view.findViewById(R.id.add_approach_btn);
+
+        add_approach_btn.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+
+                LayoutInflater li = LayoutInflater.from(requireContext());
+                View promptsView = li.inflate(R.layout.dialog_add_approach, null);
+
+                AlertDialog.Builder mDialogBuilder = new AlertDialog.Builder(requireContext());
+
+                mDialogBuilder.setView(promptsView);
+
+                inputWeight = promptsView.findViewById(R.id.input_weight);
+                inputCount = promptsView.findViewById(R.id.input_count);
+
+                inputWeight.setImeActionLabel("", EditorInfo.IME_ACTION_NEXT);
+
+                inputWeight.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if(actionId==EditorInfo.IME_ACTION_NEXT){
+                            if( inputWeight.getText().toString().trim().equalsIgnoreCase(""))
+                                inputWeight.setError("Введите вес!");
+                            else
+                                Toast.makeText(requireContext(),"Notnull",Toast.LENGTH_SHORT).show();
+                        }
+                        return false;
+                    }
+                });
+                inputCount.setImeActionLabel("", EditorInfo.IME_ACTION_NEXT);
+
+                inputCount.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if(actionId==EditorInfo.IME_ACTION_DONE){
+                            if( inputCount.getText().toString().trim().equalsIgnoreCase(""))
+                                inputCount.setError("Введите количество повторений!");
+                            else
+                                Toast.makeText(requireContext(),"Notnull",Toast.LENGTH_SHORT).show();
+                        }
+                        return false;
+                    }
+                });
+
+                mDialogBuilder
+                        .setCancelable(false)
+                        .setPositiveButton("OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        try {
+                                            addItem(arg1,arg2);
+                                        } catch (ParseException e) {
+                                            e.printStackTrace();
+                                        }
+                                        // dialog.cancel();
+                                    }
+                                })
+                        .setNegativeButton("Отмена",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+                AlertDialog alertDialog = mDialogBuilder.create();
+                alertDialog.show();
+                inputWeight.getText().clear();
+                inputCount.getText().clear();
+            }
+        });
+
+       /* ContentValues cv = new ContentValues();
+        cv.put(ApproachesTable.ApproachesEntry.APP_WEIGHT, 66);
+        cv.put(ApproachesTable.ApproachesEntry.APP_COUNT, 66);
+        cv.put(ApproachesTable.ApproachesEntry.APP_EX_ID,(int)arg1);
+        cv.put(ApproachesTable.ApproachesEntry.APP_PROG_ID,arg2);
+        cv.put(ApproachesTable.ApproachesEntry.APP_DATE, "2020-03-20");
+
+        database.insert(ApproachesTable.ApproachesEntry.TABLE_APPROACHES, null, cv);
+        try {
+            approachAdapter2.swapCursor(getAllItems(arg1));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        cv.put(ApproachesTable.ApproachesEntry.APP_WEIGHT, 66);
+        cv.put(ApproachesTable.ApproachesEntry.APP_COUNT, 66);
+        cv.put(ApproachesTable.ApproachesEntry.APP_EX_ID,(int)arg1);
+        cv.put(ApproachesTable.ApproachesEntry.APP_PROG_ID,arg2);
+        cv.put(ApproachesTable.ApproachesEntry.APP_DATE, "2019-03-20");
+
+        database.insert(ApproachesTable.ApproachesEntry.TABLE_APPROACHES, null, cv);
+        try {
+            approachAdapter2.swapCursor(getAllItems(arg1));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        cv.put(ApproachesTable.ApproachesEntry.APP_WEIGHT, 66);
+        cv.put(ApproachesTable.ApproachesEntry.APP_COUNT, 66);
+        cv.put(ApproachesTable.ApproachesEntry.APP_EX_ID,(int)arg1);
+        cv.put(ApproachesTable.ApproachesEntry.APP_PROG_ID,arg2);
+        cv.put(ApproachesTable.ApproachesEntry.APP_DATE, "2020-02-02");
+
+        database.insert(ApproachesTable.ApproachesEntry.TABLE_APPROACHES, null, cv);
+        try {
+            approachAdapter2.swapCursor(getAllItems(arg1));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        cv.put(ApproachesTable.ApproachesEntry.APP_WEIGHT, 66);
+        cv.put(ApproachesTable.ApproachesEntry.APP_COUNT, 66);
+        cv.put(ApproachesTable.ApproachesEntry.APP_EX_ID,(int)arg1);
+        cv.put(ApproachesTable.ApproachesEntry.APP_PROG_ID,arg2);
+        cv.put(ApproachesTable.ApproachesEntry.APP_DATE, "2020-03-25");
+
+        database.insert(ApproachesTable.ApproachesEntry.TABLE_APPROACHES, null, cv);
+        try {
+            approachAdapter2.swapCursor(getAllItems(arg1));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }*/
+
+       /*Toast toast = null;
+        try {
+            toast = Toast.makeText(requireContext(),
+                    searchPreviousDate(arg1,date1)+ " ", Toast.LENGTH_LONG);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        toast.show();
+*/
+
 
     }
-    private Cursor getAllItems(long id) {
+
+    private void addItem(long ex_id, int prog_id) throws ParseException {
+
+        if (inputWeight.getText().toString().trim().length() == 0
+                && inputCount.getText().toString().trim().length() == 0) {
+            return;
+        }
+
+        double weight = Double.parseDouble(inputWeight.getText().toString());
+        int count = Integer.parseInt(inputCount.getText().toString());
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+
+        ContentValues cv = new ContentValues();
+        cv.put(ApproachesTable.ApproachesEntry.APP_WEIGHT, weight);
+        cv.put(ApproachesTable.ApproachesEntry.APP_COUNT, count);
+        cv.put(ApproachesTable.ApproachesEntry.APP_EX_ID,(int)ex_id);
+        cv.put(ApproachesTable.ApproachesEntry.APP_PROG_ID,prog_id);
+        cv.put(ApproachesTable.ApproachesEntry.APP_DATE, formatter.format(date));
+
+        database.insert(ApproachesTable.ApproachesEntry.TABLE_APPROACHES, null, cv);
+        approachAdapter2.swapCursor(getAllItems(ex_id));
+
+        inputWeight.getText().clear();
+        inputCount.getText().clear();
+    }
+
+    private Cursor getAllItems(long id) throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date date1 = new Date();
+        formatter.format(date1);
+
+        String whereClause = ApproachesTable.ApproachesEntry.APP_EX_ID + "=? AND " +
+                ApproachesTable.ApproachesEntry.APP_DATE + "=?";
+        String[] whereArgs = new String[]{String.valueOf(id), formatter.format(date1)};
+
         return database.query(
                 ApproachesTable.ApproachesEntry.TABLE_APPROACHES,
                 null,
-                null,
-                null,
+                whereClause,
+                whereArgs,
                 null,
                 null,
                 null
         );
     }
+    private Cursor getPreviousItems(long id) throws ParseException {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date date1 = new Date();
+        formatter.format(date1);
+
+        String whereClause = ApproachesTable.ApproachesEntry.APP_EX_ID + "=? AND " +
+                ApproachesTable.ApproachesEntry.APP_DATE + "=?";
+        String[] whereArgs = new String[]{String.valueOf(id), searchPreviousDate(id, date1)};
+
+        return database.query(
+                ApproachesTable.ApproachesEntry.TABLE_APPROACHES,
+                null,
+                whereClause,
+                whereArgs,
+                null,
+                null,
+                null
+        );
+    }
+
+    public String searchPreviousDate (long id, Date date) throws ParseException {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+        String query = "select date from " + ApproachesTable.ApproachesEntry.TABLE_APPROACHES + " WHERE _excercises_id = " + id;
+        Cursor c = database.rawQuery(query , null);
+
+        String a,res; res="error";
+        Date date2;
+        date2 = formatter.parse("1999-01-01");
+        boolean flag=false;
+        while (c.moveToNext())
+        {
+            a = c.getString(c.getColumnIndex("date"));
+
+            if (date2.getTime()<date.getTime() && date2.getTime()<formatter.parse(a).getTime()) {
+                flag = true;
+                if(formatter.parse(a).getYear()==date.getYear() && formatter.parse(a).getMonth()==date.getMonth() &&
+                        formatter.parse(a).getDay()!=date.getDay() && flag==true) {
+                    date2.setTime(formatter.parse(a).getTime());
+                    res = a;
+                }
+            }
+        }
+        c.close();
+        return res;
+    }
+
     @Override
     public void onNoteClick(int position) {
 

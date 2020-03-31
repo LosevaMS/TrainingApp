@@ -13,7 +13,7 @@
     android:background="@drawable/shadow_background_1">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cv"
+        android:id="@+id/cv_history"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
@@ -27,18 +27,18 @@
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="186dp">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/gym"
                 android:layout_width="match_parent"
                 android:layout_height="139dp"
+                android:background="@drawable/gym1"
                 android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                />
+                android:scaleType="centerCrop"/>
 
             <TextView
-                android:id="@+id/program_name_item"
+                android:id="@+id/program_name_item_history"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/gym"
@@ -54,44 +54,26 @@
                 android:typeface="normal"
                 android:fontFamily="@font/roboto_medium"/>
 
-            <ImageView
-                android:id="@+id/delete_item"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_below="@+id/gym"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="14dp"
-                android:layout_marginTop="11dp"
-                android:layout_marginEnd="14dp"
-                android:layout_marginBottom="11dp"
-                android:background="@drawable/delete" />
-
-            <ImageView
-                android:id="@+id/edit_item"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_below="@+id/gym"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="11dp"
-                android:layout_marginBottom="11dp"
-                android:layout_toEndOf="@+id/delete_item"
-                android:layout_toRightOf="@+id/delete_item"
-                android:background="@drawable/edit" />
-
-            <ImageView
-                android:id="@+id/play_item"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_below="@+id/gym"
+            <TextView
+                android:id="@+id/date_history"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/gym"
+                android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="13dp"
                 android:layout_marginEnd="14dp"
-                android:layout_marginRight="25dp"
-                android:layout_marginBottom="11dp"
-                android:background="@drawable/ic_play" />
+                android:layout_marginRight="14dp"
+                android:fontFamily="@font/roboto"
+                android:gravity="bottom"
+                android:paddingLeft="14dp"
+                android:paddingBottom="9dp"
+                android:text="date"
+                android:textColor="#ffffff"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:typeface="normal" />
+
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 </LinearLayout>

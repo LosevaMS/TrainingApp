@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,16 +26,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import Adapters.ExercisesAdapter;
+import Adapters.HistoryTrainingAdapter;
 import Tables.ExercisesTable;
 import Tables.HistoryTable;
 
-public class TrainingFragment extends Fragment implements ExercisesAdapter.OnNoteListener{
+public class HistoryTrainingFragment extends Fragment implements HistoryTrainingAdapter.OnNoteListener{
 
     private SQLiteDatabase database;
+    private HistoryTrainingAdapter historyTrainingAdapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        setRetainInstance(true);
-        return inflater.inflate(R.layout.fragment_training,container,false);
+        return inflater.inflate(R.layout.fragment_history_training,container,false);
     }
 
     @Override
@@ -45,39 +47,17 @@ public class TrainingFragment extends Fragment implements ExercisesAdapter.OnNot
         BottomNavigationView navBar = getActivity().findViewById(R.id.nav_view);
         navBar.setVisibility(View.GONE);
 
-        TextView finishText = view.findViewById(R.id.finish_training);
-
         DBHelper dbHelper = new DBHelper(requireContext());
         database = dbHelper.getWritableDatabase();
 
         assert getArguments() != null;
         final long arg1 = getArguments().getLong("prog_id");
-        final String arg2 = getArguments().getString("prog_name");
+        final String arg2 = getArguments().getString("date");
 
-        final RecyclerView recyclerView2 = view.findViewById(R.id.exercises_recyclerview);
-        recyclerView2.setLayoutManager(new LinearLayoutManager(requireContext()));
-        ExercisesAdapter exercisesAdapter = new ExercisesAdapter(requireContext(), getAllItems(arg1), this);
-        recyclerView2.setAdapter(exercisesAdapter);
-
-        finishText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-                 Date date = new Date();
-
-                 ContentValues cv = new ContentValues();
-                 cv.put(HistoryTable.HistoryEntry.HISTORY_PROG_ID, arg1);
-                 cv.put(HistoryTable.HistoryEntry.HISTORY_PROG_NAME, arg2);
-                 cv.put(HistoryTable.HistoryEntry.HISTORY_DATE, formatter.format(date));
-
-                 database.insert(HistoryTable.HistoryEntry.TABLE_HISTORY, null, cv);
-
-                final NavController navController = Navigation.findNavController(requireView());
-                navController.navigate(R.id.action_training_to_navigation_list);
-            }
-        });
-
+        final RecyclerView recyclerView = view.findViewById(R.id.history_training_recyclerview);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        historyTrainingAdapter = new HistoryTrainingAdapter(requireContext(),getAllItems(arg1),this);
+        recyclerView.setAdapter(historyTrainingAdapter);
 
     }
 
@@ -95,6 +75,10 @@ public class TrainingFragment extends Fragment implements ExercisesAdapter.OnNot
     @Override
     public void onNoteClick(int position) {
        /* final NavController navController = Navigation.findNavController(requireView());
-        navController.navigate(R.id.action_navigation_list_to_training);*/
+        Bundle bundle = new Bundle();
+        bundle.putLong("prog_id",getArguments().getLong("prog_id"));
+        //bundle.putIntegerArrayList("ex_id",getArguments().getIntegerArrayList("ex_id"));
+        bundle.putString("date",getArguments().getString("date"));
+        navController.navigate(R.id.action_fragment_history_training_to_fragment_history_approach, bundle);*/
     }
 }

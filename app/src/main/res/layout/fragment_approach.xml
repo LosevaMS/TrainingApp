@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<RelativeLayout android:layout_height="match_parent"
+    android:layout_width="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+<androidx.core.widget.NestedScrollView
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    >
+
+<RelativeLayout
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:id="@+id/approach_fragment">
@@ -21,13 +31,15 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/last_approach_recyclerview"
-        android:layout_below="@id/last_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/last_time"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:scrollbars="none"
+        android:overScrollMode="never"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -49,17 +61,19 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp"
+        android:overScrollMode="never"/>
 
+</RelativeLayout>
+</androidx.core.widget.NestedScrollView>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_exercise_btn"
+        android:id="@+id/add_approach_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/approach_recyclerview"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="480dp"
+        android:layout_marginEnd="20dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="0dp"
         android:src="@drawable/ic_add"
@@ -67,5 +81,4 @@
         app:borderWidth="0dp"
         app:elevation="6dp"
         app:fabSize="normal" />
-
 </RelativeLayout>

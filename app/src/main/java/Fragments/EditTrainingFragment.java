@@ -6,10 +6,14 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,7 +48,7 @@ public class EditTrainingFragment extends Fragment implements ExerciseListAdapte
         BottomNavigationView navBar = getActivity().findViewById(R.id.nav_view);
         navBar.setVisibility(GONE);
 
-        userInput = view.findViewById(R.id.edit_exercise_name);
+        userInput = view.findViewById(R.id.edit_training_name);
         FloatingActionButton add_exercise_button = view.findViewById(R.id.add_exercise_btn);
         FloatingActionButton okBtn = view.findViewById(R.id.ok_btn);
 
@@ -62,33 +66,19 @@ public class EditTrainingFragment extends Fragment implements ExerciseListAdapte
 
         userInput.setText(arg2);
 
-        okBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String name = userInput.getText().toString();
-                ContentValues cv = new ContentValues();
-                cv.put(ProgramTable.ProgramEntry.PROG_NAME, name);
-                database.update(ProgramTable.ProgramEntry.TABLE_PROGRAMS, cv, "name = ?", new String[]{arg2});
-                exerciseListAdapter.swapCursor(getAllItems(arg1));
-                final NavController navController = Navigation.findNavController(requireView());
-                navController.navigate(R.id.action_edit_training_to_navigation_list);
-            }
-        });
-
-
         add_exercise_button.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
 
                 LayoutInflater li = LayoutInflater.from(requireContext());
-                View promptsView = li.inflate(R.layout.dialog_add_program, null);
+                View promptsView = li.inflate(R.layout.dialog_add_exercises, null);
 
                 AlertDialog.Builder mDialogBuilder = new AlertDialog.Builder(requireContext());
 
                 mDialogBuilder.setView(promptsView);
 
-                userInput2 = promptsView.findViewById(R.id.input_text);
+                userInput2 = promptsView.findViewById(R.id.input_exercise_name);
 
                 mDialogBuilder
                         .setCancelable(false)
@@ -110,6 +100,20 @@ public class EditTrainingFragment extends Fragment implements ExerciseListAdapte
             }
         });
 
+        okBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name = userInput.getText().toString();
+                if(name !=arg2) {
+                    ContentValues cv = new ContentValues();
+                    cv.put(ProgramTable.ProgramEntry.PROG_NAME, name);
+                    database.update(ProgramTable.ProgramEntry.TABLE_PROGRAMS, cv, "name = ?", new String[]{arg2});
+                    //exerciseListAdapter.swapCursor(getAllItems(arg1));
+                }
+                final NavController navController = Navigation.findNavController(requireView());
+                navController.navigate(R.id.action_edit_training_to_navigation_list);
+            }
+        });
     }
 
 

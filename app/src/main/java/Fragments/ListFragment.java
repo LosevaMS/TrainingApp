@@ -1,17 +1,31 @@
 package Fragments;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -24,16 +38,27 @@ import com.example.globusproject.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.IOException;
+
 import Adapters.ProgramListAdapter;
 import Tables.ProgramTable;
+
+import static android.app.Activity.RESULT_OK;
 
 
 public class ListFragment extends Fragment implements ProgramListAdapter.OnNoteListener {
 
     private FloatingActionButton add_program_button;
+    private Button loadImage_btn;
     private EditText userInput;
     private SQLiteDatabase database;
     private ProgramListAdapter programListAdapter;
+    private ImageView imageView;
+    private Uri uri;
+    private CardView cardView;
+
+    private static final int IMAGE_PICK_CODE = 1000;
+    private static final int PERMISSION_CODE = 1001;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,9 +86,11 @@ public class ListFragment extends Fragment implements ProgramListAdapter.OnNoteL
         programListAdapter = new ProgramListAdapter(requireContext(),getAllItems(),this);
         recyclerView.setAdapter(programListAdapter);
 
-        add_program_button = view.findViewById(R.id.add_btn);
 
+        add_program_button = view.findViewById(R.id.add_btn);
         userInput = view.findViewById(R.id.input_text);
+        loadImage_btn = view.findViewById(R.id.load_image_btn);
+
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -79,8 +106,6 @@ public class ListFragment extends Fragment implements ProgramListAdapter.OnNoteL
         }).attachToRecyclerView(recyclerView);
 
 
-
-
         add_program_button.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -94,10 +119,32 @@ public class ListFragment extends Fragment implements ProgramListAdapter.OnNoteL
                 mDialogBuilder.setView(promptsView);
 
                 userInput = promptsView.findViewById(R.id.input_text);
+                loadImage_btn = promptsView.findViewById(R.id.load_image_btn);
+                imageView = promptsView.findViewById(R.id.preview_image);
+                cardView = promptsView.findViewById(R.id.cardview_for_preview);
+
+                loadImage_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
+                            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                                    ==PackageManager.PERMISSION_DENIED){
+                                String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
+                                requestPermissions(permissions,PERMISSION_CODE);
+                            }
+                            else {
+                                pickImageFromGallery();
+                            }
+                        }
+                        else {
+                            pickImageFromGallery();
+                        }
+                    }
+                });
 
                 mDialogBuilder
                         .setCancelable(false)
-                        .setPositiveButton("OK",
+                        .setPositiveButton("ОК",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog,int id) {
                                        addItem();
@@ -116,9 +163,40 @@ public class ListFragment extends Fragment implements ProgramListAdapter.OnNoteL
         });
 
 
+
         onSaveInstanceState(savedInstanceState);
     }
 
+    private void pickImageFromGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent,IMAGE_PICK_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case PERMISSION_CODE:{
+                if (grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                    pickImageFromGallery();
+                }
+                else{
+                    Toast toast = Toast.makeText(requireContext(),
+                            "Permissions denied", Toast.LENGTH_LONG);
+                    toast.show();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == IMAGE_PICK_CODE){
+            uri = data.getData();
+            imageView.setImageURI(data.getData());
+        }
+    }
 
     private void addItem() {
 
@@ -129,6 +207,7 @@ public class ListFragment extends Fragment implements ProgramListAdapter.OnNoteL
         String name = userInput.getText().toString();
         ContentValues cv = new ContentValues();
         cv.put(ProgramTable.ProgramEntry.PROG_NAME, name);
+        cv.put(ProgramTable.ProgramEntry.PROG_URI, String.valueOf(uri));
 
         database.insert(ProgramTable.ProgramEntry.TABLE_PROGRAMS, null, cv);
         programListAdapter.swapCursor(getAllItems());

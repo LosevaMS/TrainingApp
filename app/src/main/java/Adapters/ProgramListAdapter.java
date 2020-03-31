@@ -6,7 +6,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +25,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.globusproject.DBHelper;
 import com.example.globusproject.R;
+import com.squareup.picasso.Picasso;
+
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
 import Tables.ProgramTable;
+
+import static android.content.ContentValues.TAG;
 
 
 public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.ProgramListViewHolder> {
@@ -38,7 +54,7 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
     public class ProgramListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         public TextView program_name_item;
-        public ImageView delete_item,edit_item,play_item;
+        public ImageView delete_item,edit_item,play_item,gym;
         public CardView cardView;
 
         OnNoteListener onNoteListener;
@@ -49,6 +65,7 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
             delete_item = itemView.findViewById(R.id.delete_item);
             edit_item = itemView.findViewById(R.id.edit_item);
             play_item = itemView.findViewById(R.id.play_item);
+            gym = itemView.findViewById(R.id.gym);
             cardView = itemView.findViewById(R.id.cv);
 
             this.onNoteListener = onNoteListener;
@@ -158,11 +175,16 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
         if(!mCursor.moveToPosition(position)){
             return;
         }
+
+        String uri = mCursor.getString(mCursor.getColumnIndex(ProgramTable.ProgramEntry.PROG_URI));
         String name = mCursor.getString(mCursor.getColumnIndex(ProgramTable.ProgramEntry.PROG_NAME));
         long id = mCursor.getLong(mCursor.getColumnIndex(ProgramTable.ProgramEntry._ID));
 
         holder.program_name_item.setText(name);
         holder.itemView.setTag(id);
+        holder.gym.setImageURI(Uri.parse(uri));
+
+
     }
 
     @Override

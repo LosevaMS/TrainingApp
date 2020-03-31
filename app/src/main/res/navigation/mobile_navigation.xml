@@ -22,7 +22,12 @@
         android:id="@+id/navigation_history"
         android:name="Fragments.HistoryFragment"
         android:label="История"
-        tools:layout="@layout/fragment_history" />
+        tools:layout="@layout/fragment_history" >
+
+        <action
+            android:id="@+id/action_navigation_history_to_fragment_history_training"
+            app:destination="@id/fragment_history_training" />
+    </fragment>
     <fragment
         android:id="@+id/navigation_profile"
         android:name="Fragments.ProfileFragment"
@@ -62,6 +67,32 @@
         <action
             android:id="@+id/action_approach_to_training"
             app:destination="@id/training" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragment_history_training"
+        android:name="Fragments.HistoryTrainingFragment"
+        android:label=" "
+        tools:layout="@layout/fragment_history_training">
+
+        <action
+            android:id="@+id/action_fragment_history_training_to_navigation_history"
+            app:destination="@id/navigation_history" />
+        <action
+            android:id="@+id/action_fragment_history_training_to_fragment_history_approach"
+            app:destination="@id/fragment_history_approach" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragment_history_approach"
+        android:name="Fragments.HistoryApproachFragment"
+        android:label=" "
+        tools:layout="@layout/fragment_history_approach">
+
+
+        <action
+            android:id="@+id/action_fragment_history_approach_to_fragment_history_training"
+            app:destination="@id/fragment_history_training" />
     </fragment>
 
 </navigation>
