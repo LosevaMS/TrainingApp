@@ -53,48 +53,8 @@ public class ProfileFragment extends Fragment {
         approachesNumber = view.findViewById(R.id.app_item_count);
         weightNumber = view.findViewById(R.id.weight_cnt);
 
-        /*try {
-            firstDate.setText(searchFirstDate());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-*/
-       /* ContentValues cv = new ContentValues();
-        cv.put(ApproachesTable.ApproachesEntry.APP_PROG_ID, 1);
-        cv.put(ApproachesTable.ApproachesEntry.APP_EX_ID, 1);
-        cv.put(ApproachesTable.ApproachesEntry.APP_DATE, "2020-02-02");
-        cv.put(ApproachesTable.ApproachesEntry.APP_COUNT, 88);
-        cv.put(ApproachesTable.ApproachesEntry.APP_WEIGHT, 88);
 
-        database.insert(ApproachesTable.ApproachesEntry.TABLE_APPROACHES, null, cv);
-
-        cv = new ContentValues();
-        cv.put(HistoryTable.HistoryEntry.HISTORY_PROG_ID, 1);
-        cv.put(HistoryTable.HistoryEntry.HISTORY_PROG_NAME, "Тренировка 1");
-        cv.put(HistoryTable.HistoryEntry.HISTORY_DATE, "2020-02-02");
-
-        database.insert(HistoryTable.HistoryEntry.TABLE_HISTORY, null, cv);*/
 
     }
 
-    public String searchFirstDate() throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
-        String query = "select date from " + HistoryTable.HistoryEntry.TABLE_HISTORY;
-        Cursor c = database.rawQuery(query, null);
-
-        String a, res;
-        res = "error";
-        Date date = new Date();
-        boolean flag = false;
-        while (c.moveToNext()) {
-            a = c.getString(c.getColumnIndex("date"));
-
-            if (date.getTime() > formatter.parse(a).getTime()) {
-                res = a;
-            }
-        }
-        c.close();
-        return res;
-    }
 }
