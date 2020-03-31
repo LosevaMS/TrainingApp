@@ -33,7 +33,7 @@ public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTraining
     private Cursor mCursor;
     private OnNoteListener mOnNoteListener;
 
-    public HistoryTrainingAdapter(Context context, Cursor cursor, OnNoteListener onNoteListener){
+    public HistoryTrainingAdapter(Context context, Cursor cursor, OnNoteListener onNoteListener) {
         mContext = context;
         mCursor = cursor;
         mOnNoteListener = onNoteListener;
@@ -43,7 +43,7 @@ public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTraining
         public TextView exerciseName;
         OnNoteListener onNoteListener;
 
-        public HistoryTrainingViewHolder( final View itemView, OnNoteListener onNoteListener) {
+        public HistoryTrainingViewHolder(final View itemView, OnNoteListener onNoteListener) {
             super(itemView);
 
             exerciseName = itemView.findViewById(R.id.ex_name_item);
@@ -58,8 +58,8 @@ public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTraining
                 @Override
                 public void onClick(View v) {
                     Bundle bundle = new Bundle();
-                    long exId = (long)itemView.getTag();
-                    bundle.putLong("ex_id",exId);
+                    long exId = (long) itemView.getTag();
+                    bundle.putLong("ex_id", exId);
                     //bundle.putLong("prog_id", searchProgId(exId));
                     bundle.putString("date", searchDate(searchProgId(exId)));
 
@@ -69,13 +69,12 @@ public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTraining
             });
         }
 
-        public int searchProgId (long id)
-        {
+        public int searchProgId(long id) {
             String query = "select _program_id from " + ExercisesTable.ExercisesEntry.TABLE_EXERCISES + " WHERE _id = " + id;
-            Cursor c = database.rawQuery(query , null);
+            Cursor c = database.rawQuery(query, null);
 
             int a = 0;
-            if (c.moveToFirst());
+            if (c.moveToFirst()) ;
             {
                 a = c.getInt(c.getColumnIndex("_program_id"));
             }
@@ -83,12 +82,12 @@ public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTraining
             return a;
         }
 
-        public String searchDate(long id){
+        public String searchDate(long id) {
             String query = "select date from " + HistoryTable.HistoryEntry.TABLE_HISTORY + " WHERE prog_id = " + id;
-            Cursor c = database.rawQuery(query , null);
+            Cursor c = database.rawQuery(query, null);
 
             String a = " ";
-            if (c.moveToFirst());
+            if (c.moveToFirst()) ;
             {
                 a = c.getString(c.getColumnIndex("date"));
             }
@@ -108,6 +107,7 @@ public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTraining
                     null
             );
         }
+
         @Override
         public void onClick(View v) {
             onNoteListener.onNoteClick(getAdapterPosition());
@@ -115,6 +115,7 @@ public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTraining
     }
 
     private SQLiteDatabase database;
+
     @Override
     public HistoryTrainingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from((mContext));
@@ -124,7 +125,7 @@ public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTraining
 
     @Override
     public void onBindViewHolder(HistoryTrainingViewHolder holder, int position) {
-        if (!mCursor.moveToPosition(position)){
+        if (!mCursor.moveToPosition(position)) {
             return;
         }
         String name = mCursor.getString(mCursor.getColumnIndex(ExercisesTable.ExercisesEntry.EX_NAME));
@@ -140,18 +141,18 @@ public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTraining
     }
 
 
-    public void swapCursor(Cursor newCursor){
-        if(mCursor != null){
+    public void swapCursor(Cursor newCursor) {
+        if (mCursor != null) {
             mCursor.close();
         }
         mCursor = newCursor;
 
-        if(newCursor != null){
+        if (newCursor != null) {
             notifyDataSetChanged();
         }
     }
 
-    public interface OnNoteListener{
+    public interface OnNoteListener {
         void onNoteClick(int position);
     }
 }

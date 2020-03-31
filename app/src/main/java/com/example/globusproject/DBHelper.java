@@ -24,38 +24,18 @@ import static Tables.HistoryTable.HistoryEntry.HISTORY_PROG_NAME;
 import static Tables.HistoryTable.HistoryEntry.TABLE_HISTORY;
 import static Tables.ProgramTable.ProgramEntry.PROG_URI;
 import static Tables.ProgramTable.ProgramEntry.TABLE_PROGRAMS;
-import static android.provider.UserDictionary.Words.APP_ID;
 
-public class DBHelper  extends SQLiteOpenHelper{
+public class DBHelper extends SQLiteOpenHelper {
 
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "training";
 
-
-
-    /*public static final String TABLE_EXERCISES = "exercises";
-    public static final String EX_ID = "_id";
-    public static final String EX_NAME = "name";
-    public static final String EX_PROG_ID = "_program_id";
-
-    public static final String TABLE_APPROACHES = "approaches";
-    public static final String APP_ID = "_id";
-    public static final String APP_EX_ID = "_excercises_id";
-    public static final String APP_WEIGHT = "weight";
-    public static final String APP_COUNT = "count";*/
-
-    public DBHelper(Context context)
-    {
+    public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-       /* db.execSQL("create table " + ProgramEntry.TABLE_PROGRAMS + "(" +
-                ProgramEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + ProgramEntry.PROG_NAME + " text, "
-                + ProgramEntry.COLUMN_AMOUNT + " INTEGER NOT NULL, " +
-                ProgramEntry.COLUMN_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
-                ");");*/
         final String SQL_CREATE_GROCERYLIST_TABLE = "CREATE TABLE " +
                 TABLE_PROGRAMS + " (" +
                 ProgramEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -65,15 +45,15 @@ public class DBHelper  extends SQLiteOpenHelper{
 
         db.execSQL("create table " + TABLE_EXERCISES + "(" + ExercisesEntry._ID
                 + " integer primary key AUTOINCREMENT," + EX_NAME + " text," + EX_PROG_ID + " integer,"
-                + "foreign key("+ EX_PROG_ID+") references "+ TABLE_PROGRAMS+"("+ ProgramEntry._ID+")" + ")");
+                + "foreign key(" + EX_PROG_ID + ") references " + TABLE_PROGRAMS + "(" + ProgramEntry._ID + ")" + ")");
 
         db.execSQL("create table " + TABLE_APPROACHES + "(" + ApproachesEntry._ID
-                + " integer primary key AUTOINCREMENT,"  + APP_WEIGHT + " double," + APP_COUNT + " integer,"+ APP_EX_ID + " integer,"
-                + APP_PROG_ID + " integer," + APP_DATE + " text," + "foreign key("+ APP_EX_ID+") references "+TABLE_EXERCISES+"("+ExercisesEntry._ID+")," +
-                 "foreign key("+ APP_PROG_ID+") references "+TABLE_PROGRAMS+"("+ProgramEntry._ID+")"+ ")");
+                + " integer primary key AUTOINCREMENT," + APP_WEIGHT + " double," + APP_COUNT + " integer," + APP_EX_ID + " integer,"
+                + APP_PROG_ID + " integer," + APP_DATE + " text," + "foreign key(" + APP_EX_ID + ") references " + TABLE_EXERCISES + "(" + ExercisesEntry._ID + ")," +
+                "foreign key(" + APP_PROG_ID + ") references " + TABLE_PROGRAMS + "(" + ProgramEntry._ID + ")" + ")");
 
         db.execSQL("create table " + TABLE_HISTORY + "(" + HistoryEntry._ID + " integer primary key AUTOINCREMENT,"
-        + HISTORY_PROG_ID + " integer," + HISTORY_PROG_NAME + " text," + HISTORY_DATE + " text" + ")");
+                + HISTORY_PROG_ID + " integer," + HISTORY_PROG_NAME + " text," + HISTORY_DATE + " text" + ")");
     }
 
     @Override

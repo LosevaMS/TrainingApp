@@ -1,20 +1,15 @@
 package Fragments;
 
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,21 +17,15 @@ import com.example.globusproject.DBHelper;
 import com.example.globusproject.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import Adapters.ExercisesAdapter;
 import Adapters.HistoryTrainingAdapter;
 import Tables.ExercisesTable;
-import Tables.HistoryTable;
 
-public class HistoryTrainingFragment extends Fragment implements HistoryTrainingAdapter.OnNoteListener{
+public class HistoryTrainingFragment extends Fragment implements HistoryTrainingAdapter.OnNoteListener {
 
     private SQLiteDatabase database;
-    private HistoryTrainingAdapter historyTrainingAdapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_history_training,container,false);
+        return inflater.inflate(R.layout.fragment_history_training, container, false);
     }
 
     @Override
@@ -56,7 +45,7 @@ public class HistoryTrainingFragment extends Fragment implements HistoryTraining
 
         final RecyclerView recyclerView = view.findViewById(R.id.history_training_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        historyTrainingAdapter = new HistoryTrainingAdapter(requireContext(),getAllItems(arg1),this);
+        HistoryTrainingAdapter historyTrainingAdapter = new HistoryTrainingAdapter(requireContext(), getAllItems(arg1), this);
         recyclerView.setAdapter(historyTrainingAdapter);
 
     }
@@ -72,13 +61,8 @@ public class HistoryTrainingFragment extends Fragment implements HistoryTraining
                 null
         );
     }
+
     @Override
     public void onNoteClick(int position) {
-       /* final NavController navController = Navigation.findNavController(requireView());
-        Bundle bundle = new Bundle();
-        bundle.putLong("prog_id",getArguments().getLong("prog_id"));
-        //bundle.putIntegerArrayList("ex_id",getArguments().getIntegerArrayList("ex_id"));
-        bundle.putString("date",getArguments().getString("date"));
-        navController.navigate(R.id.action_fragment_history_training_to_fragment_history_approach, bundle);*/
     }
 }

@@ -22,26 +22,20 @@ public class ExerciseListAdapter extends RecyclerView.Adapter<ExerciseListAdapte
 
     private Context mContext;
     private Cursor mCursor;
-    private OnNoteListener mOnNoteListener;
 
-    public ExerciseListAdapter(Context context, Cursor cursor, OnNoteListener onNoteListener){
+    public ExerciseListAdapter(Context context, Cursor cursor){
         mContext = context;
         mCursor = cursor;
-        mOnNoteListener = onNoteListener;
     }
 
-    public class ExerciseViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ExerciseViewHolder extends RecyclerView.ViewHolder {
         public TextView nameText;
         public Button deleteBtn;
-        OnNoteListener onNoteListener;
 
-        public ExerciseViewHolder( final View itemView, OnNoteListener onNoteListener) {
+        public ExerciseViewHolder( final View itemView) {
             super(itemView);
             nameText = itemView.findViewById(R.id.exercise_name_item);
             deleteBtn = itemView.findViewById(R.id.delete_ex_item);
-
-            this.onNoteListener = onNoteListener;
-            itemView.setOnClickListener(this);
 
             DBHelper dbHelper = new DBHelper(mContext);
             database = dbHelper.getWritableDatabase();
@@ -102,10 +96,6 @@ public class ExerciseListAdapter extends RecyclerView.Adapter<ExerciseListAdapte
                     null
             );
         }
-        @Override
-        public void onClick(View v) {
-            onNoteListener.onNoteClick(getAdapterPosition());
-        }
     }
 
     private SQLiteDatabase database;
@@ -113,7 +103,7 @@ public class ExerciseListAdapter extends RecyclerView.Adapter<ExerciseListAdapte
     public ExerciseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from((mContext));
         View view = inflater.inflate(R.layout.exercise_item, parent, false);
-        return new ExerciseViewHolder(view, mOnNoteListener);
+        return new ExerciseViewHolder(view);
     }
 
     @Override
@@ -142,9 +132,5 @@ public class ExerciseListAdapter extends RecyclerView.Adapter<ExerciseListAdapte
         if(newCursor != null){
             notifyDataSetChanged();
         }
-    }
-
-    public interface OnNoteListener{
-        void onNoteClick(int position);
     }
 }

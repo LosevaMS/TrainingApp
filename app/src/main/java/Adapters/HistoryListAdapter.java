@@ -35,12 +35,13 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
     private Cursor mCursor;
     private OnNoteListener mOnNoteListener;
 
-    public HistoryListAdapter(Context context, Cursor cursor, OnNoteListener onNoteListener){
+    public HistoryListAdapter(Context context, Cursor cursor, OnNoteListener onNoteListener) {
         mContext = context;
         mCursor = cursor;
         mOnNoteListener = onNoteListener;
     }
-    public class HistoryListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+
+    public class HistoryListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView program_name_item, date;
         public CardView cardView;
@@ -66,27 +67,26 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
                 @Override
                 public void onClick(View v) {
                     Bundle bundle = new Bundle();
-                    long id = (long)itemView.getTag();
+                    long id = (long) itemView.getTag();
 
-                    bundle.putLong("prog_id",searchProgId(id));
-                    bundle.putString("date",searchDate(id));
+                    bundle.putLong("prog_id", searchProgId(id));
+                    bundle.putString("date", searchDate(id));
                     //bundle.putIntegerArrayList("ex_id",searchExId(id));
 
                     final NavController navController = Navigation.findNavController(itemView);
-                    navController.navigate(R.id.action_navigation_history_to_fragment_history_training,bundle);
+                    navController.navigate(R.id.action_navigation_history_to_fragment_history_training, bundle);
                 }
             });
 
         }
 
 
-        public int searchProgId (long id)
-        {
+        public int searchProgId(long id) {
             String query = "select prog_id from " + HistoryTable.HistoryEntry.TABLE_HISTORY + " WHERE _id = " + id;
-            Cursor c = database.rawQuery(query , null);
+            Cursor c = database.rawQuery(query, null);
 
             int a = 0;
-            if (c.moveToFirst());
+            if (c.moveToFirst()) ;
             {
                 a = c.getInt(c.getColumnIndex("prog_id"));
             }
@@ -94,27 +94,25 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
             return a;
         }
 
-        public ArrayList<Integer> searchExId (long id)
-        {
+        public ArrayList<Integer> searchExId(long id) {
             String query = "select ex_id from " + HistoryTable.HistoryEntry.TABLE_HISTORY + " WHERE _id = " + id;
-            Cursor c = database.rawQuery(query , null);
+            Cursor c = database.rawQuery(query, null);
 
             ArrayList a = new ArrayList();
-            if (c.moveToNext());
+            if (c.moveToNext()) ;
             {
-                 a.add(c.getInt(c.getColumnIndex("ex_id")));
+                a.add(c.getInt(c.getColumnIndex("ex_id")));
             }
             c.close();
             return a;
         }
 
-        public String searchDate (long id)
-        {
+        public String searchDate(long id) {
             String query = "select date from " + HistoryTable.HistoryEntry.TABLE_HISTORY + " WHERE _id = " + id;
-            Cursor c = database.rawQuery(query , null);
+            Cursor c = database.rawQuery(query, null);
 
             String a = " ";
-            if (c.moveToFirst());
+            if (c.moveToFirst()) ;
             {
                 a = c.getString(c.getColumnIndex("date"));
             }
@@ -130,13 +128,15 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
     }
 
     private SQLiteDatabase database;
+
     @Override
     public HistoryListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        View view = inflater.inflate(R.layout.history_card,parent,false);
+        View view = inflater.inflate(R.layout.history_card, parent, false);
 
-        return new HistoryListViewHolder(view,mOnNoteListener);
+        return new HistoryListViewHolder(view, mOnNoteListener);
     }
+
     private Cursor getAllItems() {
         return database.query(
                 HistoryTable.HistoryEntry.TABLE_HISTORY,
@@ -151,8 +151,8 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
 
 
     @Override
-    public void onBindViewHolder( HistoryListViewHolder holder, int position) {
-        if(!mCursor.moveToPosition(position)){
+    public void onBindViewHolder(HistoryListViewHolder holder, int position) {
+        if (!mCursor.moveToPosition(position)) {
             return;
         }
         String prog_name = mCursor.getString(mCursor.getColumnIndex(HistoryTable.HistoryEntry.HISTORY_PROG_NAME));
@@ -166,13 +166,12 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
         holder.gym.setImageURI(Uri.parse(searchUri(prog_id)));
     }
 
-    public String searchUri (long id)
-    {
+    public String searchUri(long id) {
         String query = "select uri from " + ProgramTable.ProgramEntry.TABLE_PROGRAMS + " WHERE _id = " + id;
-        Cursor c = database.rawQuery(query , null);
+        Cursor c = database.rawQuery(query, null);
 
         String a = "not found";
-        if (c.moveToFirst());
+        if (c.moveToFirst()) ;
         {
             a = c.getString(c.getColumnIndex("uri"));
         }
@@ -185,16 +184,18 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
         return mCursor.getCount();
 
     }
-    public void swapCursor (Cursor newCursor){
-        if (mCursor!=null){
+
+    public void swapCursor(Cursor newCursor) {
+        if (mCursor != null) {
             mCursor.close();
         }
         mCursor = newCursor;
-        if(newCursor!=null){
+        if (newCursor != null) {
             notifyDataSetChanged();
         }
     }
-    public interface OnNoteListener{
+
+    public interface OnNoteListener {
         void onNoteClick(int position);
     }
 }

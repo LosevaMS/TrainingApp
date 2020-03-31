@@ -11,18 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,22 +31,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import Adapters.ApproachAdapter;
-import Adapters.ExercisesAdapter;
 import Tables.ApproachesTable;
-import Tables.ExercisesTable;
-import Tables.HistoryTable;
-import Tables.ProgramTable;
 
-public class ApproachFragment extends Fragment implements ApproachAdapter.OnNoteListener{
+public class ApproachFragment extends Fragment implements ApproachAdapter.OnNoteListener {
 
     private SQLiteDatabase database;
     private ApproachAdapter approachAdapter1, approachAdapter2;
-    private TextView finishText;
     private EditText inputWeight, inputCount;
-    private FloatingActionButton add_approach_btn;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_approach,container,false);
+        return inflater.inflate(R.layout.fragment_approach, container, false);
     }
 
     @Override
@@ -76,7 +65,7 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
         final RecyclerView recyclerView1 = view.findViewById(R.id.last_approach_recyclerview);
         recyclerView1.setLayoutManager(new LinearLayoutManager(requireContext()));
         try {
-            approachAdapter1 = new ApproachAdapter(requireContext(),getPreviousItems(arg1),this);
+            approachAdapter1 = new ApproachAdapter(requireContext(), getPreviousItems(arg1), this);
         } catch (ParseException ex) {
             ex.printStackTrace();
         }
@@ -85,38 +74,14 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
         final RecyclerView recyclerView2 = view.findViewById(R.id.approach_recyclerview);
         recyclerView2.setLayoutManager(new LinearLayoutManager(requireContext()));
         try {
-            approachAdapter2 = new ApproachAdapter(requireContext(),getAllItems(arg1),this);
+            approachAdapter2 = new ApproachAdapter(requireContext(), getAllItems(arg1), this);
         } catch (ParseException e) {
             e.printStackTrace();
         }
         recyclerView2.setAdapter(approachAdapter2);
 
 
-
-
-            /*if (date1.getYear() > date2.getYear() && date1.getMonth() > date2.getMonth() && date1.getDay() > date2.getDay()) {
-                Toast toast = Toast.makeText(requireContext(),
-                        "Date1 is after Date2", Toast.LENGTH_LONG);
-                toast.show();
-            } else if (date1.getYear() < date2.getYear() && date1.getMonth() < date2.getMonth() && date1.getDay() < date2.getDay()) {
-                Toast toast = Toast.makeText(requireContext(),
-                        "Date1 is before Date2", Toast.LENGTH_LONG);
-                toast.show();
-            } else if (date1.getYear() == date2.getYear() && date1.getMonth() == date2.getMonth() && date1.getDay() == date2.getDay()) {
-                Toast toast = Toast.makeText(requireContext(),
-                        "Date1 is equal to Date2", Toast.LENGTH_LONG);
-                toast.show();
-            } else {
-                Toast toast = Toast.makeText(requireContext(),
-                        "How to get here?", Toast.LENGTH_LONG);
-                toast.show();
-            }*/
-
-
-       /* Toast toast = Toast.makeText(requireContext(),
-                arg1+ " ", Toast.LENGTH_LONG);
-        toast.show();*/
-       add_approach_btn = view.findViewById(R.id.add_approach_btn);
+        FloatingActionButton add_approach_btn = view.findViewById(R.id.add_approach_btn);
 
         add_approach_btn.setOnClickListener(new View.OnClickListener() {
 
@@ -139,11 +104,11 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
 
                     @Override
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                        if(actionId==EditorInfo.IME_ACTION_NEXT){
-                            if( inputWeight.getText().toString().trim().equalsIgnoreCase(""))
+                        if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                            if (inputWeight.getText().toString().trim().equalsIgnoreCase(""))
                                 inputWeight.setError("Введите вес!");
                             else
-                                Toast.makeText(requireContext(),"Notnull",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(requireContext(), "Notnull", Toast.LENGTH_SHORT).show();
                         }
                         return false;
                     }
@@ -154,11 +119,11 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
 
                     @Override
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                        if(actionId==EditorInfo.IME_ACTION_DONE){
-                            if( inputCount.getText().toString().trim().equalsIgnoreCase(""))
+                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+                            if (inputCount.getText().toString().trim().equalsIgnoreCase(""))
                                 inputCount.setError("Введите количество повторений!");
                             else
-                                Toast.makeText(requireContext(),"Notnull",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(requireContext(), "Notnull", Toast.LENGTH_SHORT).show();
                         }
                         return false;
                     }
@@ -168,9 +133,9 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
                         .setCancelable(false)
                         .setPositiveButton("OK",
                                 new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog,int id) {
+                                    public void onClick(DialogInterface dialog, int id) {
                                         try {
-                                            addItem(arg1,arg2);
+                                            addItem(arg1, arg2);
                                         } catch (ParseException e) {
                                             e.printStackTrace();
                                         }
@@ -179,7 +144,7 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
                                 })
                         .setNegativeButton("Отмена",
                                 new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog,int id) {
+                                    public void onClick(DialogInterface dialog, int id) {
                                         dialog.cancel();
                                     }
                                 });
@@ -189,70 +154,6 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
                 inputCount.getText().clear();
             }
         });
-
-       /* ContentValues cv = new ContentValues();
-        cv.put(ApproachesTable.ApproachesEntry.APP_WEIGHT, 66);
-        cv.put(ApproachesTable.ApproachesEntry.APP_COUNT, 66);
-        cv.put(ApproachesTable.ApproachesEntry.APP_EX_ID,(int)arg1);
-        cv.put(ApproachesTable.ApproachesEntry.APP_PROG_ID,arg2);
-        cv.put(ApproachesTable.ApproachesEntry.APP_DATE, "2020-03-20");
-
-        database.insert(ApproachesTable.ApproachesEntry.TABLE_APPROACHES, null, cv);
-        try {
-            approachAdapter2.swapCursor(getAllItems(arg1));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        cv.put(ApproachesTable.ApproachesEntry.APP_WEIGHT, 66);
-        cv.put(ApproachesTable.ApproachesEntry.APP_COUNT, 66);
-        cv.put(ApproachesTable.ApproachesEntry.APP_EX_ID,(int)arg1);
-        cv.put(ApproachesTable.ApproachesEntry.APP_PROG_ID,arg2);
-        cv.put(ApproachesTable.ApproachesEntry.APP_DATE, "2019-03-20");
-
-        database.insert(ApproachesTable.ApproachesEntry.TABLE_APPROACHES, null, cv);
-        try {
-            approachAdapter2.swapCursor(getAllItems(arg1));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        cv.put(ApproachesTable.ApproachesEntry.APP_WEIGHT, 66);
-        cv.put(ApproachesTable.ApproachesEntry.APP_COUNT, 66);
-        cv.put(ApproachesTable.ApproachesEntry.APP_EX_ID,(int)arg1);
-        cv.put(ApproachesTable.ApproachesEntry.APP_PROG_ID,arg2);
-        cv.put(ApproachesTable.ApproachesEntry.APP_DATE, "2020-02-02");
-
-        database.insert(ApproachesTable.ApproachesEntry.TABLE_APPROACHES, null, cv);
-        try {
-            approachAdapter2.swapCursor(getAllItems(arg1));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        cv.put(ApproachesTable.ApproachesEntry.APP_WEIGHT, 66);
-        cv.put(ApproachesTable.ApproachesEntry.APP_COUNT, 66);
-        cv.put(ApproachesTable.ApproachesEntry.APP_EX_ID,(int)arg1);
-        cv.put(ApproachesTable.ApproachesEntry.APP_PROG_ID,arg2);
-        cv.put(ApproachesTable.ApproachesEntry.APP_DATE, "2020-03-25");
-
-        database.insert(ApproachesTable.ApproachesEntry.TABLE_APPROACHES, null, cv);
-        try {
-            approachAdapter2.swapCursor(getAllItems(arg1));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }*/
-
-       /*Toast toast = null;
-        try {
-            toast = Toast.makeText(requireContext(),
-                    searchPreviousDate(arg1,date1)+ " ", Toast.LENGTH_LONG);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        toast.show();
-*/
-
 
     }
 
@@ -272,8 +173,8 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
         ContentValues cv = new ContentValues();
         cv.put(ApproachesTable.ApproachesEntry.APP_WEIGHT, weight);
         cv.put(ApproachesTable.ApproachesEntry.APP_COUNT, count);
-        cv.put(ApproachesTable.ApproachesEntry.APP_EX_ID,(int)ex_id);
-        cv.put(ApproachesTable.ApproachesEntry.APP_PROG_ID,prog_id);
+        cv.put(ApproachesTable.ApproachesEntry.APP_EX_ID, (int) ex_id);
+        cv.put(ApproachesTable.ApproachesEntry.APP_PROG_ID, prog_id);
         cv.put(ApproachesTable.ApproachesEntry.APP_DATE, formatter.format(date));
 
         database.insert(ApproachesTable.ApproachesEntry.TABLE_APPROACHES, null, cv);
@@ -302,6 +203,7 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
                 null
         );
     }
+
     private Cursor getPreviousItems(long id) throws ParseException {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -323,25 +225,25 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
         );
     }
 
-    public String searchPreviousDate (long id, Date date) throws ParseException {
+    public String searchPreviousDate(long id, Date date) throws ParseException {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
         String query = "select date from " + ApproachesTable.ApproachesEntry.TABLE_APPROACHES + " WHERE _excercises_id = " + id;
-        Cursor c = database.rawQuery(query , null);
+        Cursor c = database.rawQuery(query, null);
 
-        String a,res; res="error";
+        String a, res;
+        res = "error";
         Date date2;
         date2 = formatter.parse("1999-01-01");
-        boolean flag=false;
-        while (c.moveToNext())
-        {
+        boolean flag = false;
+        while (c.moveToNext()) {
             a = c.getString(c.getColumnIndex("date"));
 
-            if (date2.getTime()<date.getTime() && date2.getTime()<formatter.parse(a).getTime()) {
+            if (date2.getTime() < date.getTime() && date2.getTime() < formatter.parse(a).getTime()) {
                 flag = true;
-                if(formatter.parse(a).getYear()==date.getYear() && formatter.parse(a).getMonth()==date.getMonth() &&
-                        formatter.parse(a).getDay()!=date.getDay() && flag==true) {
+                if (formatter.parse(a).getYear() == date.getYear() && formatter.parse(a).getMonth() == date.getMonth() &&
+                        formatter.parse(a).getDay() != date.getDay() && flag == true) {
                     date2.setTime(formatter.parse(a).getTime());
                     res = a;
                 }

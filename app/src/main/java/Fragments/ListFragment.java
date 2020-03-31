@@ -8,11 +8,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,10 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,7 +33,7 @@ import com.example.globusproject.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.io.IOException;
+import org.jetbrains.annotations.NotNull;
 
 import Adapters.ProgramListAdapter;
 import Tables.ProgramTable;
@@ -46,7 +41,7 @@ import Tables.ProgramTable;
 import static android.app.Activity.RESULT_OK;
 
 
-public class ListFragment extends Fragment implements ProgramListAdapter.OnNoteListener {
+public class ListFragment extends Fragment {
 
     private FloatingActionButton add_program_button;
     private Button loadImage_btn;
@@ -65,11 +60,13 @@ public class ListFragment extends Fragment implements ProgramListAdapter.OnNoteL
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
     }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setRetainInstance(true);
-        return inflater.inflate(R.layout.fragment_list,container,false);
+        return inflater.inflate(R.layout.fragment_list, container, false);
     }
+
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -81,9 +78,9 @@ public class ListFragment extends Fragment implements ProgramListAdapter.OnNoteL
         DBHelper dbHelper = new DBHelper(requireContext());
         database = dbHelper.getWritableDatabase();
 
-        final RecyclerView recyclerView=view.findViewById(R.id.recyclerview);
+        final RecyclerView recyclerView = view.findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        programListAdapter = new ProgramListAdapter(requireContext(),getAllItems(),this);
+        programListAdapter = new ProgramListAdapter(requireContext(), getAllItems());
         recyclerView.setAdapter(programListAdapter);
 
 
@@ -95,12 +92,12 @@ public class ListFragment extends Fragment implements ProgramListAdapter.OnNoteL
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            public boolean onMove(@NotNull RecyclerView recyclerView, @NotNull RecyclerView.ViewHolder viewHolder, @NotNull RecyclerView.ViewHolder target) {
                 return false;
             }
 
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            public void onSwiped(@NotNull RecyclerView.ViewHolder viewHolder, int direction) {
                 removeItem((long) viewHolder.itemView.getTag());
             }
         }).attachToRecyclerView(recyclerView);
@@ -126,17 +123,15 @@ public class ListFragment extends Fragment implements ProgramListAdapter.OnNoteL
                 loadImage_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                                    ==PackageManager.PERMISSION_DENIED){
+                                    == PackageManager.PERMISSION_DENIED) {
                                 String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
-                                requestPermissions(permissions,PERMISSION_CODE);
-                            }
-                            else {
+                                requestPermissions(permissions, PERMISSION_CODE);
+                            } else {
                                 pickImageFromGallery();
                             }
-                        }
-                        else {
+                        } else {
                             pickImageFromGallery();
                         }
                     }
@@ -146,13 +141,13 @@ public class ListFragment extends Fragment implements ProgramListAdapter.OnNoteL
                         .setCancelable(false)
                         .setPositiveButton("ОК",
                                 new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog,int id) {
-                                       addItem();
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        addItem();
                                     }
                                 })
                         .setNegativeButton("Отмена",
                                 new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog,int id) {
+                                    public void onClick(DialogInterface dialog, int id) {
                                         dialog.cancel();
                                     }
                                 });
@@ -163,24 +158,22 @@ public class ListFragment extends Fragment implements ProgramListAdapter.OnNoteL
         });
 
 
-
         onSaveInstanceState(savedInstanceState);
     }
 
     private void pickImageFromGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
-        startActivityForResult(intent,IMAGE_PICK_CODE);
+        startActivityForResult(intent, IMAGE_PICK_CODE);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
-            case PERMISSION_CODE:{
-                if (grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+        switch (requestCode) {
+            case PERMISSION_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     pickImageFromGallery();
-                }
-                else{
+                } else {
                     Toast toast = Toast.makeText(requireContext(),
                             "Permissions denied", Toast.LENGTH_LONG);
                     toast.show();
@@ -192,7 +185,7 @@ public class ListFragment extends Fragment implements ProgramListAdapter.OnNoteL
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == IMAGE_PICK_CODE){
+        if (resultCode == RESULT_OK && requestCode == IMAGE_PICK_CODE) {
             uri = data.getData();
             imageView.setImageURI(data.getData());
         }
@@ -200,7 +193,7 @@ public class ListFragment extends Fragment implements ProgramListAdapter.OnNoteL
 
     private void addItem() {
 
-        if (userInput.getText().toString().trim().length() == 0 ) {
+        if (userInput.getText().toString().trim().length() == 0) {
             return;
         }
 
@@ -231,13 +224,6 @@ public class ListFragment extends Fragment implements ProgramListAdapter.OnNoteL
                 null,
                 null
         );
-    }
-
-    @Override
-    public void onNoteClick(int position) {
-        final NavController navController = Navigation.findNavController(requireView());
-                navController.navigate(R.id.action_navigation_list_to_edit_training);
-
     }
 
 }

@@ -35,7 +35,7 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_profile,container,false);
+        return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
     @Override
@@ -81,17 +81,17 @@ public class ProfileFragment extends Fragment {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
         String query = "select date from " + HistoryTable.HistoryEntry.TABLE_HISTORY;
-        Cursor c = database.rawQuery(query , null);
+        Cursor c = database.rawQuery(query, null);
 
-        String a,res; res="error";
+        String a, res;
+        res = "error";
         Date date = new Date();
-        boolean flag=false;
-        while (c.moveToNext())
-        {
+        boolean flag = false;
+        while (c.moveToNext()) {
             a = c.getString(c.getColumnIndex("date"));
 
-            if (date.getTime()>formatter.parse(a).getTime()) {
-                    res = a;
+            if (date.getTime() > formatter.parse(a).getTime()) {
+                res = a;
             }
         }
         c.close();
