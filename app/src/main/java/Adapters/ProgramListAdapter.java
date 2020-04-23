@@ -19,6 +19,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.globusproject.DBHelper;
 import com.example.globusproject.R;
 
@@ -160,8 +161,8 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
 
         holder.program_name_item.setText(name);
         holder.itemView.setTag(id);
-        holder.gym.setImageURI(Uri.parse(uri));
 
+        Glide.with(holder.itemView.getContext()).load(uri).into(holder.gym);
 
     }
 
