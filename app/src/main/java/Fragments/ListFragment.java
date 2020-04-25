@@ -153,6 +153,7 @@ public class ListFragment extends Fragment {
                                 });
                 AlertDialog alertDialog = mDialogBuilder.create();
                 alertDialog.show();
+               // alertDialog.getWindow().setLayout(860, 1000);
                 userInput.getText().clear();
             }
         });

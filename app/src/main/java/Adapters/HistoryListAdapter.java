@@ -19,6 +19,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.globusproject.DBHelper;
 import com.example.globusproject.R;
 
@@ -163,7 +164,11 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
         holder.program_name_item.setText(prog_name);
         holder.date.setText(date);
         holder.itemView.setTag(id);
-        holder.gym.setImageURI(Uri.parse(searchUri(prog_id)));
+
+        if(searchUri(prog_id).equals("null"))
+            holder.gym.setImageResource(R.drawable.gym4app6);
+        else
+        Glide.with(holder.itemView.getContext()).load(searchUri(prog_id)).into(holder.gym);
     }
 
     public String searchUri(long id) {

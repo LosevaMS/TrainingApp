@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
 import androidx.navigation.NavController;
@@ -148,7 +150,6 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
         );
     }
 
-
     @Override
     public void onBindViewHolder(ProgramListViewHolder holder, int position) {
         if (!mCursor.moveToPosition(position)) {
@@ -162,7 +163,10 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
         holder.program_name_item.setText(name);
         holder.itemView.setTag(id);
 
-        Glide.with(holder.itemView.getContext()).load(uri).into(holder.gym);
+        if(uri.equals("null"))
+            holder.gym.setImageResource(R.drawable.gym4app6);
+        else
+            Glide.with(holder.itemView.getContext()).load(uri).into(holder.gym);
 
     }
 

@@ -33,7 +33,6 @@
                 android:id="@+id/gym"
                 android:layout_width="match_parent"
                 android:layout_height="139dp"
-                android:background="@drawable/gym1"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"/>
 

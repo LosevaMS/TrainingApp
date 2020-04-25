@@ -6,10 +6,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,7 +23,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import Adapters.HistoryTrainingAdapter;
 import Tables.ExercisesTable;
 
-public class HistoryTrainingFragment extends Fragment implements HistoryTrainingAdapter.OnNoteListener {
+public class HistoryTrainingFragment extends Fragment implements HistoryTrainingAdapter.ClickListener {
 
     private SQLiteDatabase database;
 
@@ -45,8 +48,33 @@ public class HistoryTrainingFragment extends Fragment implements HistoryTraining
 
         final RecyclerView recyclerView = view.findViewById(R.id.history_training_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        HistoryTrainingAdapter historyTrainingAdapter = new HistoryTrainingAdapter(requireContext(), getAllItems(arg1), this);
+        HistoryTrainingAdapter historyTrainingAdapter = new HistoryTrainingAdapter(requireContext(), getAllItems(arg1),this);
         recyclerView.setAdapter(historyTrainingAdapter);
+
+       /* recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(requireContext(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        // do whatever
+                    }
+
+                    @Override public void onLongItemClick(View view, int position) {
+                        // do whatever
+                    }
+                })
+        );*/
+
+        historyTrainingAdapter.setOnItemClickListener(new HistoryTrainingAdapter.ClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+                Bundle bundle = new Bundle();
+                long exId = (long) v.getTag();
+                bundle.putLong("ex_id", exId);
+                bundle.putString("date", arg2);
+
+                final NavController navController = Navigation.findNavController(v);
+                navController.navigate(R.id.action_fragment_history_training_to_fragment_history_approach, bundle);
+            }
+        });
 
     }
 
@@ -63,6 +91,6 @@ public class HistoryTrainingFragment extends Fragment implements HistoryTraining
     }
 
     @Override
-    public void onNoteClick(int position) {
+    public void onItemClick(int position, View v) {
     }
 }

@@ -54,7 +54,6 @@ public class ProfileFragment extends Fragment {
         weightNumber = view.findViewById(R.id.weight_cnt);
 
 
-
     }
 
 }

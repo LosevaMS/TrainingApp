@@ -31,30 +31,30 @@ import Tables.ProgramTable;
 public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTrainingAdapter.HistoryTrainingViewHolder> {
     private Context mContext;
     private Cursor mCursor;
-    private OnNoteListener mOnNoteListener;
+    private static ClickListener mClickListener;
 
-    public HistoryTrainingAdapter(Context context, Cursor cursor, OnNoteListener onNoteListener) {
+    public HistoryTrainingAdapter(Context context, Cursor cursor, ClickListener clickListener1) {
         mContext = context;
         mCursor = cursor;
-        mOnNoteListener = onNoteListener;
+        mClickListener = clickListener1;
     }
 
     public class HistoryTrainingViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView exerciseName;
-        OnNoteListener onNoteListener;
+        ClickListener clickListener;
 
-        public HistoryTrainingViewHolder(final View itemView, OnNoteListener onNoteListener) {
+        public HistoryTrainingViewHolder(final View itemView, ClickListener clickListener) {
             super(itemView);
 
             exerciseName = itemView.findViewById(R.id.ex_name_item);
 
-            this.onNoteListener = onNoteListener;
+            this.clickListener = clickListener;
             itemView.setOnClickListener(this);
 
             DBHelper dbHelper = new DBHelper(mContext);
             database = dbHelper.getWritableDatabase();
 
-            exerciseName.setOnClickListener(new View.OnClickListener() {
+           /* exerciseName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Bundle bundle = new Bundle();
@@ -66,7 +66,11 @@ public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTraining
                     final NavController navController = Navigation.findNavController(itemView);
                     navController.navigate(R.id.action_fragment_history_training_to_fragment_history_approach, bundle);
                 }
-            });
+            });*/
+        }
+        @Override
+        public void onClick(View v) {
+            clickListener.onItemClick(getAdapterPosition(), v);
         }
 
         public int searchProgId(long id) {
@@ -108,10 +112,6 @@ public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTraining
             );
         }
 
-        @Override
-        public void onClick(View v) {
-            onNoteListener.onNoteClick(getAdapterPosition());
-        }
     }
 
     private SQLiteDatabase database;
@@ -120,7 +120,7 @@ public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTraining
     public HistoryTrainingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from((mContext));
         View view = inflater.inflate(R.layout.ex_item, parent, false);
-        return new HistoryTrainingViewHolder(view, mOnNoteListener);
+        return new HistoryTrainingViewHolder(view, mClickListener);
     }
 
     @Override
@@ -140,7 +140,6 @@ public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTraining
         return mCursor.getCount();
     }
 
-
     public void swapCursor(Cursor newCursor) {
         if (mCursor != null) {
             mCursor.close();
@@ -151,8 +150,10 @@ public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTraining
             notifyDataSetChanged();
         }
     }
-
-    public interface OnNoteListener {
-        void onNoteClick(int position);
+    public void setOnItemClickListener(ClickListener clickListener) {
+        HistoryTrainingAdapter.mClickListener = clickListener;
+    }
+    public interface ClickListener {
+        void onItemClick(int position, View v);
     }
 }

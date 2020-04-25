@@ -70,7 +70,6 @@ public class HistoryFragment extends Fragment implements HistoryListAdapter.OnNo
             }
         }).attachToRecyclerView(recyclerView);
 
-
         assert savedInstanceState != null;
         onSaveInstanceState(savedInstanceState);
     }

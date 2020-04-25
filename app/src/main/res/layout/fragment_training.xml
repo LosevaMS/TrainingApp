@@ -13,21 +13,23 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="60dp" />
+        android:layout_marginBottom="60dp"
+        android:overScrollMode="never"/>
 
     <TextView
         android:id="@+id/finish_training"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_alignStart="@+id/exercises_recyclerview"
         android:layout_alignLeft="@+id/exercises_recyclerview"
         android:layout_alignEnd="@+id/exercises_recyclerview"
         android:layout_alignRight="@+id/exercises_recyclerview"
         android:layout_alignBottom="@+id/exercises_recyclerview"
-        android:layout_marginBottom="-40dp"
+        android:layout_marginBottom="-50dp"
         android:gravity="center"
         android:text="@string/finish_training"
         android:textColor="#2C98F0"
-        app:fontFamily="@font/roboto_medium" />
+        app:fontFamily="@font/roboto_medium"
+        android:textSize="14sp"/>
 
 </RelativeLayout>
