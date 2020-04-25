@@ -169,6 +169,7 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
             holder.gym.setImageResource(R.drawable.gym4app6);
         else
         Glide.with(holder.itemView.getContext()).load(searchUri(prog_id)).into(holder.gym);
+
     }
 
     public String searchUri(long id) {
