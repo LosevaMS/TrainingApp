@@ -58,6 +58,15 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
         Date date1 = new Date();
         formatter.format(date1);
 
+        if(savedInstanceState != null){
+
+            Toast.makeText(getActivity()," = " + savedInstanceState.getLong("ChronoTime") ,
+                    Toast.LENGTH_LONG).show();
+        }
+
+       /* Toast.makeText(getActivity()," = " + savedInstanceState.getLong("ChronoTime") ,
+                Toast.LENGTH_LONG).show();*/
+
         assert getArguments() != null;
         final long arg1 = getArguments().getLong("ex_id");
         final int arg2 = getArguments().getInt("prog_id");
