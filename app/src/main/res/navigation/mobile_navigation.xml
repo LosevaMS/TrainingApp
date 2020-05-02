@@ -43,6 +43,9 @@
         <action
             android:id="@+id/action_edit_training_to_navigation_list"
             app:destination="@id/navigation_list" />
+        <action
+            android:id="@+id/action_edit_training_to_fragment_inline_exercises"
+            app:destination="@id/fragment_inline_exercises" />
     </fragment>
 
     <fragment
@@ -84,15 +87,25 @@
     </fragment>
 
     <fragment
-        android:id="@+id/fragment_history_approach"
-        android:name="Fragments.HistoryApproachFragment"
-        android:label=" "
-        tools:layout="@layout/fragment_history_approach">
+    android:id="@+id/fragment_history_approach"
+    android:name="Fragments.HistoryApproachFragment"
+    android:label=" "
+    tools:layout="@layout/fragment_history_approach">
 
 
+    <action
+        android:id="@+id/action_fragment_history_approach_to_fragment_history_training"
+        app:destination="@id/fragment_history_training" />
+</fragment>
+
+    <fragment
+        android:id="@+id/fragment_inline_exercises"
+        android:name="Fragments.InlineExercisesListFragment"
+        android:label="Список упражнений"
+        tools:layout="@layout/fragment_exercises_list">
         <action
-            android:id="@+id/action_fragment_history_approach_to_fragment_history_training"
-            app:destination="@id/fragment_history_training" />
+            android:id="@+id/action_fragment_inline_exercises_to_edit_training"
+            app:destination="@id/edit_training" />
     </fragment>
 
 </navigation>

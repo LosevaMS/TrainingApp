@@ -77,42 +77,6 @@ public class TrainingFragment extends Fragment {
         final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         final Date date = new Date();
 
-        //chronometer = view.findViewById(R.id.chronometer);
-        //chronometerHelper = new ChronometerHelper();
-
-
-        /*if((savedInstanceState !=null) && savedInstanceState.containsKey("ChronoTime"))
-            chronometer.setBase(savedInstanceState.getLong("ChronoTime"));
-        Toast.makeText(getActivity()," = " + savedInstanceState.getLong("ChronoTime") ,
-                Toast.LENGTH_LONG).show();*/
-
-
-
-       // startStopWatch();
-
-       /* if (chronometerHelper.getStartTime() != null) {
-            if (chronometerHelper.getPause()==null) chronometer.setBase(chronometerHelper.getStartTime());
-            else chronometer.setBase(SystemClock.elapsedRealtime()-chronometerHelper.getPause());
-        }
-            if (chronometerHelper.getStartTime() != null && chronometerHelper.isRunning()) {
-            chronometer.setBase(chronometerHelper.getStartTime());
-            chronometer.start();
-        }*/
-
-
-        /*chronometer.setFormat("Time: %s");
-        chronometer.setBase(SystemClock.elapsedRealtime());
-
-        chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-            @Override
-            public void onChronometerTick(Chronometer chronometer) {
-                if ((SystemClock.elapsedRealtime() - chronometer.getBase()) >= 10000) {
-                    chronometer.setBase(SystemClock.elapsedRealtime());
-                    Toast.makeText(getActivity(), "Bing!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });*/
-
         final RecyclerView recyclerView2 = view.findViewById(R.id.exercises_recyclerview);
         recyclerView2.setLayoutManager(new LinearLayoutManager(requireContext()));
         ExercisesAdapter exercisesAdapter = new ExercisesAdapter(requireContext(), getAllItems(arg1));

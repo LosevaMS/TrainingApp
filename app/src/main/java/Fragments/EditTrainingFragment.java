@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,8 +22,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.globusproject.DBHelper;
 import com.example.globusproject.R;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import Adapters.ExerciseListAdapter;
 import Tables.ExercisesTable;
@@ -32,7 +34,7 @@ import static android.view.View.GONE;
 
 public class EditTrainingFragment extends Fragment {
 
-    private EditText userInput, userInput2;
+    private EditText userInput2;
     private SQLiteDatabase database;
     private ExerciseListAdapter exerciseListAdapter;
 
@@ -45,9 +47,19 @@ public class EditTrainingFragment extends Fragment {
         BottomNavigationView navBar = getActivity().findViewById(R.id.nav_view);
         navBar.setVisibility(GONE);
 
-        userInput = view.findViewById(R.id.edit_training_name);
-        FloatingActionButton add_exercise_button = view.findViewById(R.id.add_exercise_btn);
-        FloatingActionButton okBtn = view.findViewById(R.id.ok_btn);
+        EditText userInput = view.findViewById(R.id.edit_training_name);
+
+        FloatingActionButton createExerciseBtn = view.findViewById(R.id.menu_create_ex_btn);
+        FloatingActionButton chooseFromListBtn = view.findViewById(R.id.menu_list_btn);
+
+
+        chooseFromListBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "Выбрать упражнение из списка",
+                        Toast.LENGTH_LONG).show();
+            }
+        });
 
         DBHelper dbHelper = new DBHelper(requireContext());
         database = dbHelper.getWritableDatabase();
@@ -63,11 +75,9 @@ public class EditTrainingFragment extends Fragment {
 
         userInput.setText(arg2);
 
-        add_exercise_button.setOnClickListener(new View.OnClickListener() {
-
+        createExerciseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View arg0) {
-
+            public void onClick(View v) {
                 LayoutInflater li = LayoutInflater.from(requireContext());
                 View promptsView = li.inflate(R.layout.dialog_add_exercises, null);
 
@@ -97,20 +107,14 @@ public class EditTrainingFragment extends Fragment {
             }
         });
 
-        okBtn.setOnClickListener(new View.OnClickListener() {
+        chooseFromListBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String name = userInput.getText().toString();
-                if (name != arg2) {
-                    ContentValues cv = new ContentValues();
-                    cv.put(ProgramTable.ProgramEntry.PROG_NAME, name);
-                    database.update(ProgramTable.ProgramEntry.TABLE_PROGRAMS, cv, "name = ?", new String[]{arg2});
-                    //exerciseListAdapter.swapCursor(getAllItems(arg1));
-                }
-                final NavController navController = Navigation.findNavController(requireView());
-                navController.navigate(R.id.action_edit_training_to_navigation_list);
+                final NavController navController = Navigation.findNavController(v);
+                navController.navigate(R.id.action_edit_training_to_fragment_inline_exercises);
             }
         });
+
     }
 
 

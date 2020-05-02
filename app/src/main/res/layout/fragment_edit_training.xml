@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/tools">
 
     <TextView
         android:id="@+id/exercise_title"
@@ -43,38 +44,67 @@
         android:layout_marginBottom="60dp"
         android:overScrollMode="never" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_exercise_btn"
+    <com.github.clans.fab.FloatingActionMenu
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/recyclerview2"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="-40dp"
-        android:src="@drawable/ic_add"
-        app:backgroundTint="#2C98F0"
-        app:borderWidth="0dp"
-        app:elevation="6dp"
-        app:fabSize="normal"/>
+        android:layout_alignParentBottom="true"
+        android:paddingBottom="32dp"
+        android:paddingEnd="24dp"
+        app:menu_colorNormal="#2C98F0"
+        app:menu_colorPressed="#67B9FA"
+        app:menu_animationDelayPerItem="50"
+        app:menu_buttonSpacing="0dp"
+        app:menu_fab_hide_animation="@anim/fab_slide_out_to_right"
+        app:menu_fab_show_animation="@anim/fab_slide_in_from_right"
+        app:menu_fab_size="normal"
+        app:menu_icon="@drawable/fab_add"
+        app:menu_labels_colorNormal="#333333"
+        app:menu_labels_colorPressed="#444444"
+        app:menu_labels_cornerRadius="3dp"
+        app:menu_labels_ellipsize="none"
+        app:menu_labels_maxLines="-1"
+        app:menu_labels_position="left"
+        app:menu_labels_showShadow="true"
+        app:menu_labels_singleLine="false"
+        app:menu_labels_textColor="#ffffff"
+        app:menu_labels_textSize="15sp"
+        app:menu_openDirection="up"
+        app:menu_shadowColor="#4D000000"
+        app:menu_shadowRadius="2dp"
+        app:menu_shadowXOffset="0dp"
+        app:menu_shadowYOffset="1dp"
+        app:menu_showShadow="true">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/ok_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/recyclerview2"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginBottom="-40dp"
-        android:layout_toStartOf="@+id/add_exercise_btn"
-        android:layout_toLeftOf="@+id/add_exercise_btn"
-        android:src="@drawable/ic_done"
-        app:backgroundTint="#2C98F0"
-        app:borderWidth="0dp"
-        app:elevation="6dp"
-        app:fabSize="normal" />
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/menu_create_ex_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_edit_white"
+            app:fab_colorNormal="#2C98F0"
+            app:fab_colorPressed="#68B4F3"
+            app:fab_label="Создать упражнение"
+            app:fab_shadowColor="#4D000000"
+            app:fab_shadowRadius="3.5dp"
+            app:fab_shadowXOffset="0dp"
+            app:fab_shadowYOffset="1.5dp"
+            app:fab_showShadow="true"
+            app:fab_size="mini" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/menu_list_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_format_list_bulleted_black_24dp"
+            app:fab_colorNormal="#2C98F0"
+            app:fab_colorPressed="#68B4F3"
+            app:fab_label="Выбрать из списка"
+            app:fab_shadowColor="#4D000000"
+            app:fab_shadowRadius="3.5dp"
+            app:fab_shadowXOffset="0dp"
+            app:fab_shadowYOffset="1.5dp"
+            app:fab_showShadow="true"
+            app:fab_size="mini" />
+    </com.github.clans.fab.FloatingActionMenu>
 
 </RelativeLayout>

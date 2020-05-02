@@ -17,22 +17,24 @@
         android:clipToPadding="false"/>
 
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/add_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/recyclerview"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="11dp"
-        android:layout_marginTop="11dp"
-        android:layout_marginEnd="11dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="70dp"
-        android:src="@drawable/ic_add"
-        app:backgroundTint="#2C98F0"
-        app:borderWidth="0dp"
-        app:elevation="6dp"
-        android:id="@+id/add_btn"
-        app:fabSize="normal"/>
+        android:src="@drawable/fab_add"
+        app:fab_colorNormal="#2C98F0"
+        app:fab_colorPressed="#E867B9FA"
+        app:fab_showShadow="true"
+        app:fab_shadowColor="#59000000"
+        app:fab_shadowRadius="6dp"
+        app:fab_shadowXOffset="0dp"
+        app:fab_shadowYOffset="2dp"
+        app:fab_size="normal"/>
 
 
 </RelativeLayout>
