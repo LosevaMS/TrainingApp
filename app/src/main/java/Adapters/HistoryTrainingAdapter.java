@@ -26,7 +26,6 @@ import com.example.globusproject.R;
 import Tables.ApproachesTable;
 import Tables.ExercisesTable;
 import Tables.HistoryTable;
-import Tables.ProgramTable;
 
 public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTrainingAdapter.HistoryTrainingViewHolder> {
     private Context mContext;
@@ -54,19 +53,6 @@ public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTraining
             DBHelper dbHelper = new DBHelper(mContext);
             database = dbHelper.getWritableDatabase();
 
-           /* exerciseName.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Bundle bundle = new Bundle();
-                    long exId = (long) itemView.getTag();
-                    bundle.putLong("ex_id", exId);
-                    //bundle.putLong("prog_id", searchProgId(exId));
-                    bundle.putString("date", searchDate(searchProgId(exId)));
-
-                    final NavController navController = Navigation.findNavController(itemView);
-                    navController.navigate(R.id.action_fragment_history_training_to_fragment_history_approach, bundle);
-                }
-            });*/
         }
         @Override
         public void onClick(View v) {

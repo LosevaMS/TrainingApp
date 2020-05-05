@@ -105,7 +105,8 @@
         tools:layout="@layout/fragment_exercises_list">
         <action
             android:id="@+id/action_fragment_inline_exercises_to_edit_training"
-            app:destination="@id/edit_training" />
+            app:destination="@id/edit_training"
+            />
     </fragment>
 
 </navigation>

@@ -10,5 +10,6 @@ public class ExercisesTable {
         public static final String TABLE_EXERCISES = "exercises";
         public static final String EX_NAME = "name";
         public static final String EX_PROG_ID = "_program_id";
+        public static final String EX_URI = "uri";
     }
 }

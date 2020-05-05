@@ -10,9 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.globusproject.DBHelper;
 import com.example.globusproject.R;
 
@@ -31,11 +33,13 @@ public class ExerciseListAdapter extends RecyclerView.Adapter<ExerciseListAdapte
     public class ExerciseViewHolder extends RecyclerView.ViewHolder {
         public TextView nameText;
         public Button deleteBtn;
+        public ImageView exerciseImage;
 
         public ExerciseViewHolder( final View itemView) {
             super(itemView);
             nameText = itemView.findViewById(R.id.exercise_name_item);
             deleteBtn = itemView.findViewById(R.id.delete_ex_item);
+            exerciseImage = itemView.findViewById(R.id.ex_image);
 
             DBHelper dbHelper = new DBHelper(mContext);
             database = dbHelper.getWritableDatabase();
@@ -113,9 +117,18 @@ public class ExerciseListAdapter extends RecyclerView.Adapter<ExerciseListAdapte
         }
         String name = mCursor.getString(mCursor.getColumnIndex(ExercisesTable.ExercisesEntry.EX_NAME));
         long id = mCursor.getLong(mCursor.getColumnIndex(ExercisesTable.ExercisesEntry._ID));
+        String uri = mCursor.getString(mCursor.getColumnIndex(ExercisesTable.ExercisesEntry.EX_URI));
 
         holder.nameText.setText(name);
         holder.itemView.setTag(id);
+
+        if(!uri.equals("null"))
+            Glide
+                    .with(holder.itemView.getContext())
+                    .asGif()
+                    .load(uri)
+                    .error(R.drawable.delete)
+                    .into(holder.exerciseImage);
     }
 
     @Override

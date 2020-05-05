@@ -77,7 +77,7 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
                     bundle.putLong("prog_id", id);
                     String name = searchName(id);
                     bundle.putString("prog_name", name);
-                    final NavController navController = Navigation.findNavController(itemView);
+                    NavController navController = Navigation.findNavController(itemView);
                     navController.navigate(R.id.action_navigation_list_to_edit_training, bundle);
                 }
             });
@@ -89,7 +89,7 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
                     bundle.putLong("prog_id", id);
                     String name = searchName(id);
                     bundle.putString("prog_name", name);
-                    final NavController navController = Navigation.findNavController(itemView);
+                    NavController navController = Navigation.findNavController(itemView);
                     navController.navigate(R.id.action_navigation_list_to_training, bundle);
                 }
             });

@@ -1,5 +1,7 @@
 package Adapters;
 
+import android.app.ActionBar;
+import android.os.Bundle;
 import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +16,8 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -25,10 +29,12 @@ import java.util.ArrayList;
 
 public class InlineExercisesAdapter extends RecyclerView.Adapter {
 
-    ArrayList<InlineExercises> inlineExercisesList;
+    private ArrayList<InlineExercises> inlineExercisesList;
+    private static ClickListener mClickListener;
 
-    public InlineExercisesAdapter(ArrayList<InlineExercises> inlineExercisesList) {
+    public InlineExercisesAdapter(ArrayList<InlineExercises> inlineExercisesList, ClickListener clickListener1) {
         this.inlineExercisesList = inlineExercisesList;
+        mClickListener = clickListener1;
     }
 
     @Override
@@ -48,15 +54,15 @@ public class InlineExercisesAdapter extends RecyclerView.Adapter {
 
         if (viewType == 0) {
             view = layoutInflater.inflate(R.layout.header_item, parent, false);
-            return new ViewHolderOne(view);
+            return new ViewHolderOne(view, mClickListener);
         }
 
         view = layoutInflater.inflate(R.layout.inline_ex_item, parent, false);
-        return new ViewHolderTwo(view);
+        return new ViewHolderTwo(view, mClickListener);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
 
         if (inlineExercisesList.get(position).getUri()==null) {
             ViewHolderOne viewHolderOne = (ViewHolderOne) holder;
@@ -70,6 +76,26 @@ public class InlineExercisesAdapter extends RecyclerView.Adapter {
                     .load(inlineExercisesList.get(position).getUri())
                     .error(R.drawable.delete)
                     .into(viewHolderTwo.exerciseImage);
+
+            if(inlineExercisesList.get(position).isSelect()){
+                viewHolderTwo.onOffImage.setImageResource(R.drawable.add_custom_btn2);
+            }else{
+                viewHolderTwo.onOffImage.setImageResource(R.drawable.add_custom_btn1);
+            }
+
+            viewHolderTwo.toggleLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (inlineExercisesList.get(position).isSelect()){
+                        inlineExercisesList.get(position).setSelect(false);
+                        viewHolderTwo.onOffImage.setImageResource(R.drawable.add_custom_btn1);
+                    } else{
+                        inlineExercisesList.get(position).setSelect(true);
+                        viewHolderTwo.onOffImage.setImageResource(R.drawable.add_custom_btn2);
+                    }
+                }
+            });
+
         }
     }
 
@@ -78,43 +104,67 @@ public class InlineExercisesAdapter extends RecyclerView.Adapter {
         return inlineExercisesList.size();
     }
 
-    class ViewHolderOne extends RecyclerView.ViewHolder {
+
+    public ArrayList<InlineExercises> getSelected(){
+        ArrayList<InlineExercises> selectedExercises = new ArrayList<>();
+        for (int i=0; i<inlineExercisesList.size();i++){
+            if (inlineExercisesList.get(i).isSelect())
+                selectedExercises.add(inlineExercisesList.get(i));
+        }
+        return selectedExercises;
+    }
+
+
+
+    static class ViewHolderOne extends RecyclerView.ViewHolder implements View.OnClickListener {
+        ClickListener clickListener;
 
         TextView headerName;
-        public ViewHolderOne(@NonNull View itemView) {
+        ViewHolderOne(@NonNull final View itemView, ClickListener clickListener) {
             super(itemView);
             headerName = itemView.findViewById(R.id.header_name);
+
+            this.clickListener = clickListener;
+            itemView.setOnClickListener(this);
+
+        }
+        @Override
+        public void onClick(View v) {
+            clickListener.onItemClick(getAdapterPosition(), v);
+        }
+    }
+
+    static class ViewHolderTwo extends RecyclerView.ViewHolder implements View.OnClickListener {
+        ClickListener clickListener;
+
+        TextView exerciseName;
+        ImageView exerciseImage;
+        ImageView onOffImage;
+        LinearLayout toggleLayout;
+
+        ViewHolderTwo(@NonNull final View itemView, ClickListener clickListener) {
+            super(itemView);
+            exerciseName = itemView.findViewById(R.id.inline_exercise_name);
+            exerciseImage = itemView.findViewById(R.id.inline_ex_image);
+            onOffImage = itemView.findViewById(R.id.add_inline_btn);
+            toggleLayout = itemView.findViewById(R.id.toggle_layout);
+
+            this.clickListener = clickListener;
+            itemView.setOnClickListener(this);
+
+        }
+
+        @Override
+        public void onClick(View v) {
+                clickListener.onItemClick(getAdapterPosition(), v);
 
         }
     }
 
-    class ViewHolderTwo extends RecyclerView.ViewHolder {
-
-        TextView exerciseName;
-        ImageView exerciseImage;
-        Boolean checked = false;
-        ToggleButton addInlineToggleBtn;
-        LinearLayout toggleLayout;
-
-        public ViewHolderTwo(@NonNull final View itemView) {
-            super(itemView);
-            exerciseName = itemView.findViewById(R.id.inline_exercise_name);
-            exerciseImage = itemView.findViewById(R.id.inline_ex_image);
-            addInlineToggleBtn = itemView.findViewById(R.id.add_inline_btn);
-            toggleLayout = itemView.findViewById(R.id.toggle_layout);
-
-            toggleLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (checked){
-                        checked = false;
-                        addInlineToggleBtn.setChecked(false);
-                    } else{
-                        checked = true;
-                        addInlineToggleBtn.setChecked(true);
-                    }
-                }
-            });
-        }
+    public void setOnItemClickListener(ClickListener clickListener) {
+        InlineExercisesAdapter.mClickListener = clickListener;
+    }
+    public interface ClickListener {
+        void onItemClick(int position, View v);
     }
 }

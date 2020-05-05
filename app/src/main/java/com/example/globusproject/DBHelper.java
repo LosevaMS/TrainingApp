@@ -17,6 +17,7 @@ import static Tables.ApproachesTable.ApproachesEntry.APP_WEIGHT;
 import static Tables.ApproachesTable.ApproachesEntry.TABLE_APPROACHES;
 import static Tables.ExercisesTable.ExercisesEntry.EX_NAME;
 import static Tables.ExercisesTable.ExercisesEntry.EX_PROG_ID;
+import static Tables.ExercisesTable.ExercisesEntry.EX_URI;
 import static Tables.ExercisesTable.ExercisesEntry.TABLE_EXERCISES;
 import static Tables.HistoryTable.HistoryEntry.HISTORY_DATE;
 import static Tables.HistoryTable.HistoryEntry.HISTORY_PROG_ID;
@@ -44,7 +45,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_GROCERYLIST_TABLE);
 
         db.execSQL("create table " + TABLE_EXERCISES + "(" + ExercisesEntry._ID
-                + " integer primary key AUTOINCREMENT," + EX_NAME + " text," + EX_PROG_ID + " integer,"
+                + " integer primary key AUTOINCREMENT," + EX_NAME + " text," + EX_PROG_ID + " integer," + EX_URI + " text,"
                 + "foreign key(" + EX_PROG_ID + ") references " + TABLE_PROGRAMS + "(" + ProgramEntry._ID + ")" + ")");
 
         db.execSQL("create table " + TABLE_APPROACHES + "(" + ApproachesEntry._ID

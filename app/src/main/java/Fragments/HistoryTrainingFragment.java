@@ -51,17 +51,6 @@ public class HistoryTrainingFragment extends Fragment implements HistoryTraining
         HistoryTrainingAdapter historyTrainingAdapter = new HistoryTrainingAdapter(requireContext(), getAllItems(arg1),this);
         recyclerView.setAdapter(historyTrainingAdapter);
 
-       /* recyclerView.addOnItemTouchListener(
-                new RecyclerItemClickListener(requireContext(), recyclerView ,new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override public void onItemClick(View view, int position) {
-                        // do whatever
-                    }
-
-                    @Override public void onLongItemClick(View view, int position) {
-                        // do whatever
-                    }
-                })
-        );*/
 
         historyTrainingAdapter.setOnItemClickListener(new HistoryTrainingAdapter.ClickListener() {
             @Override
