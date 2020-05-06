@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
 xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
 android:layout_height="110dp"
 android:layout_marginTop="6dp"
 android:layout_marginBottom="6dp"
 android:background="@drawable/shadow_background_1">
 
 
-<ImageView
-    android:id="@+id/ex_image"
-    android:layout_width="90dp"
-    android:layout_height="90dp"
-    android:layout_alignParentStart="true"
-    android:layout_marginStart="10dp"
-    android:layout_marginTop="9dp"
-    android:adjustViewBounds="true"
-    android:background="#FEFEFE"
-    android:scaleType="fitCenter"/>
+    <ImageView
+        android:id="@+id/ex_image"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="7dp"
+        android:adjustViewBounds="true"
+        android:background="#FEFEFE"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/ic_sport4" />
 
 <TextView
     android:id="@+id/exercise_name_item"

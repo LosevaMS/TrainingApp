@@ -18,6 +18,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -164,6 +166,16 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
             }
         });
 
+        androidx.appcompat.widget.Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final NavController navController = Navigation.findNavController(getView());
+                if (!navController.popBackStack()) {
+                    navController.navigate(R.id.action_approach_to_training);
+                }
+            }
+        });
     }
 
     private void addItem(long ex_id, int prog_id) throws ParseException {

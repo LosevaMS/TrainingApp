@@ -13,14 +13,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -86,17 +87,33 @@ public class InlineExercisesListFragment extends Fragment implements InlineExerc
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
+       /* final Toolbar toolbar = view.findViewById(R.id.toolbar);
+        ((AppCompatActivity) requireActivity()).setActionBar(toolbar);
+*/
+
+        /*Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        ((AppCompatActivity) requireActivity()).setActionBar(toolbar);
+        toolbar.setTitle("Title");
+        toolbar.setNavigationIcon(R.drawable.ic_back_button);*/
+
+        androidx.appcompat.widget.Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<InlineExercises> selectedExercises = inlineExercisesAdapter.getSelected();
+
+                viewModel = ViewModelProviders.of(requireActivity()).get(SharedViewModel.class);
+
+                viewModel.setText(selectedExercises);
+                final NavController navController = Navigation.findNavController(getView());
+                if (!navController.popBackStack()) {
+                    navController.navigate(R.id.action_fragment_inline_exercises_to_edit_training);
+                }
+            }
+        });
+
     }
 
-
-    private boolean[] toPrimitiveArray(final ArrayList<Boolean> booleanList) {
-        final boolean[] primitives = new boolean[booleanList.size()];
-        int index = 0;
-        for (Boolean object : booleanList) {
-            primitives[index++] = object;
-        }
-        return primitives;
-    }
 
     @Override
     public void onItemClick(int position, View v) {

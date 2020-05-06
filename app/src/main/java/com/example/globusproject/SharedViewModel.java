@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel;
 import java.util.ArrayList;
 
 public class SharedViewModel extends ViewModel {
+
     private MutableLiveData<ArrayList<InlineExercises>> text = new MutableLiveData<>();
 
     public void setText(ArrayList<InlineExercises> input) {
@@ -15,5 +16,9 @@ public class SharedViewModel extends ViewModel {
 
     public LiveData<ArrayList<InlineExercises>> getText() {
         return text;
+    }
+
+    public void deleteAll(){
+        text = new MutableLiveData<>();
     }
 }

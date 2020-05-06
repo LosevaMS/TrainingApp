@@ -130,6 +130,8 @@ public class ListFragment extends Fragment {
                 imageView = promptsView.findViewById(R.id.preview_image);
                 cardView = promptsView.findViewById(R.id.cardview_for_preview);
 
+                uri = null;
+
                 loadImage_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

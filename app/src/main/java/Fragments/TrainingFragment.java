@@ -41,12 +41,13 @@ import java.util.Date;
 import Adapters.ExercisesAdapter;
 import Tables.ExercisesTable;
 import Tables.HistoryTable;
+import Tables.ProgramTable;
 
 public class TrainingFragment extends Fragment {
 
     private SQLiteDatabase database;
     private Chronometer chronometer;
-    private boolean btnColor = true;
+    static private boolean btnPause= true;
     private ChronometerHelper chronometerHelper;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -95,15 +96,34 @@ public class TrainingFragment extends Fragment {
 
                 chronometer.stop();
                 String time;
-                int elapsed = (int)(SystemClock.elapsedRealtime()-chronometer.getBase());
+                int elapsed;
+                if (chronometerHelper.getPause()!=null && !chronometerHelper.isRunning())
+                    elapsed = chronometerHelper.getPause().intValue();
+                else
+                 elapsed = (int)(SystemClock.elapsedRealtime()-chronometer.getBase());
+
                 time = String.valueOf(elapsed/1000);
                 Toast.makeText(getActivity(), "Time is: "+time+" sec",
                         Toast.LENGTH_LONG).show();
                 resetChronometer(v);
                 pauseChronometer(v);
 
+                btnPause=true;
+
                 final NavController navController = Navigation.findNavController(requireView());
                 navController.navigate(R.id.action_training_to_navigation_list);
+            }
+        });
+
+        androidx.appcompat.widget.Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //pauseChronometer(requireView());
+                final NavController navController = Navigation.findNavController(getView());
+                if (!navController.popBackStack()) {
+                    navController.navigate(R.id.action_training_to_navigation_list);
+                }
             }
         });
     }
@@ -160,18 +180,22 @@ public class TrainingFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
 
-      if (btnColor){
+      if (btnPause){
           item.setIcon(R.drawable.ic_pause);
           startChronometer(requireView());
-          btnColor = false;
+          btnPause = false;
       }else{
           item.setIcon(R.drawable.ic_play_white);
           pauseChronometer(requireView());
-          btnColor = true;
+          btnPause = true;
       }
-      if (item.getItemId()==android.R.id.home){
+      /*if (item.getItemId()==android.R.id.home){
           pauseChronometer(requireView());
-      }
+          final NavController navController = Navigation.findNavController(getView());
+          if (!navController.popBackStack()) {
+              navController.navigate(R.id.action_training_to_navigation_list);
+          }
+      }*/
         return super.onOptionsItemSelected(item);
     }
 
