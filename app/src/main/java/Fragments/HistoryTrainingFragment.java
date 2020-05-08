@@ -21,7 +21,9 @@ import com.example.globusproject.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import Adapters.HistoryTrainingAdapter;
+import Tables.ApproachesTable;
 import Tables.ExercisesTable;
+import Tables.HistoryExercisesTable;
 
 public class HistoryTrainingFragment extends Fragment implements HistoryTrainingAdapter.ClickListener {
 
@@ -48,7 +50,7 @@ public class HistoryTrainingFragment extends Fragment implements HistoryTraining
 
         final RecyclerView recyclerView = view.findViewById(R.id.history_training_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        HistoryTrainingAdapter historyTrainingAdapter = new HistoryTrainingAdapter(requireContext(), getAllItems(arg1),this);
+        HistoryTrainingAdapter historyTrainingAdapter = new HistoryTrainingAdapter(requireContext(), getAllItems(arg1,arg2),this);
         recyclerView.setAdapter(historyTrainingAdapter);
 
 
@@ -67,12 +69,18 @@ public class HistoryTrainingFragment extends Fragment implements HistoryTraining
 
     }
 
-    private Cursor getAllItems(long id) {
+    private Cursor getAllItems(long id, String date) {
+
+        String whereClause = HistoryExercisesTable.HistoryExercisesEntry.HISTORY_PROG_ID + "=? AND " +
+                HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_DATE + "=?";
+
+        String[] whereArgs = new String[]{String.valueOf(id), date};
+
         return database.query(
-                ExercisesTable.ExercisesEntry.TABLE_EXERCISES,
+                HistoryExercisesTable.HistoryExercisesEntry.TABLE_HISTORY_EXERCISES,
                 null,
-                ExercisesTable.ExercisesEntry.EX_PROG_ID + "=" + id,
-                null,
+                whereClause,
+                whereArgs,
                 null,
                 null,
                 null

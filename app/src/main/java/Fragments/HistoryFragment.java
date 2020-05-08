@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,7 +25,12 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+
 import Adapters.HistoryListAdapter;
+import Tables.ApproachesTable;
+import Tables.HistoryApproachesTable;
+import Tables.HistoryExercisesTable;
 import Tables.HistoryTable;
 
 public class HistoryFragment extends Fragment implements HistoryListAdapter.OnNoteListener {
@@ -79,6 +85,23 @@ public class HistoryFragment extends Fragment implements HistoryListAdapter.OnNo
 
 
     private void removeItem(long id) {
+        String date = searchDate(id);
+        int prog_id = searchProgId(id);
+
+        ArrayList<Integer> exIdArray = searchExId(prog_id);
+
+        for (int i = 0; i<exIdArray.size(); i++){
+            database.delete(HistoryApproachesTable.HistoryApproachesEntry.TABLE_HISTORY_APPROACHES,
+                    HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_EX_ID + "=? and "
+                            + HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_PROG_ID + "=? and "
+                            + HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_DATE + "=?" ,
+                    new String[]{exIdArray.get(i).toString(), String.valueOf(prog_id), date});
+        }
+        for (int i = 0; i<exIdArray.size(); i++){
+            database.delete(HistoryExercisesTable.HistoryExercisesEntry.TABLE_HISTORY_EXERCISES,
+                    HistoryExercisesTable.HistoryExercisesEntry._ID + "=" + exIdArray.get(i), null);
+        }
+
         database.delete(HistoryTable.HistoryEntry.TABLE_HISTORY,
                 HistoryTable.HistoryEntry._ID + "=" + id, null);
         historyListAdapter.swapCursor(getAllItems());
@@ -94,6 +117,45 @@ public class HistoryFragment extends Fragment implements HistoryListAdapter.OnNo
                 null,
                 HistoryTable.HistoryEntry._ID + " DESC"
         );
+    }
+
+    public int searchProgId(long id) {
+        String query = "select prog_id from " + HistoryTable.HistoryEntry.TABLE_HISTORY + " WHERE _id = " + id;
+        Cursor c = database.rawQuery(query, null);
+
+        int a = 0;
+        if (c.moveToFirst())
+        {
+            a = c.getInt(c.getColumnIndex("prog_id"));
+        }
+        c.close();
+        return a;
+    }
+
+    public String searchDate(long id) {
+        String query = "select date from " + HistoryTable.HistoryEntry.TABLE_HISTORY + " WHERE _id = " + id;
+        Cursor c = database.rawQuery(query, null);
+
+        String a = " ";
+        if (c.moveToFirst())
+        {
+            a = c.getString(c.getColumnIndex("date"));
+        }
+        c.close();
+        return a;
+    }
+
+    public ArrayList<Integer> searchExId(int id) {
+        String query = "select _id from " + HistoryExercisesTable.HistoryExercisesEntry.TABLE_HISTORY_EXERCISES + " WHERE prog_id = " + id;
+        Cursor c = database.rawQuery(query, null);
+
+        ArrayList a = new ArrayList();
+        while (c.moveToNext())
+        {
+            a.add(c.getInt(c.getColumnIndex("_id")));
+        }
+        c.close();
+        return a;
     }
 
     @Override

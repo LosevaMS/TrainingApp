@@ -1,11 +1,10 @@
 <resources>
-    <string name="app_name">GlobusProject</string>
+    <string name="app_name">GymFix</string>
     <string name="title_list">Программы</string>
     <string name="title_history">История</string>
     <string name="title_profile">Профиль</string>
     <string name="finish_training">ЗАКОНЧИТЬ ТРЕНИРОВКУ</string>
     <string name="add_btn">Add</string>
-    <string name="add_btn_circle">+</string>
     <string name="enter_prog_name">Название тренировки</string>
     <string name="ok_btn">OK</string>
     <string name="cancel_btn">CANCEL</string>

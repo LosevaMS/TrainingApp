@@ -20,11 +20,13 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.globusproject.DBHelper;
 import com.example.globusproject.R;
 
 import Tables.ApproachesTable;
 import Tables.ExercisesTable;
+import Tables.HistoryExercisesTable;
 import Tables.HistoryTable;
 
 public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTrainingAdapter.HistoryTrainingViewHolder> {
@@ -40,12 +42,14 @@ public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTraining
 
     public class HistoryTrainingViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView exerciseName;
+        public ImageView exerciseImage;
         ClickListener clickListener;
 
         public HistoryTrainingViewHolder(final View itemView, ClickListener clickListener) {
             super(itemView);
 
-            exerciseName = itemView.findViewById(R.id.ex_name_item);
+            exerciseName = itemView.findViewById(R.id.ex_name_item_training);
+            exerciseImage = itemView.findViewById(R.id.ex_image_training);
 
             this.clickListener = clickListener;
             itemView.setOnClickListener(this);
@@ -114,11 +118,23 @@ public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTraining
         if (!mCursor.moveToPosition(position)) {
             return;
         }
-        String name = mCursor.getString(mCursor.getColumnIndex(ExercisesTable.ExercisesEntry.EX_NAME));
-        long id = mCursor.getLong(mCursor.getColumnIndex(ExercisesTable.ExercisesEntry._ID));
+        String name = mCursor.getString(mCursor.getColumnIndex(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_NAME));
+        String uri = mCursor.getString(mCursor.getColumnIndex(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_URI));
+        long id = mCursor.getLong(mCursor.getColumnIndex(HistoryExercisesTable.HistoryExercisesEntry._ID));
 
         holder.exerciseName.setText(name);
         holder.itemView.setTag(id);
+
+        if(!uri.equals("null") && uri.contains(".gif"))
+            Glide
+                    .with(holder.itemView.getContext())
+                    .asGif()
+                    .load(uri)
+                    .error(R.drawable.delete)
+                    .into(holder.exerciseImage);
+
+        if (!uri.equals("null") && !uri.contains(".gif"))
+            Glide.with(holder.itemView.getContext()).load(uri).into(holder.exerciseImage);
     }
 
     @Override

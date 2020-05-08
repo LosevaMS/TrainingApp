@@ -6,11 +6,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import Tables.ApproachesTable.*;
 import Tables.ExercisesTable.*;
+import Tables.HistoryApproachesTable.*;
+import Tables.HistoryExercisesTable.*;
 import Tables.HistoryTable.*;
 import Tables.ProgramTable.*;
 
 import static Tables.ApproachesTable.ApproachesEntry.APP_COUNT;
 import static Tables.ApproachesTable.ApproachesEntry.APP_EX_ID;
+import static Tables.ApproachesTable.ApproachesEntry.APP_IS_CURRENT;
 import static Tables.ApproachesTable.ApproachesEntry.APP_PROG_ID;
 import static Tables.ApproachesTable.ApproachesEntry.APP_DATE;
 import static Tables.ApproachesTable.ApproachesEntry.APP_WEIGHT;
@@ -19,9 +22,21 @@ import static Tables.ExercisesTable.ExercisesEntry.EX_NAME;
 import static Tables.ExercisesTable.ExercisesEntry.EX_PROG_ID;
 import static Tables.ExercisesTable.ExercisesEntry.EX_URI;
 import static Tables.ExercisesTable.ExercisesEntry.TABLE_EXERCISES;
+import static Tables.HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_COUNT;
+import static Tables.HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_DATE;
+import static Tables.HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_EX_ID;
+import static Tables.HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_PROG_ID;
+import static Tables.HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_WEIGHT;
+import static Tables.HistoryApproachesTable.HistoryApproachesEntry.TABLE_HISTORY_APPROACHES;
+import static Tables.HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_DATE;
+import static Tables.HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_NAME;
+import static Tables.HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_URI;
+import static Tables.HistoryExercisesTable.HistoryExercisesEntry.TABLE_HISTORY_EXERCISES;
 import static Tables.HistoryTable.HistoryEntry.HISTORY_DATE;
 import static Tables.HistoryTable.HistoryEntry.HISTORY_PROG_ID;
 import static Tables.HistoryTable.HistoryEntry.HISTORY_PROG_NAME;
+import static Tables.HistoryTable.HistoryEntry.HISTORY_TIME;
+import static Tables.HistoryTable.HistoryEntry.HISTORY_URI;
 import static Tables.HistoryTable.HistoryEntry.TABLE_HISTORY;
 import static Tables.ProgramTable.ProgramEntry.PROG_URI;
 import static Tables.ProgramTable.ProgramEntry.TABLE_PROGRAMS;
@@ -50,11 +65,26 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.execSQL("create table " + TABLE_APPROACHES + "(" + ApproachesEntry._ID
                 + " integer primary key AUTOINCREMENT," + APP_WEIGHT + " double," + APP_COUNT + " integer," + APP_EX_ID + " integer,"
-                + APP_PROG_ID + " integer," + APP_DATE + " text," + "foreign key(" + APP_EX_ID + ") references " + TABLE_EXERCISES + "(" + ExercisesEntry._ID + ")," +
+                + APP_PROG_ID + " integer," + APP_DATE + " text," + APP_IS_CURRENT + " boolean,"
+                + "foreign key(" + APP_EX_ID + ") references " + TABLE_EXERCISES + "(" + ExercisesEntry._ID + ")," +
                 "foreign key(" + APP_PROG_ID + ") references " + TABLE_PROGRAMS + "(" + ProgramEntry._ID + ")" + ")");
 
         db.execSQL("create table " + TABLE_HISTORY + "(" + HistoryEntry._ID + " integer primary key AUTOINCREMENT,"
-                + HISTORY_PROG_ID + " integer," + HISTORY_PROG_NAME + " text," + HISTORY_DATE + " text" + ")");
+                + HISTORY_PROG_ID + " integer," + HISTORY_PROG_NAME + " text," + HISTORY_DATE + " text," + HISTORY_TIME
+                + " integer, " + HISTORY_URI + " text" + ")");
+
+        db.execSQL("create table " + TABLE_HISTORY_EXERCISES + "(" + HistoryExercisesEntry._ID + " integer,"
+                 + HISTORY_EX_NAME + " text," + HistoryExercisesEntry.HISTORY_PROG_ID +  " integer," + HISTORY_EX_URI + " text,"
+                + HISTORY_EX_DATE + " text, " + "foreign key(" + HistoryExercisesEntry.HISTORY_PROG_ID + ") references "
+                + TABLE_HISTORY + "(" + HISTORY_PROG_ID + ")"+ ")");
+
+        db.execSQL("create table " + TABLE_HISTORY_APPROACHES + "(" + HistoryApproachesEntry._ID
+                + " integer primary key AUTOINCREMENT," + HISTORY_APP_WEIGHT + " double," + HISTORY_APP_COUNT + " integer,"
+                + HISTORY_APP_EX_ID + " integer," + HISTORY_APP_PROG_ID + " integer," + HISTORY_APP_DATE + " text,"
+                + "foreign key(" + HISTORY_APP_EX_ID + ") references " + TABLE_HISTORY_EXERCISES + "(" + HistoryExercisesEntry._ID + "),"
+                + "foreign key(" + HISTORY_APP_PROG_ID + ") references " + TABLE_HISTORY + "(" + HISTORY_PROG_ID + ")" + ")");
+
+
     }
 
     @Override
@@ -62,6 +92,8 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("drop table if exists " + ApproachesEntry.TABLE_APPROACHES);
         db.execSQL("drop table if exists " + ExercisesEntry.TABLE_EXERCISES);
         db.execSQL("drop table if exists " + TABLE_PROGRAMS);
+        db.execSQL("drop table if exists " + HistoryExercisesEntry.TABLE_HISTORY_EXERCISES);
+        db.execSQL("drop table if exists " + HistoryApproachesEntry.TABLE_HISTORY_APPROACHES);
         db.execSQL("drop table if exists " + TABLE_HISTORY);
 
         onCreate(db);

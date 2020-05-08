@@ -13,6 +13,7 @@ public class ApproachesTable {
         public static final String APP_COUNT = "count";
         public static final String APP_PROG_ID = "_program_id";
         public static final String APP_DATE = "date";
+        public static final String APP_IS_CURRENT = "is_current";
 
     }
 }

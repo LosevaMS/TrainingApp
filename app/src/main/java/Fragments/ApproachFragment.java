@@ -34,6 +34,7 @@ import java.util.Date;
 
 import Adapters.ApproachAdapter;
 import Tables.ApproachesTable;
+import Tables.HistoryApproachesTable;
 
 public class ApproachFragment extends Fragment implements ApproachAdapter.OnNoteListener {
 
@@ -56,18 +57,20 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
         DBHelper dbHelper = new DBHelper(requireContext());
         database = dbHelper.getWritableDatabase();
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date date1 = new Date();
-        formatter.format(date1);
+       /* SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-        if(savedInstanceState != null){
-
-            Toast.makeText(getActivity()," = " + savedInstanceState.getLong("ChronoTime") ,
-                    Toast.LENGTH_LONG).show();
-        }
-
-       /* Toast.makeText(getActivity()," = " + savedInstanceState.getLong("ChronoTime") ,
-                Toast.LENGTH_LONG).show();*/
+        try {
+            Date date1 = formatter.parse("1999-01-01 13:01");
+            Date date2 = formatter.parse("1999-01-01 18:39");
+            if (date1.getTime()>date2.getTime())
+                Toast.makeText(getActivity(),"1 больше", Toast.LENGTH_LONG).show();
+            if (date1.getTime()<date2.getTime())
+                Toast.makeText(getActivity(),"2 больше", Toast.LENGTH_LONG).show();
+            if (date1.getTime()==date2.getTime())
+                Toast.makeText(getActivity(),"равны", Toast.LENGTH_LONG).show();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }*/
 
         assert getArguments() != null;
         final long arg1 = getArguments().getLong("ex_id");
@@ -146,6 +149,7 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         try {
+                                            //addApproachInHistory(arg1, arg2);
                                             addItem(arg1, arg2);
                                         } catch (ParseException e) {
                                             e.printStackTrace();
@@ -176,6 +180,30 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
                 }
             }
         });
+
+    }
+
+    private void addApproachInHistory(long ex_id, int prog_id) throws ParseException {
+        if (inputWeight.getText().toString().trim().length() == 0
+                && inputCount.getText().toString().trim().length() == 0) {
+            return;
+        }
+
+        double weight = Double.parseDouble(inputWeight.getText().toString());
+        int count = Integer.parseInt(inputCount.getText().toString());
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date date = new Date();
+
+        ContentValues cv = new ContentValues();
+        cv.put(HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_WEIGHT, weight);
+        cv.put(HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_COUNT, count);
+        cv.put(HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_EX_ID, (int) ex_id);
+        cv.put(HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_PROG_ID, prog_id);
+        cv.put(HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_DATE, formatter.format(date));
+
+        database.insert(HistoryApproachesTable.HistoryApproachesEntry.TABLE_HISTORY_APPROACHES, null, cv);
+
     }
 
     private void addItem(long ex_id, int prog_id) throws ParseException {
@@ -188,7 +216,7 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
         double weight = Double.parseDouble(inputWeight.getText().toString());
         int count = Integer.parseInt(inputCount.getText().toString());
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         Date date = new Date();
 
         ContentValues cv = new ContentValues();
@@ -197,6 +225,7 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
         cv.put(ApproachesTable.ApproachesEntry.APP_EX_ID, (int) ex_id);
         cv.put(ApproachesTable.ApproachesEntry.APP_PROG_ID, prog_id);
         cv.put(ApproachesTable.ApproachesEntry.APP_DATE, formatter.format(date));
+        cv.put(ApproachesTable.ApproachesEntry.APP_IS_CURRENT, true);
 
         database.insert(ApproachesTable.ApproachesEntry.TABLE_APPROACHES, null, cv);
         approachAdapter2.swapCursor(getAllItems(ex_id));
@@ -206,13 +235,11 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
     }
 
     private Cursor getAllItems(long id) throws ParseException {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date date1 = new Date();
-        formatter.format(date1);
 
         String whereClause = ApproachesTable.ApproachesEntry.APP_EX_ID + "=? AND " +
-                ApproachesTable.ApproachesEntry.APP_DATE + "=?";
-        String[] whereArgs = new String[]{String.valueOf(id), formatter.format(date1)};
+                ApproachesTable.ApproachesEntry.APP_IS_CURRENT + "=?";
+
+        String[] whereArgs = new String[]{String.valueOf(id), String.valueOf(1)};
 
         return database.query(
                 ApproachesTable.ApproachesEntry.TABLE_APPROACHES,
@@ -227,7 +254,7 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
 
     private Cursor getPreviousItems(long id) throws ParseException {
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         Date date1 = new Date();
         formatter.format(date1);
 
@@ -248,26 +275,34 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
 
     public String searchPreviousDate(long id, Date date) throws ParseException {
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-        String query = "select date from " + ApproachesTable.ApproachesEntry.TABLE_APPROACHES + " WHERE _excercises_id = " + id;
-        Cursor c = database.rawQuery(query, null);
+        String whereClause = ApproachesTable.ApproachesEntry.APP_EX_ID + "=? AND " +
+                ApproachesTable.ApproachesEntry.APP_IS_CURRENT + "=?";
+        String[] whereArgs = new String[]{String.valueOf(id), String.valueOf(0)};
+
+        Cursor c = database.query(
+                ApproachesTable.ApproachesEntry.TABLE_APPROACHES,
+                new String[]{"date"},
+                whereClause,
+                whereArgs,
+                null,
+                null,
+                null
+        );
 
         String a, res;
         res = "error";
         Date date2;
-        date2 = formatter.parse("1999-01-01");
+        date2 = formatter.parse("1999-01-01 00:00");
         boolean flag = false;
         while (c.moveToNext()) {
             a = c.getString(c.getColumnIndex("date"));
 
             if (date2.getTime() < date.getTime() && date2.getTime() < formatter.parse(a).getTime()) {
-                flag = true;
-                if (formatter.parse(a).getYear() == date.getYear() && formatter.parse(a).getMonth() == date.getMonth() &&
-                        formatter.parse(a).getDay() != date.getDay() && flag == true) {
                     date2.setTime(formatter.parse(a).getTime());
                     res = a;
-                }
+
             }
         }
         c.close();

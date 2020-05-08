@@ -4,10 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:card_view="http://schemas.android.com/tools"
-    android:layout_marginStart="11dp"
-    android:layout_marginEnd="11dp"
-    android:layout_marginTop="5dp"
-    android:layout_marginBottom="5dp"
+    android:layout_marginBottom="8dp"
     android:clipToPadding="false"
     android:clipChildren="false"
     android:background="@drawable/shadow_background_1">
@@ -34,7 +31,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="139dp"
                 android:adjustViewBounds="true"
-                android:scaleType="centerCrop"/>
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/gym4app6" />
 
             <TextView
                 android:id="@+id/program_name_item_history"
@@ -48,7 +46,6 @@
                 android:text="Program name"
                 android:textColor="#ffffff"
                 android:textSize="20sp"
-                android:textStyle="bold"
                 android:transformPivotX="50dp"
                 android:typeface="normal"
                 android:fontFamily="@font/roboto_medium"/>
@@ -68,6 +65,26 @@
                 android:paddingLeft="14dp"
                 android:paddingBottom="9dp"
                 android:text="date"
+                android:textColor="#ffffff"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:typeface="normal" />
+
+            <TextView
+                android:id="@+id/time_history"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/gym"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="14dp"
+                android:layout_marginRight="14dp"
+                android:fontFamily="@font/roboto"
+                android:gravity="bottom"
+                android:paddingLeft="14dp"
+                android:paddingBottom="28dp"
+                android:text="time"
                 android:textColor="#ffffff"
                 android:textSize="15sp"
                 android:textStyle="bold"

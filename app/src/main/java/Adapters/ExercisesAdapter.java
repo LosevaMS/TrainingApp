@@ -7,12 +7,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.globusproject.DBHelper;
 import com.example.globusproject.R;
 
@@ -29,15 +31,17 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
 
     public class ExercisesViewHolder extends RecyclerView.ViewHolder {
         public TextView nameText;
+        public ImageView exerciseImage;
 
         public ExercisesViewHolder(final View itemView) {
             super(itemView);
-            nameText = itemView.findViewById(R.id.ex_name_item);
+            nameText = itemView.findViewById(R.id.ex_name_item_training);
+            exerciseImage = itemView.findViewById(R.id.ex_image_training);
 
             DBHelper dbHelper = new DBHelper(mContext);
             database = dbHelper.getWritableDatabase();
 
-            nameText.setOnClickListener(new View.OnClickListener() {
+            itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Bundle bundle = new Bundle();
@@ -106,10 +110,22 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
             return;
         }
         String name = mCursor.getString(mCursor.getColumnIndex(ExercisesTable.ExercisesEntry.EX_NAME));
+        String uri = mCursor.getString(mCursor.getColumnIndex(ExercisesTable.ExercisesEntry.EX_URI));
         long id = mCursor.getLong(mCursor.getColumnIndex(ExercisesTable.ExercisesEntry._ID));
 
         holder.nameText.setText(name);
         holder.itemView.setTag(id);
+
+        if(!uri.equals("null") && uri.contains(".gif"))
+            Glide
+                    .with(holder.itemView.getContext())
+                    .asGif()
+                    .load(uri)
+                    .error(R.drawable.delete)
+                    .into(holder.exerciseImage);
+
+        if (!uri.equals("null") && !uri.contains(".gif"))
+            Glide.with(holder.itemView.getContext()).load(uri).into(holder.exerciseImage);
     }
 
     @Override

@@ -39,7 +39,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import Adapters.ExercisesAdapter;
+import Tables.ApproachesTable;
 import Tables.ExercisesTable;
+import Tables.HistoryApproachesTable;
+import Tables.HistoryExercisesTable;
 import Tables.HistoryTable;
 import Tables.ProgramTable;
 
@@ -47,7 +50,8 @@ public class TrainingFragment extends Fragment {
 
     private SQLiteDatabase database;
     private Chronometer chronometer;
-    static private boolean btnPause= true;
+    static private boolean btnPause = true;
+
     private ChronometerHelper chronometerHelper;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -75,7 +79,7 @@ public class TrainingFragment extends Fragment {
         DBHelper dbHelper = new DBHelper(requireContext());
         database = dbHelper.getWritableDatabase();
 
-        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         final Date date = new Date();
 
         final RecyclerView recyclerView2 = view.findViewById(R.id.exercises_recyclerview);
@@ -87,28 +91,33 @@ public class TrainingFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                ContentValues cv = new ContentValues();
-                cv.put(HistoryTable.HistoryEntry.HISTORY_PROG_ID, arg1);
-                cv.put(HistoryTable.HistoryEntry.HISTORY_PROG_NAME, arg2);
-                cv.put(HistoryTable.HistoryEntry.HISTORY_DATE, formatter.format(date));
-
-                database.insert(HistoryTable.HistoryEntry.TABLE_HISTORY, null, cv);
-
                 chronometer.stop();
-                String time;
                 int elapsed;
                 if (chronometerHelper.getPause()!=null && !chronometerHelper.isRunning())
                     elapsed = chronometerHelper.getPause().intValue();
                 else
                  elapsed = (int)(SystemClock.elapsedRealtime()-chronometer.getBase());
 
-                time = String.valueOf(elapsed/1000);
-                Toast.makeText(getActivity(), "Time is: "+time+" sec",
+                int time = elapsed/60000;
+                Toast.makeText(getActivity(), "Time is: "+time+" min",
                         Toast.LENGTH_LONG).show();
                 resetChronometer(v);
                 pauseChronometer(v);
 
                 btnPause=true;
+
+                ContentValues cv = new ContentValues();
+                cv.put(HistoryTable.HistoryEntry.HISTORY_PROG_ID, arg1);
+                cv.put(HistoryTable.HistoryEntry.HISTORY_PROG_NAME, arg2);
+                cv.put(HistoryTable.HistoryEntry.HISTORY_URI, searchUri(arg1));
+                cv.put(HistoryTable.HistoryEntry.HISTORY_DATE, formatter.format(date));
+                cv.put(HistoryTable.HistoryEntry.HISTORY_TIME, time);
+
+                addExercisesInHistory(formatter.format(date));
+                addApproachesInHistory(formatter.format(date));
+                changeApproachesState(formatter.format(date));
+
+                database.insert(HistoryTable.HistoryEntry.TABLE_HISTORY, null, cv);
 
                 final NavController navController = Navigation.findNavController(requireView());
                 navController.navigate(R.id.action_training_to_navigation_list);
@@ -128,6 +137,65 @@ public class TrainingFragment extends Fragment {
         });
     }
 
+    public void changeApproachesState(String date){
+
+        ContentValues cv = new ContentValues();
+        cv.put(ApproachesTable.ApproachesEntry.APP_IS_CURRENT,false);
+        cv.put(ApproachesTable.ApproachesEntry.APP_DATE, date);
+
+        database.update(ApproachesTable.ApproachesEntry.TABLE_APPROACHES, cv,
+                ApproachesTable.ApproachesEntry.APP_IS_CURRENT + "=" + 1,null);
+
+    }
+
+    public void addApproachesInHistory(String date){
+
+        ContentValues cv = new ContentValues();
+
+        String whereClause = ApproachesTable.ApproachesEntry.APP_DATE + "=? AND " +
+                ApproachesTable.ApproachesEntry.APP_IS_CURRENT + "=?";
+        String[] whereArgs = new String[]{date, String.valueOf(1)};
+
+        Cursor c = database.query(
+                ApproachesTable.ApproachesEntry.TABLE_APPROACHES,
+                null,
+                whereClause,
+                whereArgs,
+                null,
+                null,
+                null
+        );
+
+        while (c.moveToNext()){
+            cv = new ContentValues();
+            cv.put(HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_PROG_ID,
+                    c.getInt(c.getColumnIndex(ApproachesTable.ApproachesEntry.APP_PROG_ID)));
+            cv.put(HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_EX_ID,
+                    c.getInt(c.getColumnIndex(ApproachesTable.ApproachesEntry.APP_EX_ID)));
+            cv.put(HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_DATE, date);
+            cv.put(HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_COUNT,
+                    c.getInt(c.getColumnIndex(ApproachesTable.ApproachesEntry.APP_COUNT)));
+            cv.put(HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_WEIGHT,
+                    c.getDouble(c.getColumnIndex(ApproachesTable.ApproachesEntry.APP_WEIGHT)));
+            cv.put(HistoryApproachesTable.HistoryApproachesEntry._ID,
+                    c.getInt(c.getColumnIndex(ApproachesTable.ApproachesEntry._ID)));
+            database.insert(HistoryApproachesTable.HistoryApproachesEntry.TABLE_HISTORY_APPROACHES,null,cv);
+        }
+    }
+
+    public String searchUri(long id) {
+        String query = "select uri from " + ProgramTable.ProgramEntry.TABLE_PROGRAMS + " WHERE _id = " + id;
+        Cursor c = database.rawQuery(query, null);
+
+        String a = "not found";
+        if (c.moveToFirst()) ;
+        {
+            a = c.getString(c.getColumnIndex("uri"));
+        }
+        c.close();
+        return a;
+    }
+
     private Cursor getAllItems(long id) {
         return database.query(
                 ExercisesTable.ExercisesEntry.TABLE_EXERCISES,
@@ -140,6 +208,23 @@ public class TrainingFragment extends Fragment {
         );
     }
 
+    private void addExercisesInHistory(String date){
+        Cursor exCursor = getAllItems(getArguments().getLong("prog_id"));
+
+        while (exCursor.moveToNext()){
+            ContentValues cv = new ContentValues();
+            cv.put(HistoryExercisesTable.HistoryExercisesEntry._ID,
+                    exCursor.getInt(exCursor.getColumnIndex( ExercisesTable.ExercisesEntry._ID)));
+            cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_NAME,
+                    exCursor.getString(exCursor.getColumnIndex( ExercisesTable.ExercisesEntry.EX_NAME)));
+            cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_URI,
+                    exCursor.getString(exCursor.getColumnIndex( ExercisesTable.ExercisesEntry.EX_URI)));
+            cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_PROG_ID, getArguments().getLong("prog_id"));
+            cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_DATE, date);
+            database.insert(HistoryExercisesTable.HistoryExercisesEntry.TABLE_HISTORY_EXERCISES, null, cv);
+        }
+        exCursor.close();
+    }
 
     public void startChronometer(View v) {
         if (!chronometerHelper.isRunning()) {
@@ -189,13 +274,6 @@ public class TrainingFragment extends Fragment {
           pauseChronometer(requireView());
           btnPause = true;
       }
-      /*if (item.getItemId()==android.R.id.home){
-          pauseChronometer(requireView());
-          final NavController navController = Navigation.findNavController(getView());
-          if (!navController.popBackStack()) {
-              navController.navigate(R.id.action_training_to_navigation_list);
-          }
-      }*/
         return super.onOptionsItemSelected(item);
     }
 

@@ -8,10 +8,11 @@
         android:id="@+id/history_training_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:overScrollMode="never"/>
+        android:paddingStart="11dp"
+        android:paddingEnd="11dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:overScrollMode="never"
+        android:clipToPadding="false"/>
 
 </RelativeLayout>

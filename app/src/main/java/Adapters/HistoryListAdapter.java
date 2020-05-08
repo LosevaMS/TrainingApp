@@ -44,7 +44,7 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
 
     public class HistoryListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public TextView program_name_item, date;
+        public TextView program_name_item, date, time;
         public CardView cardView;
         public ImageView gym;
 
@@ -54,6 +54,7 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
             super(itemView);
             program_name_item = itemView.findViewById(R.id.program_name_item_history);
             date = itemView.findViewById(R.id.date_history);
+            time = itemView.findViewById(R.id.time_history);
             cardView = itemView.findViewById(R.id.cv_history);
             gym = itemView.findViewById(R.id.gym);
 
@@ -87,7 +88,7 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
             Cursor c = database.rawQuery(query, null);
 
             int a = 0;
-            if (c.moveToFirst()) ;
+            if (c.moveToFirst())
             {
                 a = c.getInt(c.getColumnIndex("prog_id"));
             }
@@ -100,7 +101,7 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
             Cursor c = database.rawQuery(query, null);
 
             ArrayList a = new ArrayList();
-            if (c.moveToNext()) ;
+            if (c.moveToNext())
             {
                 a.add(c.getInt(c.getColumnIndex("ex_id")));
             }
@@ -113,7 +114,7 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
             Cursor c = database.rawQuery(query, null);
 
             String a = " ";
-            if (c.moveToFirst()) ;
+            if (c.moveToFirst())
             {
                 a = c.getString(c.getColumnIndex("date"));
             }
@@ -158,21 +159,24 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
         }
         String prog_name = mCursor.getString(mCursor.getColumnIndex(HistoryTable.HistoryEntry.HISTORY_PROG_NAME));
         long id = mCursor.getLong(mCursor.getColumnIndex(HistoryTable.HistoryEntry._ID));
-        long prog_id = mCursor.getLong(mCursor.getColumnIndex(HistoryTable.HistoryEntry.HISTORY_PROG_ID));
         String date = mCursor.getString(mCursor.getColumnIndex(HistoryTable.HistoryEntry.HISTORY_DATE));
+        String time = mCursor.getString(mCursor.getColumnIndex(HistoryTable.HistoryEntry.HISTORY_TIME)) + " мин";
+        String uri = mCursor.getString(mCursor.getColumnIndex(HistoryTable.HistoryEntry.HISTORY_URI));
+
 
         holder.program_name_item.setText(prog_name);
         holder.date.setText(date);
+        holder.time.setText(time);
         holder.itemView.setTag(id);
 
-        if(searchUri(prog_id).equals("null"))
+        if(uri.equals("null"))
             holder.gym.setImageResource(R.drawable.gym4app6);
         else
-        Glide.with(holder.itemView.getContext()).load(searchUri(prog_id)).into(holder.gym);
+        Glide.with(holder.itemView.getContext()).load(uri).into(holder.gym);
 
     }
 
-    public String searchUri(long id) {
+   /* public String searchUri(long id) {
         String query = "select uri from " + ProgramTable.ProgramEntry.TABLE_PROGRAMS + " WHERE _id = " + id;
         Cursor c = database.rawQuery(query, null);
 
@@ -183,7 +187,7 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
         }
         c.close();
         return a;
-    }
+    }*/
 
     @Override
     public int getItemCount() {

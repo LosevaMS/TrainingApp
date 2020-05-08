@@ -14,6 +14,7 @@ import com.example.globusproject.DBHelper;
 import com.example.globusproject.R;
 
 import Tables.ApproachesTable;
+import Tables.HistoryApproachesTable;
 
 public class HistoryApproachAdapter extends RecyclerView.Adapter<HistoryApproachAdapter.HistoryApproachViewHolder> {
     private Context mContext;
@@ -67,8 +68,8 @@ public class HistoryApproachAdapter extends RecyclerView.Adapter<HistoryApproach
         if (!mCursor.moveToPosition(position)) {
             return;
         }
-        double weight = mCursor.getDouble(mCursor.getColumnIndex(ApproachesTable.ApproachesEntry.APP_WEIGHT));
-        int count = mCursor.getInt(mCursor.getColumnIndex(ApproachesTable.ApproachesEntry.APP_COUNT));
+        double weight = mCursor.getDouble(mCursor.getColumnIndex(HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_WEIGHT));
+        int count = mCursor.getInt(mCursor.getColumnIndex(HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_COUNT));
 
         holder.weight.setText(String.valueOf(weight));
         holder.count.setText(String.valueOf(count));

@@ -20,6 +20,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import Adapters.HistoryApproachAdapter;
 import Tables.ApproachesTable;
+import Tables.HistoryApproachesTable;
 
 public class HistoryApproachFragment extends Fragment {
 
@@ -54,12 +55,12 @@ public class HistoryApproachFragment extends Fragment {
 
     private Cursor getAllItems(long ex_id, String date) {
 
-        String whereClause = ApproachesTable.ApproachesEntry.APP_EX_ID + "=? AND " +
-                ApproachesTable.ApproachesEntry.APP_DATE + "=?";
+        String whereClause = HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_EX_ID + "=? AND " +
+                HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_DATE + "=?";
         String[] whereArgs = new String[]{String.valueOf(ex_id), date};
 
         return database.query(
-                ApproachesTable.ApproachesEntry.TABLE_APPROACHES,
+                HistoryApproachesTable.HistoryApproachesEntry.TABLE_HISTORY_APPROACHES,
                 null,
                 whereClause,
                 whereArgs,

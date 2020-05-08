@@ -42,6 +42,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import Adapters.ProgramListAdapter;
 import Tables.ProgramTable;
 
@@ -169,7 +173,6 @@ public class ListFragment extends Fragment {
                 userInput.getText().clear();
             }
         });
-
 
         onSaveInstanceState(savedInstanceState);
     }
