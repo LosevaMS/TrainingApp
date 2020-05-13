@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -50,6 +52,18 @@ public class HistoryApproachFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         HistoryApproachAdapter historyApproachAdapter = new HistoryApproachAdapter(requireContext(), getAllItems(arg1, arg2));
         recyclerView.setAdapter(historyApproachAdapter);
+
+
+        androidx.appcompat.widget.Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final NavController navController = Navigation.findNavController(getView());
+                if (!navController.popBackStack()) {
+                    navController.navigate(R.id.action_fragment_history_approach_to_fragment_history_training);
+                }
+            }
+        });
 
     }
 

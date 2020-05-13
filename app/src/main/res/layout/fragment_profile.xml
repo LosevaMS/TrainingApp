@@ -6,220 +6,102 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/profile_fragment"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:layout_marginTop="16dp"
-    android:layout_marginBottom="16dp">
+    android:background="#F4F8FB">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="55dp">
     <RelativeLayout
-        android:id="@+id/progress_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/shadow_background_1"
-        android:paddingEnd="20dp"
-        android:paddingStart="20dp"
-        android:paddingTop="20dp"
-        android:paddingBottom="30dp">
+        android:orientation="vertical">
     <TextView
-        android:id="@+id/progress"
+        android:id="@+id/month_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Прогресс"
-        android:textColor="#000000"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        />
-
+        android:paddingTop="14dp"
+        android:paddingStart="31dp"
+        android:paddingEnd="10dp"
+        android:textSize="16sp"
+        android:text="Month"/>
 
     <TextView
-        android:id="@+id/start"
+        android:id="@+id/year_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/month_text"
+        android:paddingTop="14dp"
+        android:text="Year"
+        android:textSize="16sp" />
+
+    <RelativeLayout
+        android:id="@+id/calendar_layout"
+        android:layout_below="@id/month_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="16dp"
-        android:layout_below="@+id/progress"
-        android:text="Начало"
-        android:textColor="#000000"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        />
+        android:layout_margin="11dp"
+        android:paddingTop="18dp"
+        android:paddingBottom="18dp"
+        android:background="@drawable/shadow_calendar">
 
-        <TextView
-            android:id="@+id/first_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/progress"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:text="01.01.2020"
-            android:textColor="#000000"
-            android:textSize="16sp"
-            />
-
-    <TextView
-        android:id="@+id/finished"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_below="@+id/start"
-        android:text="Завершенные тренировки"
-        android:textColor="#000000"
-        android:textSize="16sp"
-        />
-
-        <TextView
-            android:id="@+id/finished_cnt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/start"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:text="0"
-            android:textColor="#000000"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <TextView
-        android:id="@+id/whole_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/finished"
-        android:text="Общее время"
-        android:textColor="#000000"
-        android:textSize="16sp"
-        />
-
-        <TextView
-            android:id="@+id/whole_time_cnt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/finished"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:text="мин"
-            android:textColor="#000000"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/time_cnt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/finished"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginStart="43dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="43dp"
-            android:layout_marginRight="10dp"
-            android:text="0"
-            android:textColor="#000000"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-
-        <TextView
-        android:id="@+id/approaches"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/whole_time"
-        android:text="Готовые подходы"
-        android:textColor="#000000"
-        android:textSize="16sp"
-        />
-
-        <TextView
-            android:id="@+id/approaches_cnt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/whole_time"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:text="0"
-            android:textColor="#000000"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/weight"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_below="@+id/approaches"
-        android:text="Перемещенный вес"
-        android:textColor="#000000"
-        android:textSize="16sp"
-        />
-
-        <TextView
-            android:id="@+id/tones"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/approaches"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:text="т"
-            android:textColor="#000000"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/weight_cnt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/approaches"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginStart="22dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="22dp"
-            android:layout_marginRight="10dp"
-            android:text="0"
-            android:textColor="#000000"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+        <com.github.sundeepk.compactcalendarview.CompactCalendarView
+            android:id="@+id/compactcalendar_view"
+            android:layout_width="fill_parent"
+            android:layout_height="205dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            app:compactCalendarBackgroundColor="#FFFFFF"
+            app:compactCalendarCurrentDayBackgroundColor="@color/colorPrimary"
+            app:compactCalendarCurrentDayTextColor="#ffffff"
+            app:compactCalendarCurrentSelectedDayBackgroundColor="#4F008DFF"
+            app:compactCalendarMultiEventIndicatorColor="@color/colorPrimary"
+            app:compactCalendarTargetHeight="250dp"
+            app:compactCalendarTextColor="#BE000000"
+            app:compactCalendarTextSize="14sp" />
 
     </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/gif"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_below="@id/progress_layout"
-        android:layout_margin="50dp"
-        />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/calendar_layout"
+            android:background="@drawable/shadow_calendar"
+            android:layout_marginStart="11dp"
+            android:layout_marginEnd="11dp">
+
+            <TextView
+                android:id="@+id/weight_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Вес"
+                android:textSize="16sp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"/>
+
+            <ImageView
+                android:id="@+id/add_weight_btn"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="4dp"
+                android:scaleType="center"
+                app:srcCompat="@drawable/ic_add_weight" />
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/weight_chart"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="14dp"
+            android:layout_marginBottom="14dp">
+        </com.github.mikephil.charting.charts.LineChart>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+    </ScrollView>
 
 </RelativeLayout>

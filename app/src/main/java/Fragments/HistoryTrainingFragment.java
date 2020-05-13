@@ -67,6 +67,16 @@ public class HistoryTrainingFragment extends Fragment implements HistoryTraining
             }
         });
 
+        androidx.appcompat.widget.Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final NavController navController = Navigation.findNavController(getView());
+                if (!navController.popBackStack()) {
+                    navController.navigate(R.id.action_fragment_history_training_to_navigation_history);
+                }
+            }
+        });
     }
 
     private Cursor getAllItems(long id, String date) {

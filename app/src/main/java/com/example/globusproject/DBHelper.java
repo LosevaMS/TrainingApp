@@ -10,6 +10,7 @@ import Tables.HistoryApproachesTable.*;
 import Tables.HistoryExercisesTable.*;
 import Tables.HistoryTable.*;
 import Tables.ProgramTable.*;
+import Tables.WeightTable.*;
 
 import static Tables.ApproachesTable.ApproachesEntry.APP_COUNT;
 import static Tables.ApproachesTable.ApproachesEntry.APP_EX_ID;
@@ -40,11 +41,14 @@ import static Tables.HistoryTable.HistoryEntry.HISTORY_URI;
 import static Tables.HistoryTable.HistoryEntry.TABLE_HISTORY;
 import static Tables.ProgramTable.ProgramEntry.PROG_URI;
 import static Tables.ProgramTable.ProgramEntry.TABLE_PROGRAMS;
+import static Tables.WeightTable.WeightEntry.DATE;
+import static Tables.WeightTable.WeightEntry.TABLE_WEIGHT;
+import static Tables.WeightTable.WeightEntry.WEIGHT;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "training";
+    private static final int DATABASE_VERSION = 6;
+    private static final String DATABASE_NAME = "training";
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -84,6 +88,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 + "foreign key(" + HISTORY_APP_EX_ID + ") references " + TABLE_HISTORY_EXERCISES + "(" + HistoryExercisesEntry._ID + "),"
                 + "foreign key(" + HISTORY_APP_PROG_ID + ") references " + TABLE_HISTORY + "(" + HISTORY_PROG_ID + ")" + ")");
 
+        db.execSQL("create table " + TABLE_WEIGHT + "(" + WeightEntry._ID
+                + " integer primary key AUTOINCREMENT," + WEIGHT + " float," + DATE + " text" + ")");
+
 
     }
 
@@ -95,6 +102,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("drop table if exists " + HistoryExercisesEntry.TABLE_HISTORY_EXERCISES);
         db.execSQL("drop table if exists " + HistoryApproachesEntry.TABLE_HISTORY_APPROACHES);
         db.execSQL("drop table if exists " + TABLE_HISTORY);
+        db.execSQL("drop table if exists " + TABLE_WEIGHT);
 
         onCreate(db);
 

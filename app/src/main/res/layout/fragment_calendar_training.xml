@@ -3,17 +3,17 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:id="@+id/history_fragment"
+    android:id="@+id/calendar_training_fragment"
     android:background="#F4F8FB">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerview_history"
+        android:id="@+id/recyclerview_calendar_history"
         android:layout_width="407dp"
         android:layout_height="match_parent"
         android:paddingStart="11dp"
         android:paddingEnd="11dp"
         android:paddingTop="14dp"
-        android:paddingBottom="62dp"
+        android:paddingBottom="14dp"
         android:clipToPadding="false"/>
 
 

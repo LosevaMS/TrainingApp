@@ -25,7 +25,7 @@
     <fragment
         android:id="@+id/navigation_history"
         android:name="Fragments.HistoryFragment"
-        android:label="История"
+        android:label="История тренировок"
         tools:layout="@layout/fragment_history" >
 
         <action
@@ -39,6 +39,9 @@
         android:name="Fragments.ProfileFragment"
         android:label="Профиль"
         tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_navigation_profile_to_calendarTrainingFragment"
+            app:destination="@id/calendarTrainingFragment" />
     </fragment>
 
     <fragment
@@ -105,6 +108,9 @@
             app:popUpTo="@id/fragment_history_approach"
             app:popUpToInclusive="true"
             />
+        <action
+            android:id="@+id/action_fragment_history_training_to_calendarTrainingFragment"
+            app:destination="@id/calendarTrainingFragment" />
     </fragment>
 
     <fragment
@@ -132,6 +138,18 @@
             app:popUpTo="@id/edit_training"
             app:popUpToInclusive="true"
             />
+    </fragment>
+    <fragment
+        android:id="@+id/calendarTrainingFragment"
+        android:name="Fragments.CalendarTrainingFragment"
+        android:label=" "
+        tools:layout="@layout/fragment_calendar_training">
+        <action
+            android:id="@+id/action_calendarTrainingFragment_to_navigation_profile"
+            app:destination="@id/navigation_profile" />
+        <action
+            android:id="@+id/action_calendarTrainingFragment_to_fragment_history_training"
+            app:destination="@id/fragment_history_training" />
     </fragment>
 
 </navigation>

@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:text="Вес"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="14dp"
+        android:textSize="14sp"
         android:textStyle="bold" />
 
     <EditText
@@ -32,7 +32,7 @@
         android:layout_below="@id/input_weight"
         android:text="Повторений"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="14dp"
+        android:textSize="14sp"
         android:textStyle="bold" />
 
     <EditText
