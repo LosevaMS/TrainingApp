@@ -113,7 +113,7 @@ public class TrainingFragment extends Fragment {
                 cv.put(HistoryTable.HistoryEntry.HISTORY_DATE, formatter.format(date));
                 cv.put(HistoryTable.HistoryEntry.HISTORY_TIME, time);
 
-                addExercisesInHistory(formatter.format(date));
+                //addExercisesInHistory(formatter.format(date));
                 addApproachesInHistory(formatter.format(date));
                 changeApproachesState(formatter.format(date));
 
@@ -152,9 +152,8 @@ public class TrainingFragment extends Fragment {
 
         ContentValues cv = new ContentValues();
 
-        String whereClause = ApproachesTable.ApproachesEntry.APP_DATE + "=? AND " +
-                ApproachesTable.ApproachesEntry.APP_IS_CURRENT + "=?";
-        String[] whereArgs = new String[]{date, String.valueOf(1)};
+        String whereClause = ApproachesTable.ApproachesEntry.APP_IS_CURRENT + "=?";
+        String[] whereArgs = new String[]{String.valueOf(1)};
 
         Cursor c = database.query(
                 ApproachesTable.ApproachesEntry.TABLE_APPROACHES,
@@ -208,7 +207,7 @@ public class TrainingFragment extends Fragment {
         );
     }
 
-    private void addExercisesInHistory(String date){
+   /* private void addExercisesInHistory(String date){
         Cursor exCursor = getAllItems(getArguments().getLong("prog_id"));
 
         while (exCursor.moveToNext()){
@@ -224,7 +223,7 @@ public class TrainingFragment extends Fragment {
             database.insert(HistoryExercisesTable.HistoryExercisesEntry.TABLE_HISTORY_EXERCISES, null, cv);
         }
         exCursor.close();
-    }
+    }*/
 
     public void startChronometer(View v) {
         if (!chronometerHelper.isRunning()) {

@@ -53,6 +53,7 @@ import java.util.Objects;
 
 import Adapters.ExerciseListAdapter;
 import Tables.ExercisesTable;
+import Tables.HistoryExercisesTable;
 import Tables.ProgramTable;
 
 import static android.app.Activity.RESULT_OK;
@@ -303,6 +304,13 @@ public class EditTrainingFragment extends Fragment {
 
         database.insert(ExercisesTable.ExercisesEntry.TABLE_EXERCISES, null, cv);
         exerciseListAdapter.swapCursor(getAllItems(id));
+
+        cv = new ContentValues();
+        cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_NAME,item.getName());
+        cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_PROG_ID,(int)id);
+        cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_URI, item.getUri());
+
+        database.insert(HistoryExercisesTable.HistoryExercisesEntry.TABLE_HISTORY_EXERCISES, null, cv);
     }
 
     private void addItem(long id) {
@@ -319,6 +327,13 @@ public class EditTrainingFragment extends Fragment {
 
         database.insert(ExercisesTable.ExercisesEntry.TABLE_EXERCISES, null, cv);
         exerciseListAdapter.swapCursor(getAllItems(id));
+
+        cv = new ContentValues();
+        cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_NAME,name);
+        cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_PROG_ID,(int)id);
+        cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_URI, String.valueOf(uri));
+
+        database.insert(HistoryExercisesTable.HistoryExercisesEntry.TABLE_HISTORY_EXERCISES, null, cv);
 
         userInput2.getText().clear();
     }

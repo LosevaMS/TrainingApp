@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,13 +29,15 @@ import com.github.clans.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 
-public class InlineExercisesAdapter extends RecyclerView.Adapter {
+public class InlineExercisesAdapter extends RecyclerView.Adapter implements Filterable {
 
     private ArrayList<InlineExercises> inlineExercisesList;
+    private ArrayList<InlineExercises> inlineExercisesListAll;
     private static ClickListener mClickListener;
 
     public InlineExercisesAdapter(ArrayList<InlineExercises> inlineExercisesList, ClickListener clickListener1) {
         this.inlineExercisesList = inlineExercisesList;
+        inlineExercisesListAll = new ArrayList<>(inlineExercisesList);
         mClickListener = clickListener1;
     }
 
@@ -114,6 +118,38 @@ public class InlineExercisesAdapter extends RecyclerView.Adapter {
         return selectedExercises;
     }
 
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+    private Filter filter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            ArrayList<InlineExercises> filteredList = new ArrayList<>();
+            if (constraint == null || constraint.length() == 0) {
+                filteredList.addAll(inlineExercisesListAll);
+            } else{
+                String filterPattern = constraint.toString().toLowerCase().trim();
+
+                for (InlineExercises item : inlineExercisesListAll){
+                    if (item.getName().toLowerCase().contains(filterPattern)){
+                        filteredList.add(item);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            inlineExercisesList.clear();
+            inlineExercisesList.addAll((ArrayList)results.values);
+            notifyDataSetChanged();
+        }
+    };
 
 
     static class ViewHolderOne extends RecyclerView.ViewHolder implements View.OnClickListener {

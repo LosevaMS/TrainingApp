@@ -1,107 +1,322 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/profile_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/profile_fragment"
     android:background="#F4F8FB">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="55dp">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-    <TextView
-        android:id="@+id/month_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="14dp"
-        android:paddingStart="31dp"
-        android:paddingEnd="10dp"
-        android:textSize="16sp"
-        android:text="Month"/>
-
-    <TextView
-        android:id="@+id/year_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@+id/month_text"
-        android:paddingTop="14dp"
-        android:text="Year"
-        android:textSize="16sp" />
-
-    <RelativeLayout
-        android:id="@+id/calendar_layout"
-        android:layout_below="@id/month_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="11dp"
-        android:paddingTop="18dp"
-        android:paddingBottom="18dp"
-        android:background="@drawable/shadow_calendar">
-
-        <com.github.sundeepk.compactcalendarview.CompactCalendarView
-            android:id="@+id/compactcalendar_view"
-            android:layout_width="fill_parent"
-            android:layout_height="205dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            app:compactCalendarBackgroundColor="#FFFFFF"
-            app:compactCalendarCurrentDayBackgroundColor="@color/colorPrimary"
-            app:compactCalendarCurrentDayTextColor="#ffffff"
-            app:compactCalendarCurrentSelectedDayBackgroundColor="#4F008DFF"
-            app:compactCalendarMultiEventIndicatorColor="@color/colorPrimary"
-            app:compactCalendarTargetHeight="250dp"
-            app:compactCalendarTextColor="#BE000000"
-            app:compactCalendarTextSize="14sp" />
-
-    </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/calendar_layout"
-            android:background="@drawable/shadow_calendar"
-            android:layout_marginStart="11dp"
-            android:layout_marginEnd="11dp">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/weight_text"
+            <RelativeLayout
+                android:id="@+id/parameters"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shadow_calendar"
+                android:layout_marginStart="11dp"
+                android:layout_marginEnd="11dp"
+                android:layout_marginTop="14dp"
+                android:paddingBottom="14dp"
+                >
+                <TextView
+                    android:id="@+id/parameters_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Текущие параметры"
+                    android:textSize="16sp"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="11dp"/>
+
+                <ImageView
+                    android:id="@+id/edit_param_btn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="2dp"
+                    android:scaleType="center"
+                    app:srcCompat="@drawable/ic_edit_black" />
+
+                <TextView
+                    android:id="@+id/weight_text1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/parameters_text"
+                    android:text="Вес"
+                    android:textColor="#636363"
+                    android:textSize="14sp"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="14dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/weight_text1"
+                    android:text="Рост"
+                    android:textColor="#636363"
+                    android:textSize="14sp"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="10dp"/>
+
+                <TextView
+                    android:id="@+id/param_weight_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/parameters_text"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginEnd="14dp"
+                    android:text="0 кг"
+                    android:textColor="#636363"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/param_height_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/weight_text1"
+                    android:layout_alignParentEnd="true"
+                    android:text="0 см"
+                    android:textColor="#636363"
+                    android:textSize="14sp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="14dp"
+                    android:layout_marginTop="10dp"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/calendar_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Вес"
-                android:textSize="16sp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"/>
+                android:layout_below="@id/parameters"
+                android:layout_margin="11dp"
+                android:background="@drawable/shadow_calendar"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp">
 
-            <ImageView
-                android:id="@+id/add_weight_btn"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="4dp"
-                android:scaleType="center"
-                app:srcCompat="@drawable/ic_add_weight" />
+                <TextView
+                    android:id="@+id/month_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="10dp"
+                    android:text="Month"
+                    android:textSize="16sp" />
 
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/weight_chart"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_marginTop="50dp"
-            android:layout_marginStart="14dp"
-            android:layout_marginEnd="14dp"
-            android:layout_marginBottom="14dp">
-        </com.github.mikephil.charting.charts.LineChart>
+                <TextView
+                    android:id="@+id/year_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/month_text"
+                    android:text="Year"
+                    android:textSize="16sp" />
+
+                <com.github.sundeepk.compactcalendarview.CompactCalendarView
+                    android:id="@+id/compactcalendar_view"
+                    android:layout_width="fill_parent"
+                    android:layout_height="205dp"
+                    android:layout_below="@+id/month_text"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    app:compactCalendarBackgroundColor="#FFFFFF"
+                    app:compactCalendarCurrentDayBackgroundColor="@color/colorPrimary"
+                    app:compactCalendarCurrentDayTextColor="#ffffff"
+                    app:compactCalendarCurrentSelectedDayBackgroundColor="#4F008DFF"
+                    app:compactCalendarMultiEventIndicatorColor="@color/colorPrimary"
+                    app:compactCalendarTargetHeight="250dp"
+                    app:compactCalendarTextColor="#BE000000"
+                    app:compactCalendarTextSize="14sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/chart_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/calendar_layout"
+                android:layout_marginStart="11dp"
+                android:layout_marginEnd="11dp"
+                android:layout_marginBottom="11dp"
+                android:background="@drawable/shadow_calendar">
+
+                <TextView
+                    android:id="@+id/weight_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="11dp"
+                    android:text="Вес"
+                    android:textSize="16sp" />
+
+                <ImageView
+                    android:id="@+id/add_weight_btn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="4dp"
+                    android:scaleType="center"
+                    app:srcCompat="@drawable/ic_add_weight" />
+
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/weight_chart"
+                    android:layout_width="match_parent"
+                    android:layout_height="230dp"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="50dp"
+                    android:layout_marginEnd="14dp"
+                    android:layout_marginBottom="14dp">
+                </com.github.mikephil.charting.charts.LineChart>
+
+                <TextView
+                    android:id="@+id/current_weight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/weight_chart"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Текущий вес"
+                    android:textColor="#636363"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/current_weight_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/weight_chart"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="вес"
+                    android:textColor="#636363"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/min_weight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/current_weight"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Минимальный вес"
+                    android:textColor="#636363"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/min_weight_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/current_weight_text"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="вес"
+                    android:textColor="#636363"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/max_weight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/min_weight"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="Максимальный вес"
+                    android:textColor="#636363"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/max_weight_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/min_weight_text"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="вес"
+                    android:textColor="#636363"
+                    android:textSize="12sp" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/bmi_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/chart_layout"
+                android:layout_marginStart="11dp"
+                android:layout_marginEnd="11dp"
+                android:layout_marginBottom="11dp"
+                android:background="@drawable/shadow_calendar">
+
+                <TextView
+                    android:id="@+id/bmi_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:text="ИМТ (кг/м²)"
+                    android:textSize="16sp" />
+
+
+                <ImageView
+                    android:id="@+id/bmi_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:layout_below="@id/bmi_text"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="14dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginEnd="14dp"
+                    android:scaleType="centerCrop"
+                    app:srcCompat="@drawable/ic_bmi" />
+
+                <TextView
+                    android:id="@+id/bmi_indicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="40dp"
+                    android:textColor="#000000"
+                    android:textSize="12sp" />
+
+                <ImageView
+                    android:id="@+id/indicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="17dp"
+                    android:layout_marginTop="60dp"
+                    android:scaleType="center"
+                    app:srcCompat="@drawable/indicator" />
+
+                <TextView
+                    android:id="@+id/bmi_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/bmi_image"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="#636363"
+                    android:textSize="12sp" />
+
+            </RelativeLayout>
 
         </RelativeLayout>
 
-    </RelativeLayout>
     </ScrollView>
 
 </RelativeLayout>

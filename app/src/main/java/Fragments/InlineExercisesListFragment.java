@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -47,6 +48,7 @@ public class InlineExercisesListFragment extends Fragment implements InlineExerc
 
     private ArrayList<InlineExercises> inlineExercisesList = new ArrayList<>();
     private SharedViewModel viewModel;
+    private InlineExercisesAdapter inlineExercisesAdapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -57,6 +59,9 @@ public class InlineExercisesListFragment extends Fragment implements InlineExerc
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        setRetainInstance(true);
+        setHasOptionsMenu(true);
+
         BottomNavigationView navBar = getActivity().findViewById(R.id.nav_view);
         navBar.setVisibility(View.GONE);
 
@@ -66,7 +71,7 @@ public class InlineExercisesListFragment extends Fragment implements InlineExerc
         }
 
         RecyclerView recyclerView = view.findViewById(R.id.inline_ex_list_recyclerview);
-        final InlineExercisesAdapter inlineExercisesAdapter = new InlineExercisesAdapter(inlineExercisesList,this);
+        inlineExercisesAdapter = new InlineExercisesAdapter(inlineExercisesList,this);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setAdapter(inlineExercisesAdapter);
 
@@ -87,15 +92,6 @@ public class InlineExercisesListFragment extends Fragment implements InlineExerc
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
-       /* final Toolbar toolbar = view.findViewById(R.id.toolbar);
-        ((AppCompatActivity) requireActivity()).setActionBar(toolbar);
-*/
-
-        /*Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        ((AppCompatActivity) requireActivity()).setActionBar(toolbar);
-        toolbar.setTitle("Title");
-        toolbar.setNavigationIcon(R.drawable.ic_back_button);*/
-
         androidx.appcompat.widget.Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,6 +110,34 @@ public class InlineExercisesListFragment extends Fragment implements InlineExerc
 
     }
 
+    public void searchItem(String item){
+        ArrayList<InlineExercises> array = new ArrayList<>();
+        for (int i=0; i<inlineExercisesList.size();i++){
+            if (inlineExercisesList.get(i).getName().contains(item))
+                array.add(inlineExercisesList.get(i));
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.search_menu, menu);
+        MenuItem searchItem = menu.findItem(R.id.search_item);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                inlineExercisesAdapter.getFilter().filter(newText);
+                return false;
+            }
+        });
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
     @Override
     public void onItemClick(int position, View v) {

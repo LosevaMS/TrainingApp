@@ -50,7 +50,7 @@ public class HistoryTrainingFragment extends Fragment implements HistoryTraining
 
         final RecyclerView recyclerView = view.findViewById(R.id.history_training_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        HistoryTrainingAdapter historyTrainingAdapter = new HistoryTrainingAdapter(requireContext(), getAllItems(arg1,arg2),this);
+        HistoryTrainingAdapter historyTrainingAdapter = new HistoryTrainingAdapter(requireContext(), getAllItems(arg1),this);
         recyclerView.setAdapter(historyTrainingAdapter);
 
 
@@ -79,12 +79,11 @@ public class HistoryTrainingFragment extends Fragment implements HistoryTraining
         });
     }
 
-    private Cursor getAllItems(long id, String date) {
+    private Cursor getAllItems(long id) {
 
-        String whereClause = HistoryExercisesTable.HistoryExercisesEntry.HISTORY_PROG_ID + "=? AND " +
-                HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_DATE + "=?";
+        String whereClause = HistoryExercisesTable.HistoryExercisesEntry.HISTORY_PROG_ID + "=?";
 
-        String[] whereArgs = new String[]{String.valueOf(id), date};
+        String[] whereArgs = new String[]{String.valueOf(id)};
 
         return database.query(
                 HistoryExercisesTable.HistoryExercisesEntry.TABLE_HISTORY_EXERCISES,

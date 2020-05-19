@@ -83,8 +83,8 @@ public class ListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         setRetainInstance(true);
 
-        setRetainInstance(true);
-        setHasOptionsMenu(true);
+        //setRetainInstance(true);
+        //setHasOptionsMenu(true);
 
         BottomNavigationView navBar = getActivity().findViewById(R.id.nav_view);
         navBar.setVisibility(View.VISIBLE);
@@ -242,7 +242,7 @@ public class ListFragment extends Fragment {
         );
     }
 
-    @Override
+   /* @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.menu_for_list_fragment,menu);
         menu.findItem(R.id.add_item).setVisible(true);
@@ -303,7 +303,7 @@ public class ListFragment extends Fragment {
             userInput.getText().clear();
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
 
 }

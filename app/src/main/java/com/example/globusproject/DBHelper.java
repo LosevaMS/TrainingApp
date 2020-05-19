@@ -29,7 +29,6 @@ import static Tables.HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_E
 import static Tables.HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_PROG_ID;
 import static Tables.HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_WEIGHT;
 import static Tables.HistoryApproachesTable.HistoryApproachesEntry.TABLE_HISTORY_APPROACHES;
-import static Tables.HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_DATE;
 import static Tables.HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_NAME;
 import static Tables.HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_URI;
 import static Tables.HistoryExercisesTable.HistoryExercisesEntry.TABLE_HISTORY_EXERCISES;
@@ -47,7 +46,7 @@ import static Tables.WeightTable.WeightEntry.WEIGHT;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 6;
+    private static final int DATABASE_VERSION = 10;
     private static final String DATABASE_NAME = "training";
 
     public DBHelper(Context context) {
@@ -77,9 +76,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 + HISTORY_PROG_ID + " integer," + HISTORY_PROG_NAME + " text," + HISTORY_DATE + " text," + HISTORY_TIME
                 + " integer, " + HISTORY_URI + " text" + ")");
 
-        db.execSQL("create table " + TABLE_HISTORY_EXERCISES + "(" + HistoryExercisesEntry._ID + " integer,"
+        db.execSQL("create table " + TABLE_HISTORY_EXERCISES + "(" + HistoryExercisesEntry._ID + " integer primary key AUTOINCREMENT,"
                  + HISTORY_EX_NAME + " text," + HistoryExercisesEntry.HISTORY_PROG_ID +  " integer," + HISTORY_EX_URI + " text,"
-                + HISTORY_EX_DATE + " text, " + "foreign key(" + HistoryExercisesEntry.HISTORY_PROG_ID + ") references "
+                + "foreign key(" + HistoryExercisesEntry.HISTORY_PROG_ID + ") references "
                 + TABLE_HISTORY + "(" + HISTORY_PROG_ID + ")"+ ")");
 
         db.execSQL("create table " + TABLE_HISTORY_APPROACHES + "(" + HistoryApproachesEntry._ID

@@ -11,6 +11,6 @@ public class HistoryExercisesTable {
         public static final String HISTORY_PROG_ID = "prog_id";
         public static final String HISTORY_EX_NAME = "ex_name";
         public static final String HISTORY_EX_URI = "ex_uri";
-        public static final String HISTORY_EX_DATE = "ex_date";
+        //public static final String HISTORY_EX_DATE = "ex_date";
     }
 }
