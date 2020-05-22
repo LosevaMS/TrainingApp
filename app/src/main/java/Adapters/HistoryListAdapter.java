@@ -34,32 +34,25 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
 
     private Context mContext;
     private Cursor mCursor;
-    private OnNoteListener mOnNoteListener;
 
-    public HistoryListAdapter(Context context, Cursor cursor, OnNoteListener onNoteListener) {
+    public HistoryListAdapter(Context context, Cursor cursor) {
         mContext = context;
         mCursor = cursor;
-        mOnNoteListener = onNoteListener;
     }
 
-    public class HistoryListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class HistoryListViewHolder extends RecyclerView.ViewHolder {
 
         public TextView program_name_item, date, time;
         public CardView cardView;
         public ImageView gym;
 
-        OnNoteListener onNoteListener;
-
-        public HistoryListViewHolder(final View itemView, OnNoteListener onNoteListener) {
+        public HistoryListViewHolder(final View itemView) {
             super(itemView);
             program_name_item = itemView.findViewById(R.id.program_name_item_history);
             date = itemView.findViewById(R.id.date_history);
             time = itemView.findViewById(R.id.time_history);
             cardView = itemView.findViewById(R.id.cv_history);
             gym = itemView.findViewById(R.id.gym);
-
-            this.onNoteListener = onNoteListener;
-            itemView.setOnClickListener(this);
 
             DBHelper dbHelper = new DBHelper(mContext);
             database = dbHelper.getWritableDatabase();
@@ -122,10 +115,6 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
             return a;
         }
 
-        @Override
-        public void onClick(View v) {
-            onNoteListener.onNoteClick(getAdapterPosition());
-        }
 
     }
 
@@ -136,7 +125,7 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View view = inflater.inflate(R.layout.history_card, parent, false);
 
-        return new HistoryListViewHolder(view, mOnNoteListener);
+        return new HistoryListViewHolder(view);
     }
 
     private Cursor getAllItems() {
@@ -203,9 +192,5 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
         if (newCursor != null) {
             notifyDataSetChanged();
         }
-    }
-
-    public interface OnNoteListener {
-        void onNoteClick(int position);
     }
 }

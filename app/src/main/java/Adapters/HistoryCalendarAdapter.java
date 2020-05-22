@@ -28,23 +28,20 @@ public class HistoryCalendarAdapter extends RecyclerView.Adapter<HistoryCalendar
 
     private Context mContext;
     private Cursor mCursor;
-    private OnNoteListener mOnNoteListener;
 
-    public HistoryCalendarAdapter(Context context, Cursor cursor, OnNoteListener onNoteListener) {
+    public HistoryCalendarAdapter(Context context, Cursor cursor) {
         mContext = context;
         mCursor = cursor;
-        mOnNoteListener = onNoteListener;
     }
 
-    public class HistoryCalendarViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class HistoryCalendarViewHolder extends RecyclerView.ViewHolder {
 
         public TextView program_name_item, date, time;
         public CardView cardView;
         public ImageView gym;
 
-        OnNoteListener onNoteListener;
 
-        public HistoryCalendarViewHolder(final View itemView, OnNoteListener onNoteListener) {
+        public HistoryCalendarViewHolder(final View itemView) {
             super(itemView);
             program_name_item = itemView.findViewById(R.id.program_name_item_history);
             date = itemView.findViewById(R.id.date_history);
@@ -52,8 +49,6 @@ public class HistoryCalendarAdapter extends RecyclerView.Adapter<HistoryCalendar
             cardView = itemView.findViewById(R.id.cv_history);
             gym = itemView.findViewById(R.id.gym);
 
-            this.onNoteListener = onNoteListener;
-            itemView.setOnClickListener(this);
 
             DBHelper dbHelper = new DBHelper(mContext);
             database = dbHelper.getWritableDatabase();
@@ -116,11 +111,6 @@ public class HistoryCalendarAdapter extends RecyclerView.Adapter<HistoryCalendar
             return a;
         }
 
-        @Override
-        public void onClick(View v) {
-            onNoteListener.onNoteClick(getAdapterPosition());
-        }
-
     }
 
     private SQLiteDatabase database;
@@ -130,7 +120,7 @@ public class HistoryCalendarAdapter extends RecyclerView.Adapter<HistoryCalendar
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View view = inflater.inflate(R.layout.history_card, parent, false);
 
-        return new HistoryCalendarViewHolder(view, mOnNoteListener);
+        return new HistoryCalendarViewHolder(view);
     }
 
     private Cursor getAllItems() {
@@ -199,7 +189,4 @@ public class HistoryCalendarAdapter extends RecyclerView.Adapter<HistoryCalendar
         }
     }
 
-    public interface OnNoteListener {
-        void onNoteClick(int position);
-    }
 }

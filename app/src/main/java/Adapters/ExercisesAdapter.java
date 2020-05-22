@@ -126,6 +126,9 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
 
         if (!uri.equals("null") && !uri.contains(".gif"))
             Glide.with(holder.itemView.getContext()).load(uri).into(holder.exerciseImage);
+
+        if (uri.equals("null"))
+            Glide.with(holder.itemView.getContext()).load(R.drawable.ic_sport4).into(holder.exerciseImage);
     }
 
     @Override

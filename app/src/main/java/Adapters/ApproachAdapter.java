@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.globusproject.DBHelper;
 import com.example.globusproject.R;
 
+import org.jetbrains.annotations.NotNull;
+
 import Tables.ApproachesTable;
 
 public class ApproachAdapter extends RecyclerView.Adapter<ApproachAdapter.ApproachViewHolder> {
@@ -27,15 +29,14 @@ public class ApproachAdapter extends RecyclerView.Adapter<ApproachAdapter.Approa
     }
 
     public class ApproachViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView weight, count, number, kgx;
-        OnNoteListener onNoteListener;
+        private TextView weight;
+        private TextView count;
+        private OnNoteListener onNoteListener;
 
-        public ApproachViewHolder(final View itemView, OnNoteListener onNoteListener) {
+        private ApproachViewHolder(final View itemView, OnNoteListener onNoteListener) {
             super(itemView);
             weight = itemView.findViewById(R.id.app_item_weight);
             count = itemView.findViewById(R.id.app_item_count);
-            number = itemView.findViewById(R.id.number);
-            kgx = itemView.findViewById(R.id.kgx);
 
             this.onNoteListener = onNoteListener;
             itemView.setOnClickListener(this);
@@ -44,7 +45,6 @@ public class ApproachAdapter extends RecyclerView.Adapter<ApproachAdapter.Approa
             database = dbHelper.getWritableDatabase();
 
         }
-
 
         private Cursor getAllItems(long ex_id) {
             return database.query(
@@ -66,15 +66,16 @@ public class ApproachAdapter extends RecyclerView.Adapter<ApproachAdapter.Approa
 
     private SQLiteDatabase database;
 
+    @NotNull
     @Override
-    public ApproachViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ApproachViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from((mContext));
         View view = inflater.inflate(R.layout.approach_item, parent, false);
         return new ApproachViewHolder(view, mOnNoteListener);
     }
 
     @Override
-    public void onBindViewHolder(ApproachViewHolder holder, int position) {
+    public void onBindViewHolder(@NotNull ApproachViewHolder holder, int position) {
         if (!mCursor.moveToPosition(position)) {
             return;
         }

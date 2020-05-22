@@ -1,13 +1,14 @@
 package Fragments;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,12 +32,11 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import Adapters.HistoryCalendarAdapter;
-import Adapters.HistoryListAdapter;
 import Tables.HistoryApproachesTable;
 import Tables.HistoryExercisesTable;
 import Tables.HistoryTable;
 
-public class CalendarTrainingFragment extends Fragment implements HistoryCalendarAdapter.OnNoteListener {
+public class CalendarTrainingFragment extends Fragment {
 
     private SQLiteDatabase database;
     private HistoryCalendarAdapter historyListAdapter;
@@ -59,12 +59,13 @@ public class CalendarTrainingFragment extends Fragment implements HistoryCalenda
         super.onViewCreated(view, savedInstanceState);
         setRetainInstance(true);
 
-        BottomNavigationView navBar = getActivity().findViewById(R.id.nav_view);
+        BottomNavigationView navBar = requireActivity().findViewById(R.id.nav_view);
         navBar.setVisibility(View.GONE);
 
         DBHelper dbHelper = new DBHelper(requireContext());
         database = dbHelper.getWritableDatabase();
 
+        assert getArguments() != null;
         final String date = getArguments().getString("date");
 
         try {
@@ -75,7 +76,7 @@ public class CalendarTrainingFragment extends Fragment implements HistoryCalenda
 
         final RecyclerView recyclerView = view.findViewById(R.id.recyclerview_calendar_history);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        historyListAdapter = new HistoryCalendarAdapter(requireContext(), getAllItems(), this);
+        historyListAdapter = new HistoryCalendarAdapter(requireContext(), getAllItems());
         recyclerView.setAdapter(historyListAdapter);
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
@@ -86,8 +87,27 @@ public class CalendarTrainingFragment extends Fragment implements HistoryCalenda
             }
 
             @Override
-            public void onSwiped(@NotNull RecyclerView.ViewHolder viewHolder, int direction) {
-                    removeItem((long) viewHolder.itemView.getTag());
+            public void onSwiped(@NotNull final RecyclerView.ViewHolder viewHolder, int direction) {
+                AlertDialog.Builder mDialogBuilder = new AlertDialog.Builder(requireContext());
+                mDialogBuilder
+                        .setMessage("Удалить историю?")
+                        .setCancelable(false)
+                        .setPositiveButton("Да",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        removeItem((long) viewHolder.itemView.getTag());
+                                    }
+                                })
+                        .setNegativeButton("Нет",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        historyListAdapter = new HistoryCalendarAdapter(requireContext(), getAllItems());
+                                        recyclerView.setAdapter(historyListAdapter);
+                                        dialog.cancel();
+                                    }
+                                });
+                AlertDialog alertDialog = mDialogBuilder.create();
+                alertDialog.show();
             }
         }).attachToRecyclerView(recyclerView);
 
@@ -98,7 +118,7 @@ public class CalendarTrainingFragment extends Fragment implements HistoryCalenda
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final NavController navController = Navigation.findNavController(getView());
+                final NavController navController = Navigation.findNavController(requireView());
                 if (!navController.popBackStack()) {
                     navController.navigate(R.id.action_calendarTrainingFragment_to_navigation_profile);
                 }
@@ -119,10 +139,6 @@ public class CalendarTrainingFragment extends Fragment implements HistoryCalenda
                             + HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_PROG_ID + "=? and "
                             + HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_DATE + "=?" ,
                     new String[]{exIdArray.get(i).toString(), String.valueOf(prog_id), date});
-        }
-        for (int i = 0; i<exIdArray.size(); i++){
-            database.delete(HistoryExercisesTable.HistoryExercisesEntry.TABLE_HISTORY_EXERCISES,
-                    HistoryExercisesTable.HistoryExercisesEntry._ID + "=" + exIdArray.get(i), null);
         }
 
         database.delete(HistoryTable.HistoryEntry.TABLE_HISTORY,
@@ -164,6 +180,7 @@ public class CalendarTrainingFragment extends Fragment implements HistoryCalenda
 
         while (c.moveToNext()){
             Date date1 = dateFormat.parse(c.getString(c.getColumnIndex("date")));
+            assert date1 != null;
             if (date.equals(dateFormat.format(date1))){
                 dateString = dateString.concat(String.valueOf(c.getInt(c.getColumnIndex("_id"))));
                 dateString = dateString.concat(",");
@@ -191,7 +208,7 @@ public class CalendarTrainingFragment extends Fragment implements HistoryCalenda
         return a;
     }
 
-    public String searchDate(long id) {
+    private String searchDate(long id) {
         String query = "select date from " + HistoryTable.HistoryEntry.TABLE_HISTORY + " WHERE _id = " + id;
         Cursor c = database.rawQuery(query, null);
 
@@ -204,7 +221,7 @@ public class CalendarTrainingFragment extends Fragment implements HistoryCalenda
         return a;
     }
 
-    public ArrayList<Integer> searchExId(int id) {
+    private ArrayList searchExId(int id) {
         String query = "select _id from " + HistoryExercisesTable.HistoryExercisesEntry.TABLE_HISTORY_EXERCISES + " WHERE prog_id = " + id;
         Cursor c = database.rawQuery(query, null);
 
@@ -215,10 +232,6 @@ public class CalendarTrainingFragment extends Fragment implements HistoryCalenda
         }
         c.close();
         return a;
-    }
-
-    @Override
-    public void onNoteClick(int position) {
     }
 
 }

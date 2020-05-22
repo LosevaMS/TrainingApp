@@ -75,7 +75,7 @@ public class ExerciseListAdapter extends RecyclerView.Adapter<ExerciseListAdapte
                         database.delete(ExercisesTable.ExercisesEntry.TABLE_EXERCISES,
                                 ExercisesTable.ExercisesEntry._ID + "=" + id, null);
                         notifyItemRemoved(getAdapterPosition());
-                        swapCursor(getAllItems(prog_id));
+                        //swapCursor(getAllItems(prog_id));
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
                         break;
@@ -140,6 +140,9 @@ public class ExerciseListAdapter extends RecyclerView.Adapter<ExerciseListAdapte
 
         if (!uri.equals("null") && !uri.contains(".gif"))
             Glide.with(holder.itemView.getContext()).load(uri).into(holder.exerciseImage);
+
+        if (uri.equals("null"))
+            Glide.with(holder.itemView.getContext()).load(R.drawable.ic_sport4).into(holder.exerciseImage);
     }
 
 

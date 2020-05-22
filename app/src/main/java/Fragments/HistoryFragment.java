@@ -1,6 +1,8 @@
 package Fragments;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -33,7 +35,7 @@ import Tables.HistoryApproachesTable;
 import Tables.HistoryExercisesTable;
 import Tables.HistoryTable;
 
-public class HistoryFragment extends Fragment implements HistoryListAdapter.OnNoteListener {
+public class HistoryFragment extends Fragment {
 
     private SQLiteDatabase database;
     private HistoryListAdapter historyListAdapter;
@@ -63,7 +65,7 @@ public class HistoryFragment extends Fragment implements HistoryListAdapter.OnNo
 
         final RecyclerView recyclerView = view.findViewById(R.id.recyclerview_history);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        historyListAdapter = new HistoryListAdapter(requireContext(), getAllItems(), this);
+        historyListAdapter = new HistoryListAdapter(requireContext(), getAllItems());
         recyclerView.setAdapter(historyListAdapter);
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
@@ -74,8 +76,27 @@ public class HistoryFragment extends Fragment implements HistoryListAdapter.OnNo
             }
 
             @Override
-            public void onSwiped(@NotNull RecyclerView.ViewHolder viewHolder, int direction) {
-                removeItem((long) viewHolder.itemView.getTag());
+            public void onSwiped(@NotNull final RecyclerView.ViewHolder viewHolder, int direction) {
+                AlertDialog.Builder mDialogBuilder = new AlertDialog.Builder(requireContext());
+                mDialogBuilder
+                        .setMessage("Удалить историю?")
+                        .setCancelable(false)
+                        .setPositiveButton("Да",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        removeItem((long) viewHolder.itemView.getTag());
+                                    }
+                                })
+                        .setNegativeButton("Нет",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        historyListAdapter = new HistoryListAdapter(requireContext(), getAllItems());
+                                        recyclerView.setAdapter(historyListAdapter);
+                                        dialog.cancel();
+                                    }
+                                });
+                AlertDialog alertDialog = mDialogBuilder.create();
+                alertDialog.show();
             }
         }).attachToRecyclerView(recyclerView);
 
@@ -96,10 +117,6 @@ public class HistoryFragment extends Fragment implements HistoryListAdapter.OnNo
                             + HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_PROG_ID + "=? and "
                             + HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_DATE + "=?" ,
                     new String[]{exIdArray.get(i).toString(), String.valueOf(prog_id), date});
-        }
-        for (int i = 0; i<exIdArray.size(); i++){
-            database.delete(HistoryExercisesTable.HistoryExercisesEntry.TABLE_HISTORY_EXERCISES,
-                    HistoryExercisesTable.HistoryExercisesEntry._ID + "=" + exIdArray.get(i), null);
         }
 
         database.delete(HistoryTable.HistoryEntry.TABLE_HISTORY,
@@ -156,10 +173,6 @@ public class HistoryFragment extends Fragment implements HistoryListAdapter.OnNo
         }
         c.close();
         return a;
-    }
-
-    @Override
-    public void onNoteClick(int position) {
     }
 
 }

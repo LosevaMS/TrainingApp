@@ -31,6 +31,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 import Adapters.ApproachAdapter;
 import Tables.ApproachesTable;
@@ -51,26 +52,11 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
         super.onViewCreated(view, savedInstanceState);
         setRetainInstance(true);
 
-        BottomNavigationView navBar = getActivity().findViewById(R.id.nav_view);
+        BottomNavigationView navBar = requireActivity().findViewById(R.id.nav_view);
         navBar.setVisibility(View.GONE);
 
         DBHelper dbHelper = new DBHelper(requireContext());
         database = dbHelper.getWritableDatabase();
-
-       /* SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-
-        try {
-            Date date1 = formatter.parse("1999-01-01 13:01");
-            Date date2 = formatter.parse("1999-01-01 18:39");
-            if (date1.getTime()>date2.getTime())
-                Toast.makeText(getActivity(),"1 больше", Toast.LENGTH_LONG).show();
-            if (date1.getTime()<date2.getTime())
-                Toast.makeText(getActivity(),"2 больше", Toast.LENGTH_LONG).show();
-            if (date1.getTime()==date2.getTime())
-                Toast.makeText(getActivity(),"равны", Toast.LENGTH_LONG).show();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }*/
 
         assert getArguments() != null;
         final long arg1 = getArguments().getLong("ex_id");
@@ -87,11 +73,7 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
 
         final RecyclerView recyclerView2 = view.findViewById(R.id.approach_recyclerview);
         recyclerView2.setLayoutManager(new LinearLayoutManager(requireContext()));
-        try {
-            approachAdapter2 = new ApproachAdapter(requireContext(), getAllItems(arg1), this);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        approachAdapter2 = new ApproachAdapter(requireContext(), getAllItems(arg1), this);
         recyclerView2.setAdapter(approachAdapter2);
 
 
@@ -148,13 +130,9 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
                         .setPositiveButton("OK",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        try {
-                                            //addApproachInHistory(arg1, arg2);
-                                            addItem(arg1, arg2);
-                                        } catch (ParseException e) {
-                                            e.printStackTrace();
-                                        }
-                                        // dialog.cancel();
+                                        //addApproachInHistory(arg1, arg2);
+                                        addItem(arg1, arg2);
+                                        //dialog.cancel();
                                     }
                                 })
                         .setNegativeButton("Отмена",
@@ -170,11 +148,11 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
             }
         });
 
-        androidx.appcompat.widget.Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        androidx.appcompat.widget.Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final NavController navController = Navigation.findNavController(getView());
+                final NavController navController = Navigation.findNavController(requireView());
                 if (!navController.popBackStack()) {
                     navController.navigate(R.id.action_approach_to_training);
                 }
@@ -183,7 +161,7 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
 
     }
 
-    private void addApproachInHistory(long ex_id, int prog_id) throws ParseException {
+   /* private void addApproachInHistory(long ex_id, int prog_id) throws ParseException {
         if (inputWeight.getText().toString().trim().length() == 0
                 && inputCount.getText().toString().trim().length() == 0) {
             return;
@@ -204,9 +182,9 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
 
         database.insert(HistoryApproachesTable.HistoryApproachesEntry.TABLE_HISTORY_APPROACHES, null, cv);
 
-    }
+    }*/
 
-    private void addItem(long ex_id, int prog_id) throws ParseException {
+    private void addItem(long ex_id, int prog_id) {
 
         if (inputWeight.getText().toString().trim().length() == 0
                 && inputCount.getText().toString().trim().length() == 0) {
@@ -234,7 +212,7 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
         inputCount.getText().clear();
     }
 
-    private Cursor getAllItems(long id) throws ParseException {
+    private Cursor getAllItems(long id) {
 
         String whereClause = ApproachesTable.ApproachesEntry.APP_EX_ID + "=? AND " +
                 ApproachesTable.ApproachesEntry.APP_IS_CURRENT + "=?";
@@ -273,7 +251,7 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
         );
     }
 
-    public String searchPreviousDate(long id, Date date) throws ParseException {
+    private String searchPreviousDate(long id, Date date) throws ParseException {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
@@ -295,12 +273,13 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
         res = "error";
         Date date2;
         date2 = formatter.parse("1999-01-01 00:00");
-        boolean flag = false;
+
         while (c.moveToNext()) {
             a = c.getString(c.getColumnIndex("date"));
 
-            if (date2.getTime() < date.getTime() && date2.getTime() < formatter.parse(a).getTime()) {
-                    date2.setTime(formatter.parse(a).getTime());
+            assert date2 != null;
+            if (date2.getTime() < date.getTime() && date2.getTime() < Objects.requireNonNull(formatter.parse(a)).getTime()) {
+                    date2.setTime(Objects.requireNonNull(formatter.parse(a)).getTime());
                     res = a;
 
             }

@@ -126,10 +126,28 @@ public class EditTrainingFragment extends Fragment {
             }
 
             @Override
-            public void onSwiped(@NotNull RecyclerView.ViewHolder viewHolder, int direction) {
-                removeItem((long) viewHolder.itemView.getTag());
-                exerciseListAdapter = new ExerciseListAdapter(requireContext(), getAllItems(arg1));
-                recyclerView2.setAdapter(exerciseListAdapter);
+            public void onSwiped(@NotNull final RecyclerView.ViewHolder viewHolder, int direction) {
+                AlertDialog.Builder mDialogBuilder = new AlertDialog.Builder(requireContext());
+                mDialogBuilder
+                        .setMessage("Удалить упражнение?")
+                        .setCancelable(false)
+                        .setPositiveButton("Да",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        removeItem((long) viewHolder.itemView.getTag());
+                                    }
+                                })
+                        .setNegativeButton("Нет",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        exerciseListAdapter = new ExerciseListAdapter(requireContext(), getAllItems(arg1));
+                                        recyclerView2.setAdapter(exerciseListAdapter);
+                                        dialog.cancel();
+                                    }
+                                });
+                AlertDialog alertDialog = mDialogBuilder.create();
+                alertDialog.show();
+
             }
         }).attachToRecyclerView(recyclerView2);
 
