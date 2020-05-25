@@ -19,13 +19,14 @@ public class ChronometerHelper {
         mStartTime = startTime;
     }
 
-    public boolean isRunning(){
+    public boolean isRunning() {
         return mRunning;
     }
 
-    public void setRunning(final boolean running){
+    public void setRunning(final boolean running) {
         mRunning = running;
     }
+
     @Nullable
     public Long getPause() {
         return mPause;

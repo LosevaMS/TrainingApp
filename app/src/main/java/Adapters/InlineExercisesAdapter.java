@@ -197,9 +197,6 @@ public class InlineExercisesAdapter extends RecyclerView.Adapter implements Filt
         }
     }
 
-    public void setOnItemClickListener(ClickListener clickListener) {
-        InlineExercisesAdapter.mClickListener = clickListener;
-    }
     public interface ClickListener {
         void onItemClick(int position, View v);
     }

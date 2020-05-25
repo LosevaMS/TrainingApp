@@ -1,12 +1,8 @@
 package Adapters;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,11 +19,9 @@ import com.bumptech.glide.Glide;
 import com.example.globusproject.DBHelper;
 import com.example.globusproject.R;
 
-import java.util.ArrayList;
+import org.jetbrains.annotations.NotNull;
 
-import Tables.ApproachesTable;
 import Tables.HistoryTable;
-import Tables.ProgramTable;
 
 
 public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.HistoryListViewHolder> {
@@ -40,18 +34,17 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
         mCursor = cursor;
     }
 
-    public class HistoryListViewHolder extends RecyclerView.ViewHolder {
+    class HistoryListViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView program_name_item, date, time;
-        public CardView cardView;
-        public ImageView gym;
+        private TextView program_name_item, date, time;
+        private ImageView gym;
 
-        public HistoryListViewHolder(final View itemView) {
+        private HistoryListViewHolder(final View itemView) {
             super(itemView);
             program_name_item = itemView.findViewById(R.id.program_name_item_history);
             date = itemView.findViewById(R.id.date_history);
             time = itemView.findViewById(R.id.time_history);
-            cardView = itemView.findViewById(R.id.cv_history);
+            CardView cardView = itemView.findViewById(R.id.cv_history);
             gym = itemView.findViewById(R.id.gym);
 
             DBHelper dbHelper = new DBHelper(mContext);
@@ -66,7 +59,6 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
 
                     bundle.putLong("prog_id", searchProgId(id));
                     bundle.putString("date", searchDate(id));
-                    //bundle.putIntegerArrayList("ex_id",searchExId(id));
 
                     final NavController navController = Navigation.findNavController(itemView);
                     navController.navigate(R.id.action_navigation_history_to_fragment_history_training, bundle);
@@ -76,52 +68,36 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
         }
 
 
-        public int searchProgId(long id) {
+        private int searchProgId(long id) {
             String query = "select prog_id from " + HistoryTable.HistoryEntry.TABLE_HISTORY + " WHERE _id = " + id;
             Cursor c = database.rawQuery(query, null);
 
             int a = 0;
-            if (c.moveToFirst())
-            {
+            if (c.moveToFirst()) {
                 a = c.getInt(c.getColumnIndex("prog_id"));
             }
             c.close();
             return a;
         }
 
-        public ArrayList<Integer> searchExId(long id) {
-            String query = "select ex_id from " + HistoryTable.HistoryEntry.TABLE_HISTORY + " WHERE _id = " + id;
-            Cursor c = database.rawQuery(query, null);
-
-            ArrayList a = new ArrayList();
-            if (c.moveToNext())
-            {
-                a.add(c.getInt(c.getColumnIndex("ex_id")));
-            }
-            c.close();
-            return a;
-        }
-
-        public String searchDate(long id) {
+        private String searchDate(long id) {
             String query = "select date from " + HistoryTable.HistoryEntry.TABLE_HISTORY + " WHERE _id = " + id;
             Cursor c = database.rawQuery(query, null);
 
             String a = " ";
-            if (c.moveToFirst())
-            {
+            if (c.moveToFirst()) {
                 a = c.getString(c.getColumnIndex("date"));
             }
             c.close();
             return a;
         }
-
-
     }
 
     private SQLiteDatabase database;
 
+    @NotNull
     @Override
-    public HistoryListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public HistoryListViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View view = inflater.inflate(R.layout.history_card, parent, false);
 
@@ -142,7 +118,7 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
 
 
     @Override
-    public void onBindViewHolder(HistoryListViewHolder holder, int position) {
+    public void onBindViewHolder(@NotNull HistoryListViewHolder holder, int position) {
         if (!mCursor.moveToPosition(position)) {
             return;
         }
@@ -152,36 +128,20 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
         String time = mCursor.getString(mCursor.getColumnIndex(HistoryTable.HistoryEntry.HISTORY_TIME)) + " мин";
         String uri = mCursor.getString(mCursor.getColumnIndex(HistoryTable.HistoryEntry.HISTORY_URI));
 
-
         holder.program_name_item.setText(prog_name);
         holder.date.setText(date);
         holder.time.setText(time);
         holder.itemView.setTag(id);
 
-        if(uri.equals("null"))
+        if (uri.equals("null"))
             holder.gym.setImageResource(R.drawable.gym4app6);
         else
-        Glide.with(holder.itemView.getContext()).load(uri).into(holder.gym);
-
+            Glide.with(holder.itemView.getContext()).load(uri).into(holder.gym);
     }
-
-   /* public String searchUri(long id) {
-        String query = "select uri from " + ProgramTable.ProgramEntry.TABLE_PROGRAMS + " WHERE _id = " + id;
-        Cursor c = database.rawQuery(query, null);
-
-        String a = "not found";
-        if (c.moveToFirst()) ;
-        {
-            a = c.getString(c.getColumnIndex("uri"));
-        }
-        c.close();
-        return a;
-    }*/
 
     @Override
     public int getItemCount() {
         return mCursor.getCount();
-
     }
 
     public void swapCursor(Cursor newCursor) {

@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.globusproject.DBHelper;
 import com.example.globusproject.R;
 
+import org.jetbrains.annotations.NotNull;
+
 import Tables.ApproachesTable;
 import Tables.HistoryApproachesTable;
 
@@ -25,21 +27,19 @@ public class HistoryApproachAdapter extends RecyclerView.Adapter<HistoryApproach
         mCursor = cursor;
     }
 
-    public class HistoryApproachViewHolder extends RecyclerView.ViewHolder {
-        public TextView weight, count, number, kgx;
+    class HistoryApproachViewHolder extends RecyclerView.ViewHolder {
+        private TextView weight;
+        private TextView count;
 
-        public HistoryApproachViewHolder(final View itemView) {
+        private HistoryApproachViewHolder(final View itemView) {
             super(itemView);
             weight = itemView.findViewById(R.id.app_item_weight);
             count = itemView.findViewById(R.id.app_item_count);
-            number = itemView.findViewById(R.id.number);
-            kgx = itemView.findViewById(R.id.kgx);
 
             DBHelper dbHelper = new DBHelper(mContext);
             database = dbHelper.getWritableDatabase();
 
         }
-
 
         private Cursor getAllItems(long ex_id) {
             return database.query(
@@ -56,15 +56,16 @@ public class HistoryApproachAdapter extends RecyclerView.Adapter<HistoryApproach
 
     private SQLiteDatabase database;
 
+    @NotNull
     @Override
-    public HistoryApproachViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public HistoryApproachViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from((mContext));
         View view = inflater.inflate(R.layout.app_item_for_history, parent, false);
         return new HistoryApproachViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(HistoryApproachViewHolder holder, int position) {
+    public void onBindViewHolder(@NotNull HistoryApproachViewHolder holder, int position) {
         if (!mCursor.moveToPosition(position)) {
             return;
         }

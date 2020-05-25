@@ -31,11 +31,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 import Adapters.ApproachAdapter;
 import Tables.ApproachesTable;
-import Tables.HistoryApproachesTable;
 
 public class ApproachFragment extends Fragment implements ApproachAdapter.OnNoteListener {
 
@@ -161,29 +161,6 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
 
     }
 
-   /* private void addApproachInHistory(long ex_id, int prog_id) throws ParseException {
-        if (inputWeight.getText().toString().trim().length() == 0
-                && inputCount.getText().toString().trim().length() == 0) {
-            return;
-        }
-
-        double weight = Double.parseDouble(inputWeight.getText().toString());
-        int count = Integer.parseInt(inputCount.getText().toString());
-
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        Date date = new Date();
-
-        ContentValues cv = new ContentValues();
-        cv.put(HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_WEIGHT, weight);
-        cv.put(HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_COUNT, count);
-        cv.put(HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_EX_ID, (int) ex_id);
-        cv.put(HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_PROG_ID, prog_id);
-        cv.put(HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_DATE, formatter.format(date));
-
-        database.insert(HistoryApproachesTable.HistoryApproachesEntry.TABLE_HISTORY_APPROACHES, null, cv);
-
-    }*/
-
     private void addItem(long ex_id, int prog_id) {
 
         if (inputWeight.getText().toString().trim().length() == 0
@@ -194,7 +171,7 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
         double weight = Double.parseDouble(inputWeight.getText().toString());
         int count = Integer.parseInt(inputCount.getText().toString());
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
         Date date = new Date();
 
         ContentValues cv = new ContentValues();
@@ -232,7 +209,7 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
 
     private Cursor getPreviousItems(long id) throws ParseException {
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
         Date date1 = new Date();
         formatter.format(date1);
 
@@ -253,7 +230,7 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
 
     private String searchPreviousDate(long id, Date date) throws ParseException {
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
 
         String whereClause = ApproachesTable.ApproachesEntry.APP_EX_ID + "=? AND " +
                 ApproachesTable.ApproachesEntry.APP_IS_CURRENT + "=?";
@@ -279,8 +256,8 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
 
             assert date2 != null;
             if (date2.getTime() < date.getTime() && date2.getTime() < Objects.requireNonNull(formatter.parse(a)).getTime()) {
-                    date2.setTime(Objects.requireNonNull(formatter.parse(a)).getTime());
-                    res = a;
+                date2.setTime(Objects.requireNonNull(formatter.parse(a)).getTime());
+                res = a;
 
             }
         }

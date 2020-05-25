@@ -21,7 +21,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
 import Adapters.HistoryApproachAdapter;
-import Tables.ApproachesTable;
 import Tables.HistoryApproachesTable;
 
 public class HistoryApproachFragment extends Fragment {
@@ -37,7 +36,7 @@ public class HistoryApproachFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         setRetainInstance(true);
 
-        BottomNavigationView navBar = getActivity().findViewById(R.id.nav_view);
+        BottomNavigationView navBar = requireActivity().findViewById(R.id.nav_view);
         navBar.setVisibility(View.GONE);
 
         DBHelper dbHelper = new DBHelper(requireContext());
@@ -54,11 +53,11 @@ public class HistoryApproachFragment extends Fragment {
         recyclerView.setAdapter(historyApproachAdapter);
 
 
-        androidx.appcompat.widget.Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        androidx.appcompat.widget.Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final NavController navController = Navigation.findNavController(getView());
+                final NavController navController = Navigation.findNavController(requireView());
                 if (!navController.popBackStack()) {
                     navController.navigate(R.id.action_fragment_history_approach_to_fragment_history_training);
                 }

@@ -6,15 +6,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
 import androidx.navigation.NavController;
@@ -25,6 +22,8 @@ import com.bumptech.glide.Glide;
 import com.example.globusproject.DBHelper;
 import com.example.globusproject.R;
 
+
+import org.jetbrains.annotations.NotNull;
 
 import Tables.ProgramTable;
 
@@ -39,21 +38,19 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
         mCursor = cursor;
     }
 
-    public class ProgramListViewHolder extends RecyclerView.ViewHolder {
+    class ProgramListViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView program_name_item;
-        public ImageView delete_item, edit_item, play_item, gym;
-        public CardView cardView;
+        private TextView program_name_item;
+        private ImageView gym;
 
 
-        public ProgramListViewHolder(final View itemView) {
+        private ProgramListViewHolder(final View itemView) {
             super(itemView);
             program_name_item = itemView.findViewById(R.id.program_name_item);
-            delete_item = itemView.findViewById(R.id.delete_item);
-            edit_item = itemView.findViewById(R.id.edit_item);
-            play_item = itemView.findViewById(R.id.play_item);
+            ImageView delete_item = itemView.findViewById(R.id.delete_item);
+            ImageView edit_item = itemView.findViewById(R.id.edit_item);
             gym = itemView.findViewById(R.id.gym);
-            cardView = itemView.findViewById(R.id.cv);
+            CardView cardView = itemView.findViewById(R.id.cv);
 
             DBHelper dbHelper = new DBHelper(mContext);
             database = dbHelper.getWritableDatabase();
@@ -113,12 +110,12 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
             }
         };
 
-        public String searchName(long id) {
+        private String searchName(long id) {
             String query = "select name from " + ProgramTable.ProgramEntry.TABLE_PROGRAMS + " WHERE _id = " + id;
             Cursor c = database.rawQuery(query, null);
 
             String a = "not found";
-            if (c.moveToFirst()) ;
+            if (c.moveToFirst())
             {
                 a = c.getString(c.getColumnIndex("name"));
             }
@@ -130,8 +127,9 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
 
     private SQLiteDatabase database;
 
+    @NotNull
     @Override
-    public ProgramListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ProgramListViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         View view = inflater.inflate(R.layout.program_card, parent, false);
 
@@ -151,7 +149,7 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
     }
 
     @Override
-    public void onBindViewHolder(ProgramListViewHolder holder, int position) {
+    public void onBindViewHolder(@NotNull ProgramListViewHolder holder, int position) {
         if (!mCursor.moveToPosition(position)) {
             return;
         }
@@ -173,7 +171,6 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
     @Override
     public int getItemCount() {
         return mCursor.getCount();
-
     }
 
     public void swapCursor(Cursor newCursor) {

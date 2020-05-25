@@ -1,21 +1,16 @@
 package Fragments;
 
-import android.content.ClipData;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -37,12 +32,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.Objects;
 
 import Adapters.ExercisesAdapter;
 import Tables.ApproachesTable;
 import Tables.ExercisesTable;
 import Tables.HistoryApproachesTable;
-import Tables.HistoryExercisesTable;
 import Tables.HistoryTable;
 import Tables.ProgramTable;
 
@@ -66,20 +62,21 @@ public class TrainingFragment extends Fragment {
         setRetainInstance(true);
         setHasOptionsMenu(true);
 
-        BottomNavigationView navBar = getActivity().findViewById(R.id.nav_view);
+        BottomNavigationView navBar = requireActivity().findViewById(R.id.nav_view);
 
-        navBar.setVisibility(View.GONE);assert getArguments() != null;
+        navBar.setVisibility(View.GONE);
+        assert getArguments() != null;
         final long arg1 = getArguments().getLong("prog_id");
         final String arg2 = getArguments().getString("prog_name");
 
-        ((AppCompatActivity) requireActivity()).getSupportActionBar().setTitle(arg2);
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle(arg2);
 
         TextView finishText = view.findViewById(R.id.finish_training);
 
         DBHelper dbHelper = new DBHelper(requireContext());
         database = dbHelper.getWritableDatabase();
 
-        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
         final Date date = new Date();
 
         final RecyclerView recyclerView2 = view.findViewById(R.id.exercises_recyclerview);
@@ -93,18 +90,18 @@ public class TrainingFragment extends Fragment {
 
                 chronometer.stop();
                 int elapsed;
-                if (chronometerHelper.getPause()!=null && !chronometerHelper.isRunning())
+                if (chronometerHelper.getPause() != null && !chronometerHelper.isRunning())
                     elapsed = chronometerHelper.getPause().intValue();
                 else
-                 elapsed = (int)(SystemClock.elapsedRealtime()-chronometer.getBase());
+                    elapsed = (int) (SystemClock.elapsedRealtime() - chronometer.getBase());
 
-                int time = elapsed/60000;
-                Toast.makeText(getActivity(), "Time is: "+time+" min",
+                int time = elapsed / 60000;
+                Toast.makeText(getActivity(), "Time is: " + time + " min",
                         Toast.LENGTH_LONG).show();
-                resetChronometer(v);
-                pauseChronometer(v);
+                resetChronometer();
+                pauseChronometer();
 
-                btnPause=true;
+                btnPause = true;
 
                 ContentValues cv = new ContentValues();
                 cv.put(HistoryTable.HistoryEntry.HISTORY_PROG_ID, arg1);
@@ -113,7 +110,6 @@ public class TrainingFragment extends Fragment {
                 cv.put(HistoryTable.HistoryEntry.HISTORY_DATE, formatter.format(date));
                 cv.put(HistoryTable.HistoryEntry.HISTORY_TIME, time);
 
-                //addExercisesInHistory(formatter.format(date));
                 addApproachesInHistory(formatter.format(date));
                 changeApproachesState(formatter.format(date));
 
@@ -124,12 +120,11 @@ public class TrainingFragment extends Fragment {
             }
         });
 
-        androidx.appcompat.widget.Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        androidx.appcompat.widget.Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //pauseChronometer(requireView());
-                final NavController navController = Navigation.findNavController(getView());
+                final NavController navController = Navigation.findNavController(requireView());
                 if (!navController.popBackStack()) {
                     navController.navigate(R.id.action_training_to_navigation_list);
                 }
@@ -137,20 +132,20 @@ public class TrainingFragment extends Fragment {
         });
     }
 
-    public void changeApproachesState(String date){
+    private void changeApproachesState(String date) {
 
         ContentValues cv = new ContentValues();
-        cv.put(ApproachesTable.ApproachesEntry.APP_IS_CURRENT,false);
+        cv.put(ApproachesTable.ApproachesEntry.APP_IS_CURRENT, false);
         cv.put(ApproachesTable.ApproachesEntry.APP_DATE, date);
 
         database.update(ApproachesTable.ApproachesEntry.TABLE_APPROACHES, cv,
-                ApproachesTable.ApproachesEntry.APP_IS_CURRENT + "=" + 1,null);
+                ApproachesTable.ApproachesEntry.APP_IS_CURRENT + "=" + 1, null);
 
     }
 
-    public void addApproachesInHistory(String date){
+    private void addApproachesInHistory(String date) {
 
-        ContentValues cv = new ContentValues();
+        ContentValues cv;
 
         String whereClause = ApproachesTable.ApproachesEntry.APP_IS_CURRENT + "=?";
         String[] whereArgs = new String[]{String.valueOf(1)};
@@ -165,7 +160,7 @@ public class TrainingFragment extends Fragment {
                 null
         );
 
-        while (c.moveToNext()){
+        while (c.moveToNext()) {
             cv = new ContentValues();
             cv.put(HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_PROG_ID,
                     c.getInt(c.getColumnIndex(ApproachesTable.ApproachesEntry.APP_PROG_ID)));
@@ -178,17 +173,17 @@ public class TrainingFragment extends Fragment {
                     c.getDouble(c.getColumnIndex(ApproachesTable.ApproachesEntry.APP_WEIGHT)));
             cv.put(HistoryApproachesTable.HistoryApproachesEntry._ID,
                     c.getInt(c.getColumnIndex(ApproachesTable.ApproachesEntry._ID)));
-            database.insert(HistoryApproachesTable.HistoryApproachesEntry.TABLE_HISTORY_APPROACHES,null,cv);
+            database.insert(HistoryApproachesTable.HistoryApproachesEntry.TABLE_HISTORY_APPROACHES, null, cv);
         }
+        c.close();
     }
 
-    public String searchUri(long id) {
+    private String searchUri(long id) {
         String query = "select uri from " + ProgramTable.ProgramEntry.TABLE_PROGRAMS + " WHERE _id = " + id;
         Cursor c = database.rawQuery(query, null);
 
         String a = "not found";
-        if (c.moveToFirst()) ;
-        {
+        if (c.moveToFirst()) {
             a = c.getString(c.getColumnIndex("uri"));
         }
         c.close();
@@ -207,29 +202,12 @@ public class TrainingFragment extends Fragment {
         );
     }
 
-   /* private void addExercisesInHistory(String date){
-        Cursor exCursor = getAllItems(getArguments().getLong("prog_id"));
-
-        while (exCursor.moveToNext()){
-            ContentValues cv = new ContentValues();
-            cv.put(HistoryExercisesTable.HistoryExercisesEntry._ID,
-                    exCursor.getInt(exCursor.getColumnIndex( ExercisesTable.ExercisesEntry._ID)));
-            cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_NAME,
-                    exCursor.getString(exCursor.getColumnIndex( ExercisesTable.ExercisesEntry.EX_NAME)));
-            cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_URI,
-                    exCursor.getString(exCursor.getColumnIndex( ExercisesTable.ExercisesEntry.EX_URI)));
-            cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_PROG_ID, getArguments().getLong("prog_id"));
-            cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_DATE, date);
-            database.insert(HistoryExercisesTable.HistoryExercisesEntry.TABLE_HISTORY_EXERCISES, null, cv);
-        }
-        exCursor.close();
-    }*/
-
-    public void startChronometer(View v) {
+    private void startChronometer() {
         if (!chronometerHelper.isRunning()) {
-            if (chronometerHelper.getPause()!=null){ chronometer.setBase(SystemClock.elapsedRealtime() - chronometerHelper.getPause());
-            chronometerHelper.setStartTime(SystemClock.elapsedRealtime() - chronometerHelper.getPause());}
-            else{
+            if (chronometerHelper.getPause() != null) {
+                chronometer.setBase(SystemClock.elapsedRealtime() - chronometerHelper.getPause());
+                chronometerHelper.setStartTime(SystemClock.elapsedRealtime() - chronometerHelper.getPause());
+            } else {
                 chronometer.setBase(SystemClock.elapsedRealtime());
                 chronometerHelper.setStartTime(SystemClock.elapsedRealtime());
             }
@@ -238,7 +216,7 @@ public class TrainingFragment extends Fragment {
         }
     }
 
-    public void pauseChronometer(View v) {
+    private void pauseChronometer() {
         if (chronometerHelper.isRunning()) {
             chronometer.stop();
             chronometerHelper.setPause(SystemClock.elapsedRealtime() - chronometer.getBase());
@@ -246,7 +224,7 @@ public class TrainingFragment extends Fragment {
         }
     }
 
-    public void resetChronometer(View v) {
+    private void resetChronometer() {
         chronometer.setBase(SystemClock.elapsedRealtime());
         chronometerHelper.setStartTime(SystemClock.elapsedRealtime());
         chronometerHelper.setPause(0);
@@ -254,7 +232,7 @@ public class TrainingFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_for_training_fragment,menu);
+        inflater.inflate(R.menu.menu_for_training_fragment, menu);
         menu.findItem(R.id.play_item).setVisible(true);
         menu.findItem(R.id.timer_item).setVisible(true);
 
@@ -264,31 +242,32 @@ public class TrainingFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
 
-      if (btnPause){
-          item.setIcon(R.drawable.ic_pause);
-          startChronometer(requireView());
-          btnPause = false;
-      }else{
-          item.setIcon(R.drawable.ic_play_white);
-          pauseChronometer(requireView());
-          btnPause = true;
-      }
+        if (btnPause) {
+            item.setIcon(R.drawable.ic_pause);
+            startChronometer();
+            btnPause = false;
+        } else {
+            item.setIcon(R.drawable.ic_play_white);
+            pauseChronometer();
+            btnPause = true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
-        final MenuItem menuItem  = menu.findItem(R.id.timer_item);
+        final MenuItem menuItem = menu.findItem(R.id.timer_item);
         FrameLayout rootView = (FrameLayout) menuItem.getActionView();
-        chronometer = (Chronometer) rootView.findViewById(R.id.chronometer2);
+        chronometer = rootView.findViewById(R.id.chronometer2);
         chronometerHelper = new ChronometerHelper();
 
         MenuItem playPauseBtn = menu.findItem(R.id.play_item);
         if (chronometerHelper.isRunning()) playPauseBtn.setIcon(R.drawable.ic_pause);
 
         if (chronometerHelper.getStartTime() != null) {
-            if (chronometerHelper.getPause()==null) chronometer.setBase(chronometerHelper.getStartTime());
-            else chronometer.setBase(SystemClock.elapsedRealtime()-chronometerHelper.getPause());
+            if (chronometerHelper.getPause() == null)
+                chronometer.setBase(chronometerHelper.getStartTime());
+            else chronometer.setBase(SystemClock.elapsedRealtime() - chronometerHelper.getPause());
         }
         if (chronometerHelper.getStartTime() != null && chronometerHelper.isRunning()) {
             chronometer.setBase(chronometerHelper.getStartTime());

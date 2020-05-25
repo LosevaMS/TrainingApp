@@ -9,14 +9,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 
 import Adapters.HistoryListAdapter;
-import Tables.ApproachesTable;
 import Tables.HistoryApproachesTable;
 import Tables.HistoryExercisesTable;
 import Tables.HistoryTable;
@@ -57,7 +52,7 @@ public class HistoryFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         setRetainInstance(true);
 
-        BottomNavigationView navBar = getActivity().findViewById(R.id.nav_view);
+        BottomNavigationView navBar = requireActivity().findViewById(R.id.nav_view);
         navBar.setVisibility(View.VISIBLE);
 
         DBHelper dbHelper = new DBHelper(requireContext());
@@ -111,11 +106,11 @@ public class HistoryFragment extends Fragment {
 
         ArrayList<Integer> exIdArray = searchExId(prog_id);
 
-        for (int i = 0; i<exIdArray.size(); i++){
+        for (int i = 0; i < exIdArray.size(); i++) {
             database.delete(HistoryApproachesTable.HistoryApproachesEntry.TABLE_HISTORY_APPROACHES,
                     HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_EX_ID + "=? and "
                             + HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_PROG_ID + "=? and "
-                            + HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_DATE + "=?" ,
+                            + HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_DATE + "=?",
                     new String[]{exIdArray.get(i).toString(), String.valueOf(prog_id), date});
         }
 
@@ -136,39 +131,36 @@ public class HistoryFragment extends Fragment {
         );
     }
 
-    public int searchProgId(long id) {
+    private int searchProgId(long id) {
         String query = "select prog_id from " + HistoryTable.HistoryEntry.TABLE_HISTORY + " WHERE _id = " + id;
         Cursor c = database.rawQuery(query, null);
 
         int a = 0;
-        if (c.moveToFirst())
-        {
+        if (c.moveToFirst()) {
             a = c.getInt(c.getColumnIndex("prog_id"));
         }
         c.close();
         return a;
     }
 
-    public String searchDate(long id) {
+    private String searchDate(long id) {
         String query = "select date from " + HistoryTable.HistoryEntry.TABLE_HISTORY + " WHERE _id = " + id;
         Cursor c = database.rawQuery(query, null);
 
         String a = " ";
-        if (c.moveToFirst())
-        {
+        if (c.moveToFirst()) {
             a = c.getString(c.getColumnIndex("date"));
         }
         c.close();
         return a;
     }
 
-    public ArrayList<Integer> searchExId(int id) {
+    private ArrayList<Integer> searchExId(int id) {
         String query = "select _id from " + HistoryExercisesTable.HistoryExercisesEntry.TABLE_HISTORY_EXERCISES + " WHERE prog_id = " + id;
         Cursor c = database.rawQuery(query, null);
 
-        ArrayList a = new ArrayList();
-        while (c.moveToNext())
-        {
+        ArrayList<Integer> a = new ArrayList<>();
+        while (c.moveToNext()) {
             a.add(c.getInt(c.getColumnIndex("_id")));
         }
         c.close();

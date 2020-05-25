@@ -18,6 +18,8 @@ import com.bumptech.glide.Glide;
 import com.example.globusproject.DBHelper;
 import com.example.globusproject.R;
 
+import org.jetbrains.annotations.NotNull;
+
 import Tables.ExercisesTable;
 
 public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.ExercisesViewHolder> {
@@ -29,11 +31,11 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
         mCursor = cursor;
     }
 
-    public class ExercisesViewHolder extends RecyclerView.ViewHolder {
-        public TextView nameText;
-        public ImageView exerciseImage;
+    class ExercisesViewHolder extends RecyclerView.ViewHolder {
+        private TextView nameText;
+        private ImageView exerciseImage;
 
-        public ExercisesViewHolder(final View itemView) {
+        private ExercisesViewHolder(final View itemView) {
             super(itemView);
             nameText = itemView.findViewById(R.id.ex_name_item_training);
             exerciseImage = itemView.findViewById(R.id.ex_image_training);
@@ -56,12 +58,12 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
 
         }
 
-        public int searchProgId(long id) {
+        private int searchProgId(long id) {
             String query = "select _program_id from " + ExercisesTable.ExercisesEntry.TABLE_EXERCISES + " WHERE _id = " + id;
             Cursor c = database.rawQuery(query, null);
 
             int a = 0;
-            if (c.moveToFirst()) ;
+            if (c.moveToFirst())
             {
                 a = c.getInt(c.getColumnIndex("_program_id"));
             }
@@ -69,18 +71,6 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
             return a;
         }
 
-        public long searchId(long id) {
-            String query = "select _program_id from " + ExercisesTable.ExercisesEntry.TABLE_EXERCISES + " WHERE _id = " + id;
-            Cursor c = database.rawQuery(query, null);
-
-            long a;
-            if (c.moveToFirst()) ;
-            {
-                a = c.getLong(c.getColumnIndex("_program_id"));
-            }
-            c.close();
-            return a;
-        }
 
         private Cursor getAllItems(long prog_id) {
             return database.query(
@@ -97,15 +87,16 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
 
     private SQLiteDatabase database;
 
+    @NotNull
     @Override
-    public ExercisesAdapter.ExercisesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ExercisesAdapter.ExercisesViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from((mContext));
         View view = inflater.inflate(R.layout.ex_item, parent, false);
         return new ExercisesAdapter.ExercisesViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ExercisesAdapter.ExercisesViewHolder holder, int position) {
+    public void onBindViewHolder(@NotNull ExercisesAdapter.ExercisesViewHolder holder, int position) {
         if (!mCursor.moveToPosition(position)) {
             return;
         }
@@ -116,7 +107,7 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
         holder.nameText.setText(name);
         holder.itemView.setTag(id);
 
-        if(!uri.equals("null") && uri.contains(".gif"))
+        if (!uri.equals("null") && uri.contains(".gif"))
             Glide
                     .with(holder.itemView.getContext())
                     .asGif()

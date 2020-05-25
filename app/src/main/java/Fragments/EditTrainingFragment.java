@@ -25,13 +25,10 @@ import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -43,13 +40,11 @@ import com.example.globusproject.InlineExercises;
 import com.example.globusproject.R;
 import com.example.globusproject.SharedViewModel;
 import com.github.clans.fab.FloatingActionButton;
-import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import Adapters.ExerciseListAdapter;
 import Tables.ExercisesTable;
@@ -72,9 +67,6 @@ public class EditTrainingFragment extends Fragment {
     private ImageView imageView;
     private Uri uri;
     private Button loadImage_btn;
-    private CardView cardView;
-
-    private SharedViewModel viewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_edit_training, container, false);
@@ -82,7 +74,7 @@ public class EditTrainingFragment extends Fragment {
 
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
 
-        BottomNavigationView navBar = getActivity().findViewById(R.id.nav_view);
+        BottomNavigationView navBar = requireActivity().findViewById(R.id.nav_view);
         navBar.setVisibility(GONE);
 
         setRetainInstance(true);
@@ -167,7 +159,6 @@ public class EditTrainingFragment extends Fragment {
                 userInput2 = promptsView.findViewById(R.id.input_text);
                 loadImage_btn = promptsView.findViewById(R.id.load_image_btn);
                 imageView = promptsView.findViewById(R.id.preview_image);
-                cardView = promptsView.findViewById(R.id.cardview_for_preview);
 
                 uri = null;
 
@@ -206,7 +197,6 @@ public class EditTrainingFragment extends Fragment {
                                 });
                 AlertDialog alertDialog = mDialogBuilder.create();
                 alertDialog.show();
-                // alertDialog.getWindow().setLayout(860, 1000);
                 userInput2.getText().clear();
             }
         });
@@ -220,30 +210,29 @@ public class EditTrainingFragment extends Fragment {
         });
 
 
-        viewModel = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
+        SharedViewModel viewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
         viewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<InlineExercises>>() {
             @Override
             public void onChanged(@Nullable ArrayList<InlineExercises> selectedExercises) {
                 assert selectedExercises != null;
                 for (int i = 0; i < selectedExercises.size(); i++) {
-                    /*Toast.makeText(getActivity(), selectedExercises.get(i).getName() + " ",
-                            Toast.LENGTH_SHORT).show();*/
-                    addFromInlineList(arg1,selectedExercises.get(i));
+                    addFromInlineList(arg1, selectedExercises.get(i));
                 }
             }
         });
         viewModel.deleteAll();
 
-        OnBackPressedCallback callback = new OnBackPressedCallback(true ) {
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 String name = userInput.getText().toString();
                 ContentValues cv = new ContentValues();
                 cv.put(ProgramTable.ProgramEntry.PROG_NAME, name);
+                assert getArguments() != null;
                 database.update(ProgramTable.ProgramEntry.TABLE_PROGRAMS, cv,
-                        ProgramTable.ProgramEntry._ID + "=" + (int) (getArguments().getLong("prog_id")),null);
+                        ProgramTable.ProgramEntry._ID + "=" + (int) (getArguments().getLong("prog_id")), null);
 
-                final NavController navController = Navigation.findNavController(getView());
+                final NavController navController = Navigation.findNavController(requireView());
                 if (!navController.popBackStack()) {
                     navController.navigate(R.id.action_edit_training_to_navigation_list);
                 }
@@ -251,16 +240,17 @@ public class EditTrainingFragment extends Fragment {
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), callback);
 
-        androidx.appcompat.widget.Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        androidx.appcompat.widget.Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String name = userInput.getText().toString();
                 ContentValues cv = new ContentValues();
                 cv.put(ProgramTable.ProgramEntry.PROG_NAME, name);
+                assert getArguments() != null;
                 database.update(ProgramTable.ProgramEntry.TABLE_PROGRAMS, cv,
-                        ProgramTable.ProgramEntry._ID + "=" + (int) (getArguments().getLong("prog_id")),null);
-                final NavController navController = Navigation.findNavController(getView());
+                        ProgramTable.ProgramEntry._ID + "=" + (int) (getArguments().getLong("prog_id")), null);
+                final NavController navController = Navigation.findNavController(requireView());
                 if (!navController.popBackStack()) {
                     navController.navigate(R.id.action_edit_training_to_navigation_list);
                 }
@@ -283,15 +273,13 @@ public class EditTrainingFragment extends Fragment {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_CODE: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    pickImageFromGallery();
-                } else {
-                    Toast toast = Toast.makeText(requireContext(),
-                            "Permissions denied", Toast.LENGTH_LONG);
-                    toast.show();
-                }
+        if (requestCode == PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                pickImageFromGallery();
+            } else {
+                Toast toast = Toast.makeText(requireContext(),
+                        "Permissions denied", Toast.LENGTH_LONG);
+                toast.show();
             }
         }
     }
@@ -300,20 +288,23 @@ public class EditTrainingFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == IMAGE_PICK_CODE) {
+            assert data != null;
             uri = data.getData();
             imageView.setImageURI(data.getData());
         }
         if (resultCode == RESULT_OK && requestCode == IMAGE_CHANGE_CODE) {
+            assert data != null;
             uri = data.getData();
             ContentValues cv = new ContentValues();
             cv.put(ProgramTable.ProgramEntry.PROG_URI, String.valueOf(uri));
 
+            assert getArguments() != null;
             database.update(ProgramTable.ProgramEntry.TABLE_PROGRAMS, cv,
-                    ProgramTable.ProgramEntry._ID + "=" + (int) (getArguments().getLong("prog_id")),null);
+                    ProgramTable.ProgramEntry._ID + "=" + (int) (getArguments().getLong("prog_id")), null);
         }
     }
 
-    private void addFromInlineList(long id, InlineExercises item){
+    private void addFromInlineList(long id, InlineExercises item) {
 
         ContentValues cv = new ContentValues();
         cv.put(ExercisesTable.ExercisesEntry.EX_NAME, item.getName());
@@ -324,8 +315,8 @@ public class EditTrainingFragment extends Fragment {
         exerciseListAdapter.swapCursor(getAllItems(id));
 
         cv = new ContentValues();
-        cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_NAME,item.getName());
-        cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_PROG_ID,(int)id);
+        cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_NAME, item.getName());
+        cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_PROG_ID, (int) id);
         cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_URI, item.getUri());
 
         database.insert(HistoryExercisesTable.HistoryExercisesEntry.TABLE_HISTORY_EXERCISES, null, cv);
@@ -347,8 +338,8 @@ public class EditTrainingFragment extends Fragment {
         exerciseListAdapter.swapCursor(getAllItems(id));
 
         cv = new ContentValues();
-        cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_NAME,name);
-        cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_PROG_ID,(int)id);
+        cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_NAME, name);
+        cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_PROG_ID, (int) id);
         cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_URI, String.valueOf(uri));
 
         database.insert(HistoryExercisesTable.HistoryExercisesEntry.TABLE_HISTORY_EXERCISES, null, cv);
@@ -359,6 +350,7 @@ public class EditTrainingFragment extends Fragment {
     private void removeItem(long id) {
         database.delete(ExercisesTable.ExercisesEntry.TABLE_EXERCISES,
                 ExercisesTable.ExercisesEntry._ID + "=" + id, null);
+        assert getArguments() != null;
         exerciseListAdapter.swapCursor(getAllItems(getArguments().getLong("prog_id")));
     }
 
@@ -376,7 +368,7 @@ public class EditTrainingFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_for_edit_training_fragment,menu);
+        inflater.inflate(R.menu.menu_for_edit_training_fragment, menu);
         menu.findItem(R.id.change_photo_item).setVisible(true);
 
         super.onCreateOptionsMenu(menu, inflater);
@@ -385,7 +377,7 @@ public class EditTrainingFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
 
-        if (item.getItemId()==R.id.change_photo_item){
+        if (item.getItemId() == R.id.change_photo_item) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                         == PackageManager.PERMISSION_DENIED) {
@@ -398,17 +390,6 @@ public class EditTrainingFragment extends Fragment {
                 changeImageFromGallery();
             }
         }
-       /* if(item.getItemId()==android.R.id.home){
-            String name = userInput.getText().toString();
-            ContentValues cv = new ContentValues();
-            cv.put(ProgramTable.ProgramEntry.PROG_NAME, name);
-            database.update(ProgramTable.ProgramEntry.TABLE_PROGRAMS, cv,
-                    ProgramTable.ProgramEntry._ID + "=" + (int) (getArguments().getLong("prog_id")),null);
-            final NavController navController = Navigation.findNavController(getView());
-            if (!navController.popBackStack()) {
-                navController.navigate(R.id.action_edit_training_to_navigation_list);
-            }
-        }*/
         return super.onOptionsItemSelected(item);
     }
 }

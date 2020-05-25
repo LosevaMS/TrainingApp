@@ -1,33 +1,24 @@
 package Adapters;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.globusproject.DBHelper;
 import com.example.globusproject.R;
 
+import org.jetbrains.annotations.NotNull;
+
 import Tables.ApproachesTable;
-import Tables.ExercisesTable;
 import Tables.HistoryExercisesTable;
-import Tables.HistoryTable;
 
 public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTrainingAdapter.HistoryTrainingViewHolder> {
     private Context mContext;
@@ -41,11 +32,11 @@ public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTraining
     }
 
     public class HistoryTrainingViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView exerciseName;
-        public ImageView exerciseImage;
+        private TextView exerciseName;
+        private ImageView exerciseImage;
         ClickListener clickListener;
 
-        public HistoryTrainingViewHolder(final View itemView, ClickListener clickListener) {
+        private HistoryTrainingViewHolder(final View itemView, ClickListener clickListener) {
             super(itemView);
 
             exerciseName = itemView.findViewById(R.id.ex_name_item_training);
@@ -63,33 +54,6 @@ public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTraining
             clickListener.onItemClick(getAdapterPosition(), v);
         }
 
-        public int searchProgId(long id) {
-            String query = "select _program_id from " + ExercisesTable.ExercisesEntry.TABLE_EXERCISES + " WHERE _id = " + id;
-            Cursor c = database.rawQuery(query, null);
-
-            int a = 0;
-            if (c.moveToFirst()) ;
-            {
-                a = c.getInt(c.getColumnIndex("_program_id"));
-            }
-            c.close();
-            return a;
-        }
-
-        public String searchDate(long id) {
-            String query = "select date from " + HistoryTable.HistoryEntry.TABLE_HISTORY + " WHERE prog_id = " + id;
-            Cursor c = database.rawQuery(query, null);
-
-            String a = " ";
-            if (c.moveToFirst()) ;
-            {
-                a = c.getString(c.getColumnIndex("date"));
-            }
-            c.close();
-            return a;
-        }
-
-
         private Cursor getAllItems(long ex_id) {
             return database.query(
                     ApproachesTable.ApproachesEntry.TABLE_APPROACHES,
@@ -106,15 +70,16 @@ public class HistoryTrainingAdapter extends RecyclerView.Adapter<HistoryTraining
 
     private SQLiteDatabase database;
 
+    @NotNull
     @Override
-    public HistoryTrainingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public HistoryTrainingViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from((mContext));
         View view = inflater.inflate(R.layout.ex_item, parent, false);
         return new HistoryTrainingViewHolder(view, mClickListener);
     }
 
     @Override
-    public void onBindViewHolder(HistoryTrainingViewHolder holder, int position) {
+    public void onBindViewHolder(@NotNull HistoryTrainingViewHolder holder, int position) {
         if (!mCursor.moveToPosition(position)) {
             return;
         }

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,8 +20,6 @@ import com.example.globusproject.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import Adapters.HistoryTrainingAdapter;
-import Tables.ApproachesTable;
-import Tables.ExercisesTable;
 import Tables.HistoryExercisesTable;
 
 public class HistoryTrainingFragment extends Fragment implements HistoryTrainingAdapter.ClickListener {
@@ -38,7 +35,7 @@ public class HistoryTrainingFragment extends Fragment implements HistoryTraining
         super.onViewCreated(view, savedInstanceState);
         setRetainInstance(true);
 
-        BottomNavigationView navBar = getActivity().findViewById(R.id.nav_view);
+        BottomNavigationView navBar = requireActivity().findViewById(R.id.nav_view);
         navBar.setVisibility(View.GONE);
 
         DBHelper dbHelper = new DBHelper(requireContext());
@@ -50,7 +47,7 @@ public class HistoryTrainingFragment extends Fragment implements HistoryTraining
 
         final RecyclerView recyclerView = view.findViewById(R.id.history_training_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        HistoryTrainingAdapter historyTrainingAdapter = new HistoryTrainingAdapter(requireContext(), getAllItems(arg1),this);
+        HistoryTrainingAdapter historyTrainingAdapter = new HistoryTrainingAdapter(requireContext(), getAllItems(arg1), this);
         recyclerView.setAdapter(historyTrainingAdapter);
 
 
@@ -67,11 +64,11 @@ public class HistoryTrainingFragment extends Fragment implements HistoryTraining
             }
         });
 
-        androidx.appcompat.widget.Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        androidx.appcompat.widget.Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final NavController navController = Navigation.findNavController(getView());
+                final NavController navController = Navigation.findNavController(requireView());
                 if (!navController.popBackStack()) {
                     navController.navigate(R.id.action_fragment_history_training_to_navigation_history);
                 }

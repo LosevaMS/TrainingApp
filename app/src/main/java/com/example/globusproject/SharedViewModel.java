@@ -18,7 +18,7 @@ public class SharedViewModel extends ViewModel {
         return text;
     }
 
-    public void deleteAll(){
+    public void deleteAll() {
         text = new MutableLiveData<>();
     }
 }

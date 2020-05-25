@@ -30,6 +30,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import Adapters.HistoryCalendarAdapter;
 import Tables.HistoryApproachesTable;
@@ -114,7 +115,7 @@ public class CalendarTrainingFragment extends Fragment {
         assert savedInstanceState != null;
         onSaveInstanceState(savedInstanceState);
 
-        androidx.appcompat.widget.Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        androidx.appcompat.widget.Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,11 +134,11 @@ public class CalendarTrainingFragment extends Fragment {
 
         ArrayList<Integer> exIdArray = searchExId(prog_id);
 
-        for (int i = 0; i<exIdArray.size(); i++){
+        for (int i = 0; i < exIdArray.size(); i++) {
             database.delete(HistoryApproachesTable.HistoryApproachesEntry.TABLE_HISTORY_APPROACHES,
                     HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_EX_ID + "=? and "
                             + HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_PROG_ID + "=? and "
-                            + HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_DATE + "=?" ,
+                            + HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_DATE + "=?",
                     new String[]{exIdArray.get(i).toString(), String.valueOf(prog_id), date});
         }
 
@@ -146,7 +147,7 @@ public class CalendarTrainingFragment extends Fragment {
         historyListAdapter.swapCursor(getAllItems());
     }
 
-    private Cursor getAllItems()  {
+    private Cursor getAllItems() {
 
         if (condition.isEmpty()) {
 
@@ -159,14 +160,13 @@ public class CalendarTrainingFragment extends Fragment {
                     null,
                     HistoryTable.HistoryEntry._ID + " DESC"
             );
-        }
-        else {
-             return  database.rawQuery("SELECT * FROM history WHERE _id IN ("+condition+")", null);
+        } else {
+            return database.rawQuery("SELECT * FROM history WHERE _id IN (" + condition + ")", null);
         }
     }
 
     private String searchIds(String date) throws ParseException {
-        Cursor c =  database.query(
+        Cursor c = database.query(
                 HistoryTable.HistoryEntry.TABLE_HISTORY,
                 null,
                 null,
@@ -175,18 +175,18 @@ public class CalendarTrainingFragment extends Fragment {
                 null,
                 HistoryTable.HistoryEntry._ID + " DESC"
         );
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String dateString = "";
 
-        while (c.moveToNext()){
+        while (c.moveToNext()) {
             Date date1 = dateFormat.parse(c.getString(c.getColumnIndex("date")));
             assert date1 != null;
-            if (date.equals(dateFormat.format(date1))){
+            if (date.equals(dateFormat.format(date1))) {
                 dateString = dateString.concat(String.valueOf(c.getInt(c.getColumnIndex("_id"))));
                 dateString = dateString.concat(",");
             }
         }
-        dateString = dateString.substring(0, dateString.length()-1);
+        dateString = dateString.substring(0, dateString.length() - 1);
 
 
         c.close();
@@ -200,8 +200,7 @@ public class CalendarTrainingFragment extends Fragment {
         Cursor c = database.rawQuery(query, null);
 
         int a = 0;
-        if (c.moveToFirst())
-        {
+        if (c.moveToFirst()) {
             a = c.getInt(c.getColumnIndex("prog_id"));
         }
         c.close();
@@ -213,21 +212,19 @@ public class CalendarTrainingFragment extends Fragment {
         Cursor c = database.rawQuery(query, null);
 
         String a = " ";
-        if (c.moveToFirst())
-        {
+        if (c.moveToFirst()) {
             a = c.getString(c.getColumnIndex("date"));
         }
         c.close();
         return a;
     }
 
-    private ArrayList searchExId(int id) {
+    private ArrayList<Integer> searchExId(int id) {
         String query = "select _id from " + HistoryExercisesTable.HistoryExercisesEntry.TABLE_HISTORY_EXERCISES + " WHERE prog_id = " + id;
         Cursor c = database.rawQuery(query, null);
 
-        ArrayList a = new ArrayList();
-        while (c.moveToNext())
-        {
+        ArrayList<Integer> a = new ArrayList<>();
+        while (c.moveToNext()) {
             a.add(c.getInt(c.getColumnIndex("_id")));
         }
         c.close();

@@ -77,9 +77,9 @@ public class DBHelper extends SQLiteOpenHelper {
                 + " integer, " + HISTORY_URI + " text" + ")");
 
         db.execSQL("create table " + TABLE_HISTORY_EXERCISES + "(" + HistoryExercisesEntry._ID + " integer primary key AUTOINCREMENT,"
-                 + HISTORY_EX_NAME + " text," + HistoryExercisesEntry.HISTORY_PROG_ID +  " integer," + HISTORY_EX_URI + " text,"
+                + HISTORY_EX_NAME + " text," + HistoryExercisesEntry.HISTORY_PROG_ID + " integer," + HISTORY_EX_URI + " text,"
                 + "foreign key(" + HistoryExercisesEntry.HISTORY_PROG_ID + ") references "
-                + TABLE_HISTORY + "(" + HISTORY_PROG_ID + ")"+ ")");
+                + TABLE_HISTORY + "(" + HISTORY_PROG_ID + ")" + ")");
 
         db.execSQL("create table " + TABLE_HISTORY_APPROACHES + "(" + HistoryApproachesEntry._ID
                 + " integer primary key AUTOINCREMENT," + HISTORY_APP_WEIGHT + " double," + HISTORY_APP_COUNT + " integer,"
