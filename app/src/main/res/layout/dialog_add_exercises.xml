@@ -13,11 +13,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:fontFamily="@font/roboto_medium"
         android:text="Введите название : "
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="20sp" />
+        android:textSize="18sp" />
 
     <EditText
         android:id="@+id/input_text"
@@ -26,7 +26,10 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_below="@+id/tv"
-        android:layout_marginTop="1dp"/>
+        android:layout_marginTop="4dp"
+        android:inputType="textCapSentences"
+        android:background="@drawable/edit_text_style1"
+        android:theme="@style/EditTextTheme"/>
 
     <Button
         android:id="@+id/load_image_btn"
@@ -43,29 +46,35 @@
         android:backgroundTint="@color/colorPrimary"
         android:text="загрузить картинку"
         android:textColor="#ffffff"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:stateListAnimator="@null"/>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardview_for_preview"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        card_view:cardElevation="0dp"
-        android:layout_marginTop="12dp"
+        android:layout_below="@+id/input_text"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         android:layout_marginStart="100dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="100dp"
         android:backgroundTint="#F3F3F3"
-        android:layout_below="@+id/input_text">
+        card_view:cardElevation="0dp">
+
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
-            android:background="@drawable/ic_image2"/>
+            android:background="@drawable/ic_image2" />
+
         <ImageView
             android:id="@+id/preview_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/input_text"
             android:adjustViewBounds="true"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop" />
     </androidx.cardview.widget.CardView>
 
 

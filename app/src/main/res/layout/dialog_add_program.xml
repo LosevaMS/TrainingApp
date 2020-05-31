@@ -13,11 +13,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
         android:fontFamily="@font/roboto_medium"
         android:text="Введите название : "
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="20sp" />
+        android:textSize="18sp" />
 
     <EditText
         android:id="@+id/input_text"
@@ -26,7 +26,10 @@
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_below="@+id/tv"
-        android:layout_marginTop="1dp"/>
+        android:layout_marginTop="4dp"
+        android:inputType="textCapSentences"
+        android:background="@drawable/edit_text_style1"
+        android:theme="@style/EditTextTheme"/>
 
     <Button
         android:id="@+id/load_image_btn"
@@ -43,20 +46,21 @@
         android:backgroundTint="@color/colorPrimary"
         android:text="загрузить картинку"
         android:textColor="#ffffff"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:stateListAnimator="@null"/>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardview_for_preview"
-        android:layout_width="150dp"
+        android:layout_width="wrap_content"
         android:layout_height="100dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         card_view:cardElevation="0dp"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="50dp"
+        android:layout_marginStart="53dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="53dp"
         android:backgroundTint="#F3F3F3"
         android:layout_below="@+id/input_text">
         <ImageView

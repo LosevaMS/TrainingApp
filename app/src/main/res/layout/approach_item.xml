@@ -5,29 +5,14 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="-75dp"
-        android:layout_marginRight="-75dp"
-        android:layout_toStartOf="@+id/app_item_weight"
-        android:layout_toLeftOf="@+id/app_item_weight"
-        android:padding="16dp"
-        android:text="1."
-        android:textColor="#DE666666"
-        android:textSize="16sp" />
-
-    <TextView
         android:id="@+id/kgx"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="-25dp"
-        android:layout_marginLeft="-25dp"
         android:layout_toEndOf="@+id/app_item_weight"
-        android:layout_toRightOf="@+id/app_item_weight"
-        android:padding="16dp"
+        android:padding="14dp"
         android:text="кг ×"
-        android:textColor="#DE666666"
+        android:textColor="#666666"
         android:textSize="16sp" />
 
     <TextView
@@ -35,23 +20,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="48dp"
-        android:layout_marginLeft="48dp"
-        android:padding="16dp"
+        android:padding="14dp"
         android:text="weight"
-        android:textColor="#DE666666"
+        android:textColor="#666666"
         android:textSize="16sp" />
 
     <TextView
         android:id="@+id/app_item_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="-27dp"
-        android:layout_marginLeft="-27dp"
+        android:layout_marginStart="-25dp"
         android:layout_toEndOf="@+id/kgx"
-        android:layout_toRightOf="@+id/kgx"
-        android:padding="16dp"
+        android:padding="14dp"
         android:text="count"
-        android:textColor="#DE666666"
+        android:textColor="#666666"
         android:textSize="16sp" />
 
 

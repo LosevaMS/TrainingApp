@@ -45,6 +45,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import Adapters.ExerciseListAdapter;
 import Tables.ExercisesTable;
@@ -180,13 +181,10 @@ public class EditTrainingFragment extends Fragment {
                 });
 
                 mDialogBuilder
-                        .setCancelable(false)
+                        .setCancelable(true)
                         .setPositiveButton("ОК",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        addItem(arg1);
-                                        exerciseListAdapter = new ExerciseListAdapter(requireContext(), getAllItems(arg1));
-                                        recyclerView2.setAdapter(exerciseListAdapter);
                                     }
                                 })
                         .setNegativeButton("Отмена",
@@ -195,8 +193,26 @@ public class EditTrainingFragment extends Fragment {
                                         dialog.cancel();
                                     }
                                 });
-                AlertDialog alertDialog = mDialogBuilder.create();
+                final AlertDialog alertDialog = mDialogBuilder.create();
                 alertDialog.show();
+
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (userInput2.getText().toString().isEmpty()){
+                            userInput2.setError("Введите название!");
+                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                        }
+                        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                        if (!userInput2.getText().toString().isEmpty()){
+                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                            addItem(arg1);
+                            exerciseListAdapter = new ExerciseListAdapter(requireContext(), getAllItems(arg1));
+                            recyclerView2.setAdapter(exerciseListAdapter);
+                            alertDialog.dismiss();
+                        }
+                    }
+                });
                 userInput2.getText().clear();
             }
         });

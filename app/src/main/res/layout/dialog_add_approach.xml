@@ -2,7 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="250dp"
-    android:layout_height="220dp"
+    android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:padding="16dp">
 
@@ -10,6 +10,7 @@
         android:id="@+id/weight_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
         android:text="Вес"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="14sp"
@@ -22,7 +23,9 @@
         android:layout_below="@id/weight_text"
         android:layout_marginTop="10dp"
         android:hint="0.0 кг"
-        android:inputType="numberDecimal"/>
+        android:inputType="numberDecimal"
+        android:theme="@style/EditTextTheme"
+        android:background="@drawable/edit_text_style2"/>
 
     <TextView
         android:id="@+id/count_text"
@@ -42,7 +45,9 @@
         android:layout_below="@id/count_text"
         android:layout_marginTop="10dp"
         android:hint="0 раз"
-        android:inputType="number"/>
+        android:inputType="number"
+        android:theme="@style/EditTextTheme"
+        android:background="@drawable/edit_text_style2"/>
 
 
 </RelativeLayout>

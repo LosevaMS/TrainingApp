@@ -9,7 +9,7 @@
                 android:top="-2dp">
                 <shape android:shape="rectangle" >
                     <stroke
-                        android:width="0.8dp"
+                        android:width="1.5dp"
                         android:color="@color/colorPrimary" />
 
                     <solid android:color="#00FFFFFF" />
@@ -32,8 +32,31 @@
                 android:top="-2dp">
                 <shape android:shape="rectangle" >
                     <stroke
-                        android:width="0.9dp"
-                        android:color="#8A000000" />
+                        android:width="1.5dp"
+                        android:color="@color/colorPrimary" />
+
+                    <solid android:color="#00FFFFFF" />
+
+                    <padding android:left="3dp"
+                        android:right="3dp"
+                        android:top="3dp"
+                        android:bottom="3dp" />
+                </shape>
+            </item>
+
+        </layer-list>
+    </item>
+    <item android:state_focused="false">
+        <layer-list >
+            <item
+                android:bottom="1dp"
+                android:left="-2dp"
+                android:right="-2dp"
+                android:top="-2dp">
+                <shape android:shape="rectangle" >
+                    <stroke
+                        android:width="1.5dp"
+                        android:color="#666666" />
 
                     <solid android:color="#00FFFFFF" />
 
@@ -55,7 +78,7 @@
                 android:top="-2dp">
                 <shape android:shape="rectangle" >
                     <stroke
-                        android:width="0.9dp"
+                        android:width="1.5dp"
                         android:color="#8A000000" />
 
                     <solid android:color="#00FFFFFF" />

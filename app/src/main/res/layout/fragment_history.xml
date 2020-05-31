@@ -13,7 +13,8 @@
         android:paddingStart="11dp"
         android:paddingEnd="11dp"
         android:paddingTop="14dp"
-        android:paddingBottom="62dp"
+        android:paddingBottom="5dp"
+        android:layout_marginBottom="55dp"
         android:clipToPadding="false"/>
 
 

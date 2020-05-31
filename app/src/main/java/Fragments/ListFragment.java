@@ -11,12 +11,18 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,6 +39,8 @@ import com.github.clans.fab.FloatingActionButton;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 import Adapters.ProgramListAdapter;
 import Tables.ProgramTable;
@@ -68,6 +76,7 @@ public class ListFragment extends Fragment {
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setRetainInstance(true);
+        setHasOptionsMenu(true);
 
         BottomNavigationView navBar = requireActivity().findViewById(R.id.nav_view);
         navBar.setVisibility(View.VISIBLE);
@@ -135,6 +144,20 @@ public class ListFragment extends Fragment {
                 loadImage_btn = promptsView.findViewById(R.id.load_image_btn);
                 imageView = promptsView.findViewById(R.id.preview_image);
 
+                userInput.setImeActionLabel("", EditorInfo.IME_ACTION_NEXT);
+
+                userInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                            if (userInput.getText().toString().trim().equalsIgnoreCase(""))
+                                userInput.setError("Введите название!");
+                        }
+                        return false;
+                    }
+                });
+
                 uri = null;
 
                 loadImage_btn.setOnClickListener(new View.OnClickListener() {
@@ -155,11 +178,10 @@ public class ListFragment extends Fragment {
                 });
 
                 mDialogBuilder
-                        .setCancelable(false)
+                        .setCancelable(true)
                         .setPositiveButton("ОК",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        addItem();
                                     }
                                 })
                         .setNegativeButton("Отмена",
@@ -168,8 +190,24 @@ public class ListFragment extends Fragment {
                                         dialog.cancel();
                                     }
                                 });
-                AlertDialog alertDialog = mDialogBuilder.create();
+                final AlertDialog alertDialog = mDialogBuilder.create();
                 alertDialog.show();
+
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (userInput.getText().toString().isEmpty()){
+                            userInput.setError("Введите название!");
+                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                        }
+                        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                        if (!userInput.getText().toString().isEmpty()){
+                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                            addItem();
+                            alertDialog.dismiss();
+                        }
+                    }
+                });
                 userInput.getText().clear();
             }
         });
@@ -242,4 +280,94 @@ public class ListFragment extends Fragment {
         );
     }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_list_menu, menu);
+        MenuItem addItem = menu.findItem(R.id.add_program_item);
+
+        addItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                LayoutInflater li = LayoutInflater.from(requireContext());
+                View promptsView = li.inflate(R.layout.dialog_add_program, null);
+
+                AlertDialog.Builder mDialogBuilder = new AlertDialog.Builder(requireContext());
+
+                mDialogBuilder.setView(promptsView);
+
+                userInput = promptsView.findViewById(R.id.input_text);
+                loadImage_btn = promptsView.findViewById(R.id.load_image_btn);
+                imageView = promptsView.findViewById(R.id.preview_image);
+
+                userInput.setImeActionLabel("", EditorInfo.IME_ACTION_NEXT);
+
+                userInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                            if (userInput.getText().toString().trim().equalsIgnoreCase(""))
+                                userInput.setError("Введите название!");
+                        }
+                        return false;
+                    }
+                });
+
+                uri = null;
+
+                loadImage_btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                                    == PackageManager.PERMISSION_DENIED) {
+                                String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
+                                requestPermissions(permissions, PERMISSION_CODE);
+                            } else {
+                                pickImageFromGallery();
+                            }
+                        } else {
+                            pickImageFromGallery();
+                        }
+                    }
+                });
+
+                mDialogBuilder
+                        .setCancelable(true)
+                        .setPositiveButton("ОК",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                    }
+                                })
+                        .setNegativeButton("Отмена",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+                final AlertDialog alertDialog = mDialogBuilder.create();
+                alertDialog.show();
+
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (userInput.getText().toString().isEmpty()){
+                            userInput.setError("Введите название!");
+                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                        }
+                        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                        if (!userInput.getText().toString().isEmpty()){
+                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                            addItem();
+                            alertDialog.dismiss();
+                        }
+                    }
+                });
+                userInput.getText().clear();
+                return false;
+            }
+        });
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 }

@@ -63,11 +63,11 @@ public class InlineExercisesListFragment extends Fragment implements InlineExerc
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                ArrayList<InlineExercises> selectedExercises = inlineExercisesAdapter.getSelected();
+                /*ArrayList<InlineExercises> selectedExercises = inlineExercisesAdapter.getSelected();
 
                 viewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
-                viewModel.setText(selectedExercises);
+                viewModel.setText(selectedExercises);*/
                 final NavController navController = Navigation.findNavController(requireView());
                 if (!navController.popBackStack()) {
                     navController.navigate(R.id.action_fragment_inline_exercises_to_edit_training);
@@ -80,11 +80,12 @@ public class InlineExercisesListFragment extends Fragment implements InlineExerc
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<InlineExercises> selectedExercises = inlineExercisesAdapter.getSelected();
+                /*ArrayList<InlineExercises> selectedExercises = inlineExercisesAdapter.getSelected();
 
                 viewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
-                viewModel.setText(selectedExercises);
+                viewModel.setText(selectedExercises);*/
+
                 final NavController navController = Navigation.findNavController(requireView());
                 if (!navController.popBackStack()) {
                     navController.navigate(R.id.action_fragment_inline_exercises_to_edit_training);
@@ -97,6 +98,24 @@ public class InlineExercisesListFragment extends Fragment implements InlineExerc
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.search_menu, menu);
+        MenuItem doneItem = menu.findItem(R.id.done_item);
+
+        doneItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                ArrayList<InlineExercises> selectedExercises = inlineExercisesAdapter.getSelected();
+
+                viewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+
+                viewModel.setText(selectedExercises);
+                final NavController navController = Navigation.findNavController(requireView());
+                if (!navController.popBackStack()) {
+                    navController.navigate(R.id.action_fragment_inline_exercises_to_edit_training);
+                }
+                return false;
+            }
+        });
+
         MenuItem searchItem = menu.findItem(R.id.search_item);
         SearchView searchView = (SearchView) searchItem.getActionView();
 

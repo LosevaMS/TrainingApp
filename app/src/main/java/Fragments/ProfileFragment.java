@@ -10,23 +10,22 @@ import android.graphics.Color;
 import android.icu.util.Calendar;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-
 import com.example.globusproject.DBHelper;
 import com.example.globusproject.R;
 import com.github.mikephil.charting.charts.LineChart;
@@ -43,7 +42,6 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -54,12 +52,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-
 import Tables.HistoryTable;
 import Tables.WeightTable;
-
 import static android.content.Context.MODE_PRIVATE;
-
+import static android.view.View.GONE;
 
 public class ProfileFragment extends Fragment {
 
@@ -70,8 +66,8 @@ public class ProfileFragment extends Fragment {
     private LineDataSet lineDataSet2 = new LineDataSet(null, null);
     private ArrayList<ILineDataSet> dataSets = new ArrayList<>();
     private LineData lineData;
-    private EditText inputWeight;
-    private TextView currentWeight, minWeight, maxWeight, bmiIndicator, bmiDescription, paramWeight, paramHeight;
+    private EditText inputWeightBMI,inputHeightBMI;
+    private TextView currentWeight, minWeight, maxWeight, bmiIndicator, bmiDescription, paramWeight, paramHeight, monthText, yearText;
     private ImageView indicator;
     private float bmi;
     private SharedPreferences sPref;
@@ -95,13 +91,9 @@ public class ProfileFragment extends Fragment {
         DBHelper dbHelper = new DBHelper(requireContext());
         database = dbHelper.getWritableDatabase();
 
-        final String[] monthNames = {"Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль",
-                "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"};
-
-        final TextView monthText = view.findViewById(R.id.month_text);
-        final TextView yearText = view.findViewById(R.id.year_text);
+        monthText = view.findViewById(R.id.month_text);
+        yearText = view.findViewById(R.id.year_text);
         weightChart = view.findViewById(R.id.weight_chart);
-        ImageView addWeightBtn = view.findViewById(R.id.add_weight_btn);
         currentWeight = view.findViewById(R.id.current_weight_text);
         minWeight = view.findViewById(R.id.min_weight_text);
         maxWeight = view.findViewById(R.id.max_weight_text);
@@ -113,6 +105,7 @@ public class ProfileFragment extends Fragment {
         paramHeight = view.findViewById(R.id.param_height_text);
 
         setBMI();
+
         paramWeight.setText(loadParamWeight());
         paramHeight.setText(loadParamHeight());
 
@@ -126,8 +119,8 @@ public class ProfileFragment extends Fragment {
 
                 mDialogBuilder.setView(promptsView);
 
-                final EditText inputWeightBMI = promptsView.findViewById(R.id.input_weight_bmi);
-                final EditText inputHeightBMI = promptsView.findViewById(R.id.input_count_bmi);
+                inputWeightBMI = promptsView.findViewById(R.id.input_weight_bmi);
+                inputHeightBMI = promptsView.findViewById(R.id.input_count_bmi);
 
                 inputWeightBMI.setImeActionLabel("", EditorInfo.IME_ACTION_NEXT);
 
@@ -138,8 +131,6 @@ public class ProfileFragment extends Fragment {
                         if (actionId == EditorInfo.IME_ACTION_NEXT) {
                             if (inputWeightBMI.getText().toString().trim().equalsIgnoreCase(""))
                                 inputWeightBMI.setError("Введите вес!");
-                            else
-                                Toast.makeText(requireContext(), "Notnull", Toast.LENGTH_SHORT).show();
                         }
                         return false;
                     }
@@ -153,31 +144,16 @@ public class ProfileFragment extends Fragment {
                         if (actionId == EditorInfo.IME_ACTION_DONE) {
                             if (inputHeightBMI.getText().toString().trim().equalsIgnoreCase(""))
                                 inputHeightBMI.setError("Введите рост!");
-                            else
-                                Toast.makeText(requireContext(), "Notnull", Toast.LENGTH_SHORT).show();
                         }
                         return false;
                     }
                 });
 
                 mDialogBuilder
-                        .setCancelable(false)
+                        .setCancelable(true)
                         .setPositiveButton("OK",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        float weight = Float.parseFloat(inputWeightBMI.getText().toString());
-                                        float height = Float.parseFloat(inputHeightBMI.getText().toString());
-                                        String weightText = inputWeightBMI.getText().toString().concat(" кг");
-                                        String heightText = inputHeightBMI.getText().toString().concat(" см");
-                                        paramWeight.setText(weightText);
-                                        paramHeight.setText(heightText);
-                                        height = height / 100;
-                                        bmi = weight / (height * height);
-                                        saveBMI(bmi, weightText, heightText);
-                                        indicator.setTranslationX(35.2f * (bmi - 15));
-                                        bmiIndicator.setText(String.valueOf(bmi));
-                                        bmiIndicator.setTranslationX(35.2f * (bmi - 15));
-                                        setBMI();
                                     }
                                 })
                         .setNegativeButton("Отмена",
@@ -186,137 +162,77 @@ public class ProfileFragment extends Fragment {
                                         dialog.cancel();
                                     }
                                 });
-                AlertDialog alertDialog = mDialogBuilder.create();
+                final AlertDialog alertDialog = mDialogBuilder.create();
                 alertDialog.show();
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (inputWeightBMI.getText().toString().isEmpty()) {
+                            inputWeightBMI.setError("Введите вес!");
+                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                        }
+                        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                        if (inputHeightBMI.getText().toString().isEmpty()) {
+                            inputHeightBMI.setError("Введите рост");
+                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                        }
+                        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                        if (!inputWeightBMI.getText().toString().isEmpty() && !inputHeightBMI.getText().toString().isEmpty()) {
+                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                            float weight = Float.parseFloat(inputWeightBMI.getText().toString());
+                            float height = Float.parseFloat(inputHeightBMI.getText().toString());
+                            String weightText = inputWeightBMI.getText().toString().concat(" кг");
+                            String heightText = inputHeightBMI.getText().toString().concat(" см");
+                            paramWeight.setText(weightText);
+                            paramHeight.setText(heightText);
+                            height = height / 100;
+                            if (height == 0 || weight == 0) {
+                                bmiDescription.setVisibility(GONE);
+                            }
+                            bmi = weight / (height * height);
+                            saveBMI(bmi, weightText, heightText);
+                            setBMI();
+
+                            addWeight();
+                            updateChart();
+                            try {
+                                currentWeight.setText(getCurrentWeight());
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            maxWeight.setText(getMaxWeight());
+                            minWeight.setText(getMinWeight());
+
+                            alertDialog.dismiss();
+                        }
+                    }
+                });
+                DisplayMetrics displayMetrics = new DisplayMetrics();
+                requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+                int displayWidth = displayMetrics.widthPixels;
+                WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+                layoutParams.copyFrom(Objects.requireNonNull(alertDialog.getWindow()).getAttributes());
+                layoutParams.width = (int) (displayWidth * 0.75f);
+                layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                alertDialog.getWindow().setAttributes(layoutParams);
+
                 inputWeightBMI.getText().clear();
                 inputHeightBMI.getText().clear();
             }
         });
 
-        try {
-            currentWeight.setText(getCurrentWeight());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
         maxWeight.setText(getMaxWeight());
         minWeight.setText(getMinWeight());
 
-        try {
-            lineDataSet1 = new LineDataSet(weightValues(), "Вес");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        try {
-            lineDataSet2 = new LineDataSet(averageWeight(), "Средний вес");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        drawWeightChart();
+        drawCalendar();
+    }
 
-        dataSets.add(lineDataSet1);
-        dataSets.add(lineDataSet2);
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void drawCalendar(){
 
-        XAxis xAxis = weightChart.getXAxis();
-        YAxis yAxis = weightChart.getAxisLeft();
-        YAxis yAxis1 = weightChart.getAxisRight();
-
-        xAxis.setTextColor(Color.parseColor("#FF637B8F"));
-        yAxis.setTextColor(Color.parseColor("#FF637B8F"));
-        yAxis1.setEnabled(false);
-
-        xAxis.setValueFormatter(new ValueFormatter() {
-            @Override
-            public String getAxisLabel(float value, AxisBase axis) {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM", Locale.getDefault());
-                Timestamp ts = new Timestamp((long) value);
-                Date formatDate = new Date(ts.getTime());
-                return sdf.format(formatDate);
-            }
-        });
-
-
-        Legend legend = weightChart.getLegend();
-        legend.setEnabled(true);
-        legend.setForm(Legend.LegendForm.CIRCLE);
-
-        Description description = new Description();
-        description.setText("");
-        weightChart.setDescription(description);
-
-        assert lineDataSet1 != null;
-        lineDataSet1.setLineWidth(2);
-        lineDataSet1.setColor(Color.parseColor("#FF51B1FF"));
-        lineDataSet1.setCircleColor(Color.parseColor("#FF2C98F0"));
-        lineDataSet1.setCircleHoleColor(Color.parseColor("#FFFFFF"));
-        lineDataSet1.setCircleRadius(4);
-        lineDataSet1.setCircleHoleRadius(2);
-        lineDataSet1.setValueTextSize(8);
-        lineDataSet1.enableDashedLine(7, 10, 0);
-
-        assert lineDataSet2 != null;
-        lineDataSet2.setLineWidth(1.5f);
-        lineDataSet2.setDrawCircles(false);
-        lineDataSet2.setDrawHighlightIndicators(false);
-        lineDataSet2.setValueTextSize(8);
-
-        lineData = new LineData(dataSets);
-        weightChart.setData(lineData);
-        weightChart.invalidate();
-
-        addWeightBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LayoutInflater li = LayoutInflater.from(requireContext());
-                View promptsView = li.inflate(R.layout.dialog_add_weight, null);
-
-                AlertDialog.Builder mDialogBuilder = new AlertDialog.Builder(requireContext());
-
-                mDialogBuilder.setView(promptsView);
-
-                inputWeight = promptsView.findViewById(R.id.input_weight_profile);
-
-                inputWeight.setImeActionLabel("", EditorInfo.IME_ACTION_NEXT);
-
-                inputWeight.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-
-                    @Override
-                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                        if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                            if (inputWeight.getText().toString().trim().equalsIgnoreCase(""))
-                                inputWeight.setError("Введите вес!");
-                            else
-                                Toast.makeText(requireContext(), "Notnull", Toast.LENGTH_SHORT).show();
-                        }
-                        return false;
-                    }
-                });
-                mDialogBuilder
-                        .setCancelable(false)
-                        .setPositiveButton("OK",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        addWeight();
-                                        updateChart();
-                                        try {
-                                            currentWeight.setText(getCurrentWeight());
-                                        } catch (ParseException e) {
-                                            e.printStackTrace();
-                                        }
-                                        maxWeight.setText(getMaxWeight());
-                                        minWeight.setText(getMinWeight());
-                                        // dialog.cancel();
-                                    }
-                                })
-                        .setNegativeButton("Отмена",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }
-                                });
-                AlertDialog alertDialog = mDialogBuilder.create();
-                alertDialog.show();
-                inputWeight.getText().clear();
-            }
-        });
+        final String[] monthNames = {"Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль",
+                "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"};
 
         String myDate = "12-05-2020 15:03";
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
@@ -336,7 +252,7 @@ public class ProfileFragment extends Fragment {
         Date currentYear = new Date();
         yearText.setText(yearFormatter.format(currentYear));
 
-        compactCalendar = view.findViewById(R.id.compactcalendar_view);
+        compactCalendar = requireActivity().findViewById(R.id.compactcalendar_view);
         compactCalendar.setFirstDayOfWeek(Calendar.MONDAY);
 
         final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -365,62 +281,106 @@ public class ProfileFragment extends Fragment {
                 monthText.setText(monthNames[Integer.parseInt(formatter.format(firstDayOfNewMonth)) - 1]);
             }
         });
+    }
 
+    private void drawWeightChart(){
+        try {
+            currentWeight.setText(getCurrentWeight());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
+        try {
+            lineDataSet1 = new LineDataSet(weightValues(), "Вес");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        try {
+            lineDataSet2 = new LineDataSet(averageWeight(), "Средний вес");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        dataSets.add(lineDataSet1);
+        dataSets.add(lineDataSet2);
+
+        XAxis xAxis = weightChart.getXAxis();
+        YAxis yAxis = weightChart.getAxisLeft();
+        YAxis yAxis1 = weightChart.getAxisRight();
+
+        xAxis.setTextColor(Color.parseColor("#666666"));
+        yAxis.setTextColor(Color.parseColor("#666666"));
+        yAxis1.setEnabled(false);
+
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getAxisLabel(float value, AxisBase axis) {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM", Locale.getDefault());
+                Timestamp ts = new Timestamp((long) value);
+                Date formatDate = new Date(ts.getTime());
+                return sdf.format(formatDate);
+            }
+        });
+
+        Legend legend = weightChart.getLegend();
+        legend.setEnabled(true);
+        legend.setForm(Legend.LegendForm.CIRCLE);
+
+        Description description = new Description();
+        description.setText("");
+        weightChart.setDescription(description);
+
+        assert lineDataSet1 != null;
+        lineDataSet1.setLineWidth(2);
+        lineDataSet1.setColor(Color.parseColor("#FF51B1FF"));
+        lineDataSet1.setCircleColor(Color.parseColor("#FF2C98F0"));
+        lineDataSet1.setCircleHoleColor(Color.parseColor("#FFFFFF"));
+        lineDataSet1.setCircleRadius(4);
+        lineDataSet1.setCircleHoleRadius(2);
+        lineDataSet1.setValueTextSize(8);
+        lineDataSet1.enableDashedLine(7, 10, 0);
+
+        assert lineDataSet2 != null;
+        lineDataSet2.setLineWidth(1.5f);
+        lineDataSet2.setDrawCircles(false);
+        lineDataSet2.setDrawHighlightIndicators(false);
+        lineDataSet2.setValueTextSize(8);
+
+        lineData = new LineData(dataSets);
+        weightChart.setData(lineData);
+        weightChart.invalidate();
     }
 
     private void setBMI() {
+        indicator.setVisibility(View.VISIBLE);
+        indicator.setTranslationX(35.2f * (loadBMI() - 15));
+        bmiIndicator.setTranslationX(35.2f * (loadBMI() - 15));
+        bmiIndicator.setText(String.format("%.2f", loadBMI()));
         if (loadBMI() < 15) {
-            indicator.setVisibility(View.GONE);
-            bmiIndicator.setText(String.format("%.2f", loadBMI()));
+            indicator.setVisibility(GONE);
             bmiIndicator.setTranslationX(35.2f * 0);
             bmiDescription.setText("Очень сильное истощение");
         }
         if (loadBMI() >= 15 && loadBMI() <= 16) {
-            indicator.setVisibility(View.VISIBLE);
-            indicator.setTranslationX(35.2f * (loadBMI() - 15));
-            bmiIndicator.setText(String.format("%.2f", loadBMI()));
-            bmiIndicator.setTranslationX(35.2f * (loadBMI() - 15));
             bmiDescription.setText("Выраженный дефицит массы тела");
         }
         if (loadBMI() > 16 && loadBMI() <= 18.5) {
-            indicator.setVisibility(View.VISIBLE);
-            indicator.setTranslationX(35.2f * (loadBMI() - 15));
-            bmiIndicator.setText(String.format("%.2f", loadBMI()));
-            bmiIndicator.setTranslationX(35.2f * (loadBMI() - 15));
             bmiDescription.setText("Недостаточная масса тела");
         }
         if (loadBMI() > 18.5 && loadBMI() <= 25) {
-            indicator.setVisibility(View.VISIBLE);
-            indicator.setTranslationX(35.2f * (loadBMI() - 15));
-            bmiIndicator.setText(String.format("%.2f", loadBMI()));
-            bmiIndicator.setTranslationX(35.2f * (loadBMI() - 15));
             bmiDescription.setText("Норма");
         }
         if (loadBMI() > 25 && loadBMI() <= 30) {
-            indicator.setVisibility(View.VISIBLE);
-            indicator.setTranslationX(35.2f * (loadBMI() - 15));
-            bmiIndicator.setText(String.format("%.2f", loadBMI()));
-            bmiIndicator.setTranslationX(35.2f * (loadBMI() - 15));
             bmiDescription.setText("Избыточная масса тела");
         }
         if (loadBMI() > 30 && loadBMI() <= 35) {
-            indicator.setVisibility(View.VISIBLE);
-            indicator.setTranslationX(35.2f * (loadBMI() - 15));
-            bmiIndicator.setText(String.format("%.2f", loadBMI()));
-            bmiIndicator.setTranslationX(35.2f * (loadBMI() - 15));
             bmiDescription.setText("Ожирение первой степени");
         }
         if (loadBMI() > 35 && loadBMI() <= 40) {
-            indicator.setVisibility(View.VISIBLE);
-            indicator.setTranslationX(35.2f * (loadBMI() - 15));
-            bmiIndicator.setText(String.format("%.2f", loadBMI()));
-            bmiIndicator.setTranslationX(35.2f * (loadBMI() - 15));
             bmiDescription.setText("Ожирение второй степени");
         }
         if (loadBMI() > 40) {
-            indicator.setVisibility(View.GONE);
-            bmiIndicator.setText(String.format("%.2f", loadBMI()));
+            indicator.setVisibility(GONE);
             bmiIndicator.setTranslationX(35.2f * (22));
             bmiDescription.setText("Ожирение третьей степени");
         }
@@ -450,7 +410,6 @@ public class ProfileFragment extends Fragment {
         return sPref.getString(PARAM_HEIGHT, "0 см");
     }
 
-
     private void updateChart() {
         try {
             lineDataSet1 = new LineDataSet(weightValues(), "Вес");
@@ -466,12 +425,7 @@ public class ProfileFragment extends Fragment {
         dataSets.add(lineDataSet1);
         dataSets.add(lineDataSet2);
 
-        XAxis xAxis = weightChart.getXAxis();
-        YAxis yAxis = weightChart.getAxisLeft();
         YAxis yAxis1 = weightChart.getAxisRight();
-
-        xAxis.setTextColor(Color.parseColor("#FF637B8F"));
-        yAxis.setTextColor(Color.parseColor("#FF637B8F"));
         yAxis1.setEnabled(false);
 
         Legend legend = weightChart.getLegend();
@@ -534,11 +488,11 @@ public class ProfileFragment extends Fragment {
     }
 
     private void addWeight() {
-        if (inputWeight.getText().toString().trim().length() == 0) {
+        if (inputWeightBMI.getText().toString().trim().length() == 0) {
             return;
         }
 
-        float weight = Float.parseFloat(inputWeight.getText().toString());
+        float weight = Float.parseFloat(inputWeightBMI.getText().toString());
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         Date date = new Date();

@@ -14,7 +14,8 @@
         android:paddingStart="11dp"
         android:paddingEnd="11dp"
         android:paddingTop="14dp"
-        android:paddingBottom="62dp"
+        android:paddingBottom="5dp"
+        android:layout_marginBottom="55dp"
         android:clipToPadding="false"/>
 
 
@@ -25,7 +26,7 @@
         android:layout_alignBottom="@+id/recyclerview"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="16dp"
         android:src="@drawable/fab_add"
         app:fab_colorNormal="#2C98F0"
         app:fab_colorPressed="#E867B9FA"

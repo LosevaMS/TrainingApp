@@ -96,8 +96,7 @@ public class TrainingFragment extends Fragment {
                     elapsed = (int) (SystemClock.elapsedRealtime() - chronometer.getBase());
 
                 int time = elapsed / 60000;
-                Toast.makeText(getActivity(), "Time is: " + time + " min",
-                        Toast.LENGTH_LONG).show();
+
                 resetChronometer();
                 pauseChronometer();
 

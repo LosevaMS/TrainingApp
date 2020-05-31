@@ -6,10 +6,12 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -42,6 +44,7 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
     private SQLiteDatabase database;
     private ApproachAdapter approachAdapter1, approachAdapter2;
     private EditText inputWeight, inputCount;
+    private TextView lastTime;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_approach, container, false);
@@ -57,6 +60,8 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
 
         DBHelper dbHelper = new DBHelper(requireContext());
         database = dbHelper.getWritableDatabase();
+
+        lastTime = view.findViewById(R.id.last_time);
 
         assert getArguments() != null;
         final long arg1 = getArguments().getLong("ex_id");
@@ -87,7 +92,7 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
                 LayoutInflater li = LayoutInflater.from(requireContext());
                 View promptsView = li.inflate(R.layout.dialog_add_approach, null);
 
-                AlertDialog.Builder mDialogBuilder = new AlertDialog.Builder(requireContext());
+                final AlertDialog.Builder mDialogBuilder = new AlertDialog.Builder(requireContext());
 
                 mDialogBuilder.setView(promptsView);
 
@@ -103,8 +108,6 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
                         if (actionId == EditorInfo.IME_ACTION_NEXT) {
                             if (inputWeight.getText().toString().trim().equalsIgnoreCase(""))
                                 inputWeight.setError("Введите вес!");
-                            else
-                                Toast.makeText(requireContext(), "Notnull", Toast.LENGTH_SHORT).show();
                         }
                         return false;
                     }
@@ -117,22 +120,17 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                         if (actionId == EditorInfo.IME_ACTION_DONE) {
                             if (inputCount.getText().toString().trim().equalsIgnoreCase(""))
-                                inputCount.setError("Введите количество повторений!");
-                            else
-                                Toast.makeText(requireContext(), "Notnull", Toast.LENGTH_SHORT).show();
+                                inputCount.setError("Введите кол-во повторений!");
                         }
                         return false;
                     }
                 });
 
                 mDialogBuilder
-                        .setCancelable(false)
+                        .setCancelable(true)
                         .setPositiveButton("OK",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        //addApproachInHistory(arg1, arg2);
-                                        addItem(arg1, arg2);
-                                        //dialog.cancel();
                                     }
                                 })
                         .setNegativeButton("Отмена",
@@ -141,8 +139,39 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
                                         dialog.cancel();
                                     }
                                 });
-                AlertDialog alertDialog = mDialogBuilder.create();
+
+                final AlertDialog alertDialog = mDialogBuilder.create();
                 alertDialog.show();
+
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (inputWeight.getText().toString().isEmpty()){
+                            inputWeight.setError("Введите вес!");
+                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                        }
+                        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                        if (inputCount.getText().toString().isEmpty()){
+                            inputCount.setError("Введите кол-во повторений!");
+                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                        }
+                        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                        if (!inputCount.getText().toString().isEmpty() && !inputWeight.getText().toString().isEmpty()) {
+                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                            addItem(arg1, arg2);
+                            alertDialog.dismiss();
+                        }
+                    }
+                });
+                DisplayMetrics displayMetrics = new DisplayMetrics();
+                requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+                int displayWidth = displayMetrics.widthPixels;
+                WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+                layoutParams.copyFrom(Objects.requireNonNull(alertDialog.getWindow()).getAttributes());
+                layoutParams.width = (int) (displayWidth * 0.75f);
+                layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                alertDialog.getWindow().setAttributes(layoutParams);
+
                 inputWeight.getText().clear();
                 inputCount.getText().clear();
             }
@@ -216,6 +245,12 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
         String whereClause = ApproachesTable.ApproachesEntry.APP_EX_ID + "=? AND " +
                 ApproachesTable.ApproachesEntry.APP_DATE + "=?";
         String[] whereArgs = new String[]{String.valueOf(id), searchPreviousDate(id, date1)};
+
+        if(searchPreviousDate(id, date1).equals("error"))
+            lastTime.setVisibility(View.GONE);
+        else
+            lastTime.setVisibility(View.VISIBLE);
+
 
         return database.query(
                 ApproachesTable.ApproachesEntry.TABLE_APPROACHES,
