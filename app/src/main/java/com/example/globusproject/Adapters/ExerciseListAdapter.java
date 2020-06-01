@@ -17,33 +17,100 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.globusproject.DBHelper;
-import com.example.globusproject.OnExerciseListClickListener;
 import com.example.globusproject.R;
 
 import org.jetbrains.annotations.NotNull;
 
 import com.example.globusproject.Tables.ExercisesTable;
-import com.example.globusproject.ViewHolders.ExerciseViewHolder;
 
-public class ExerciseListAdapter extends RecyclerView.Adapter<ExerciseViewHolder> {
+public class ExerciseListAdapter extends RecyclerView.Adapter<ExerciseListAdapter.ExerciseViewHolder> {
 
     private Context mContext;
     private Cursor mCursor;
-    private static OnExerciseListClickListener onExerciseListClickListener;
 
-    public ExerciseListAdapter(Context context, Cursor cursor, OnExerciseListClickListener onExerciseListClickListener) {
+    public ExerciseListAdapter(Context context, Cursor cursor) {
         mContext = context;
         mCursor = cursor;
-        ExerciseListAdapter.onExerciseListClickListener = onExerciseListClickListener;
     }
 
+    class ExerciseViewHolder extends RecyclerView.ViewHolder {
+        private TextView nameText;
+        private ImageView exerciseImage;
+
+        private ExerciseViewHolder(final View itemView) {
+            super(itemView);
+            nameText = itemView.findViewById(R.id.exercise_name_item);
+            Button deleteBtn = itemView.findViewById(R.id.delete_ex_item);
+            exerciseImage = itemView.findViewById(R.id.ex_image);
+
+            DBHelper dbHelper = new DBHelper(mContext);
+            database = dbHelper.getWritableDatabase();
+
+            deleteBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder adb = new AlertDialog.Builder(mContext);
+                    adb.setMessage("Удалить упражнение?");
+                    adb.setPositiveButton("Да", myClickListener);
+                    adb.setNegativeButton("Нет", myClickListener);
+                    adb.create();
+                    adb.show();
+                }
+            });
+        }
+
+        DialogInterface.OnClickListener myClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case Dialog.BUTTON_POSITIVE:
+                        long id = (long) itemView.getTag();
+                        long prog_id = searchId(id);
+                        database.delete(ExercisesTable.ExercisesEntry.TABLE_EXERCISES,
+                                ExercisesTable.ExercisesEntry._ID + "=" + id, null);
+                        notifyItemRemoved(getAdapterPosition());
+                        swapCursor(getAllItems(prog_id));
+                        break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        break;
+                }
+            }
+        };
+        public long searchId (long id)
+        {
+            String query = "select _program_id from " + ExercisesTable.ExercisesEntry.TABLE_EXERCISES + " WHERE _id = " + id;
+            Cursor c = database.rawQuery(query , null);
+
+            long a;
+            if (c.moveToFirst());
+            {
+                a = c.getLong(c.getColumnIndex("_program_id"));
+            }
+            c.close();
+            return a;
+        }
+
+        private Cursor getAllItems(long prog_id) {
+            return database.query(
+                    ExercisesTable.ExercisesEntry.TABLE_EXERCISES,
+                    null,
+                    ExercisesTable.ExercisesEntry.EX_PROG_ID + "=" + prog_id,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+        }
+    }
+
+    private SQLiteDatabase database;
 
     @NotNull
     @Override
     public ExerciseViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from((mContext));
         View view = inflater.inflate(R.layout.exercise_item, parent, false);
-        return new ExerciseViewHolder(view,onExerciseListClickListener);
+        return new ExerciseViewHolder(view);
     }
 
     @Override
@@ -51,13 +118,28 @@ public class ExerciseListAdapter extends RecyclerView.Adapter<ExerciseViewHolder
         if (!mCursor.moveToPosition(position)) {
             return;
         }
-        holder.bindData(mCursor);
+        String name = mCursor.getString(mCursor.getColumnIndex(ExercisesTable.ExercisesEntry.EX_NAME));
+        long id = mCursor.getLong(mCursor.getColumnIndex(ExercisesTable.ExercisesEntry._ID));
+        String uri = mCursor.getString(mCursor.getColumnIndex(ExercisesTable.ExercisesEntry.EX_URI));
 
+        holder.nameText.setText(name);
+        holder.itemView.setTag(id);
+
+        if (!uri.equals("null") && uri.contains(".gif"))
+            Glide
+                    .with(holder.itemView.getContext())
+                    .asGif()
+                    .load(uri)
+                    .error(R.drawable.delete)
+                    .into(holder.exerciseImage);
+
+        if (!uri.equals("null") && !uri.contains(".gif"))
+            Glide.with(holder.itemView.getContext()).load(uri).into(holder.exerciseImage);
+
+        if (uri.equals("null"))
+            Glide.with(holder.itemView.getContext()).load(R.drawable.ic_sport4).into(holder.exerciseImage);
     }
 
-    public void setOnExerciseListClickListener(OnExerciseListClickListener onExerciseListClickListener){
-        ExerciseListAdapter.onExerciseListClickListener = onExerciseListClickListener;
-    }
 
     @Override
     public int getItemCount() {
