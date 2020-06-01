@@ -1,4 +1,4 @@
-package Fragments;
+package com.example.globusproject.Fragments;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.Chronometer;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -35,18 +34,22 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
-import Adapters.ExercisesAdapter;
-import Tables.ApproachesTable;
-import Tables.ExercisesTable;
-import Tables.HistoryApproachesTable;
-import Tables.HistoryTable;
-import Tables.ProgramTable;
+import com.example.globusproject.Adapters.ExercisesAdapter;
+import com.example.globusproject.Tables.ApproachesTable;
+import com.example.globusproject.Tables.ExercisesTable;
+import com.example.globusproject.Tables.HistoryApproachesTable;
+import com.example.globusproject.Tables.HistoryTable;
+import com.example.globusproject.Tables.ProgramTable;
 
 public class TrainingFragment extends Fragment {
 
     private SQLiteDatabase database;
     private Chronometer chronometer;
+    private long program_id;
+    private String program_name;
     static private boolean btnPause = true;
+    private SimpleDateFormat formatter;
+    private  Date date;
 
     private ChronometerHelper chronometerHelper;
 
@@ -66,28 +69,27 @@ public class TrainingFragment extends Fragment {
 
         navBar.setVisibility(View.GONE);
         assert getArguments() != null;
-        final long arg1 = getArguments().getLong("prog_id");
-        final String arg2 = getArguments().getString("prog_name");
+        program_id = getArguments().getLong("prog_id");
+        program_name = getArguments().getString("prog_name");
 
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle(arg2);
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).setTitle(program_name);
 
         TextView finishText = view.findViewById(R.id.finish_training);
 
         DBHelper dbHelper = new DBHelper(requireContext());
         database = dbHelper.getWritableDatabase();
 
-        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-        final Date date = new Date();
+        formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+        date = new Date();
 
-        final RecyclerView recyclerView2 = view.findViewById(R.id.exercises_recyclerview);
-        recyclerView2.setLayoutManager(new LinearLayoutManager(requireContext()));
-        ExercisesAdapter exercisesAdapter = new ExercisesAdapter(requireContext(), getAllItems(arg1));
-        recyclerView2.setAdapter(exercisesAdapter);
+        RecyclerView recyclerView = view.findViewById(R.id.exercises_recyclerview);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        ExercisesAdapter exercisesAdapter = new ExercisesAdapter(requireContext(), getAllItems(program_id));
+        recyclerView.setAdapter(exercisesAdapter);
 
         finishText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 chronometer.stop();
                 int elapsed;
                 if (chronometerHelper.getPause() != null && !chronometerHelper.isRunning())
@@ -103,9 +105,9 @@ public class TrainingFragment extends Fragment {
                 btnPause = true;
 
                 ContentValues cv = new ContentValues();
-                cv.put(HistoryTable.HistoryEntry.HISTORY_PROG_ID, arg1);
-                cv.put(HistoryTable.HistoryEntry.HISTORY_PROG_NAME, arg2);
-                cv.put(HistoryTable.HistoryEntry.HISTORY_URI, searchUri(arg1));
+                cv.put(HistoryTable.HistoryEntry.HISTORY_PROG_ID, program_id);
+                cv.put(HistoryTable.HistoryEntry.HISTORY_PROG_NAME, program_name);
+                cv.put(HistoryTable.HistoryEntry.HISTORY_URI, searchUri(program_id));
                 cv.put(HistoryTable.HistoryEntry.HISTORY_DATE, formatter.format(date));
                 cv.put(HistoryTable.HistoryEntry.HISTORY_TIME, time);
 
@@ -114,7 +116,7 @@ public class TrainingFragment extends Fragment {
 
                 database.insert(HistoryTable.HistoryEntry.TABLE_HISTORY, null, cv);
 
-                final NavController navController = Navigation.findNavController(requireView());
+                NavController navController = Navigation.findNavController(requireView());
                 navController.navigate(R.id.action_training_to_navigation_list);
             }
         });
@@ -123,7 +125,7 @@ public class TrainingFragment extends Fragment {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final NavController navController = Navigation.findNavController(requireView());
+                NavController navController = Navigation.findNavController(requireView());
                 if (!navController.popBackStack()) {
                     navController.navigate(R.id.action_training_to_navigation_list);
                 }

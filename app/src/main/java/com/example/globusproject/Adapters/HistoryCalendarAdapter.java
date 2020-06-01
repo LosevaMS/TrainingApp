@@ -1,4 +1,4 @@
-package Adapters;
+package com.example.globusproject.Adapters;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -21,7 +21,7 @@ import com.example.globusproject.R;
 
 import org.jetbrains.annotations.NotNull;
 
-import Tables.HistoryTable;
+import com.example.globusproject.Tables.HistoryTable;
 
 
 public class HistoryCalendarAdapter extends RecyclerView.Adapter<HistoryCalendarAdapter.HistoryCalendarViewHolder> {
@@ -68,7 +68,6 @@ public class HistoryCalendarAdapter extends RecyclerView.Adapter<HistoryCalendar
             });
 
         }
-
 
         private int searchProgId(long id) {
             String query = "select prog_id from " + HistoryTable.HistoryEntry.TABLE_HISTORY + " WHERE _id = " + id;

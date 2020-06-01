@@ -1,4 +1,4 @@
-package Fragments;
+package com.example.globusproject.Fragments;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -40,10 +40,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
-import Adapters.ProgramListAdapter;
-import Tables.ProgramTable;
+import com.example.globusproject.Adapters.ProgramListAdapter;
+import com.example.globusproject.Tables.ProgramTable;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -56,6 +54,7 @@ public class ListFragment extends Fragment {
     private ProgramListAdapter programListAdapter;
     private ImageView imageView;
     private Uri uri;
+    private RecyclerView recyclerView;
 
     private static final int IMAGE_PICK_CODE = 1000;
     private static final int PERMISSION_CODE = 1001;
@@ -84,16 +83,14 @@ public class ListFragment extends Fragment {
         DBHelper dbHelper = new DBHelper(requireContext());
         database = dbHelper.getWritableDatabase();
 
-        final RecyclerView recyclerView = view.findViewById(R.id.recyclerview);
+        recyclerView = view.findViewById(R.id.recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         programListAdapter = new ProgramListAdapter(requireContext(), getAllItems());
         recyclerView.setAdapter(programListAdapter);
 
-
         FloatingActionButton add_program_button = view.findViewById(R.id.add_btn);
         userInput = view.findViewById(R.id.input_text);
         loadImage_btn = view.findViewById(R.id.load_image_btn);
-
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -126,7 +123,6 @@ public class ListFragment extends Fragment {
                 alertDialog.show();
             }
         }).attachToRecyclerView(recyclerView);
-
 
         add_program_button.setOnClickListener(new View.OnClickListener() {
 
@@ -196,12 +192,12 @@ public class ListFragment extends Fragment {
                 alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (userInput.getText().toString().isEmpty()){
+                        if (userInput.getText().toString().isEmpty()) {
                             userInput.setError("Введите название!");
                             alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                         }
                         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                        if (!userInput.getText().toString().isEmpty()){
+                        if (!userInput.getText().toString().isEmpty()) {
                             alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
                             addItem();
                             alertDialog.dismiss();
@@ -280,6 +276,86 @@ public class ListFragment extends Fragment {
         );
     }
 
+    private void showAlertDialog() {
+
+        LayoutInflater li = LayoutInflater.from(requireContext());
+        View promptsView = li.inflate(R.layout.dialog_add_program, null);
+
+        AlertDialog.Builder mDialogBuilder = new AlertDialog.Builder(requireContext());
+
+        mDialogBuilder.setView(promptsView);
+
+        userInput = promptsView.findViewById(R.id.input_text);
+        loadImage_btn = promptsView.findViewById(R.id.load_image_btn);
+        imageView = promptsView.findViewById(R.id.preview_image);
+
+        userInput.setImeActionLabel("", EditorInfo.IME_ACTION_NEXT);
+
+        userInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                    if (userInput.getText().toString().trim().equalsIgnoreCase(""))
+                        userInput.setError("Введите название!");
+                }
+                return false;
+            }
+        });
+
+        uri = null;
+
+        loadImage_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                            == PackageManager.PERMISSION_DENIED) {
+                        String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
+                        requestPermissions(permissions, PERMISSION_CODE);
+                    } else {
+                        pickImageFromGallery();
+                    }
+                } else {
+                    pickImageFromGallery();
+                }
+            }
+        });
+
+        mDialogBuilder
+                .setCancelable(true)
+                .setPositiveButton("ОК",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        })
+                .setNegativeButton("Отмена",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+        final AlertDialog alertDialog = mDialogBuilder.create();
+        alertDialog.show();
+
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (userInput.getText().toString().isEmpty()) {
+                    userInput.setError("Введите название!");
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                }
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                if (!userInput.getText().toString().isEmpty()) {
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    addItem();
+                    alertDialog.dismiss();
+                }
+            }
+        });
+        userInput.getText().clear();
+    }
+
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_list_menu, menu);
@@ -288,82 +364,7 @@ public class ListFragment extends Fragment {
         addItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                LayoutInflater li = LayoutInflater.from(requireContext());
-                View promptsView = li.inflate(R.layout.dialog_add_program, null);
-
-                AlertDialog.Builder mDialogBuilder = new AlertDialog.Builder(requireContext());
-
-                mDialogBuilder.setView(promptsView);
-
-                userInput = promptsView.findViewById(R.id.input_text);
-                loadImage_btn = promptsView.findViewById(R.id.load_image_btn);
-                imageView = promptsView.findViewById(R.id.preview_image);
-
-                userInput.setImeActionLabel("", EditorInfo.IME_ACTION_NEXT);
-
-                userInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-
-                    @Override
-                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                        if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                            if (userInput.getText().toString().trim().equalsIgnoreCase(""))
-                                userInput.setError("Введите название!");
-                        }
-                        return false;
-                    }
-                });
-
-                uri = null;
-
-                loadImage_btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                                    == PackageManager.PERMISSION_DENIED) {
-                                String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
-                                requestPermissions(permissions, PERMISSION_CODE);
-                            } else {
-                                pickImageFromGallery();
-                            }
-                        } else {
-                            pickImageFromGallery();
-                        }
-                    }
-                });
-
-                mDialogBuilder
-                        .setCancelable(true)
-                        .setPositiveButton("ОК",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                    }
-                                })
-                        .setNegativeButton("Отмена",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }
-                                });
-                final AlertDialog alertDialog = mDialogBuilder.create();
-                alertDialog.show();
-
-                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (userInput.getText().toString().isEmpty()){
-                            userInput.setError("Введите название!");
-                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                        }
-                        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                        if (!userInput.getText().toString().isEmpty()){
-                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                            addItem();
-                            alertDialog.dismiss();
-                        }
-                    }
-                });
-                userInput.getText().clear();
+                showAlertDialog();
                 return false;
             }
         });

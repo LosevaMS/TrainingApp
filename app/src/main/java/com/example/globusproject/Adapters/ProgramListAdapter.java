@@ -1,4 +1,4 @@
-package Adapters;
+package com.example.globusproject.Adapters;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -25,7 +25,7 @@ import com.example.globusproject.R;
 
 import org.jetbrains.annotations.NotNull;
 
-import Tables.ProgramTable;
+import com.example.globusproject.Tables.ProgramTable;
 
 
 public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.ProgramListViewHolder> {

@@ -1,31 +1,20 @@
-package Adapters;
+package com.example.globusproject.Adapters;
 
-import android.app.ActionBar;
-import android.os.Bundle;
-import android.text.Layout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.globusproject.InlineExercises;
 import com.example.globusproject.R;
-import com.github.clans.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 

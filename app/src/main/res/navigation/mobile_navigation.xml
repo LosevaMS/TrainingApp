@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_list"
-        android:name="Fragments.ListFragment"
+        android:name="com.example.globusproject.Fragments.ListFragment"
         android:label="Программы тренировок"
         tools:layout="@layout/fragment_list" >
         <action
@@ -24,7 +24,7 @@
 
     <fragment
         android:id="@+id/navigation_history"
-        android:name="Fragments.HistoryFragment"
+        android:name="com.example.globusproject.Fragments.HistoryFragment"
         android:label="История тренировок"
         tools:layout="@layout/fragment_history" >
 
@@ -36,7 +36,7 @@
     </fragment>
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="Fragments.ProfileFragment"
+        android:name="com.example.globusproject.Fragments.ProfileFragment"
         android:label="Профиль"
         tools:layout="@layout/fragment_profile" >
         <action
@@ -46,7 +46,7 @@
 
     <fragment
         android:id="@+id/edit_training"
-        android:name="Fragments.EditTrainingFragment"
+        android:name="com.example.globusproject.Fragments.EditTrainingFragment"
         android:label="Тренировка"
         tools:layout="@layout/fragment_edit_training" >
         <action
@@ -63,7 +63,7 @@
 
     <fragment
         android:id="@+id/training"
-        android:name="Fragments.TrainingFragment"
+        android:name="com.example.globusproject.Fragments.TrainingFragment"
         android:label=" "
         tools:layout="@layout/fragment_training">
 
@@ -81,7 +81,7 @@
 
     <fragment
         android:id="@+id/approach"
-        android:name="Fragments.ApproachFragment"
+        android:name="com.example.globusproject.Fragments.ApproachFragment"
         android:label=" "
         tools:layout="@layout/fragment_approach">
         <action
@@ -93,7 +93,7 @@
 
     <fragment
         android:id="@+id/fragment_history_training"
-        android:name="Fragments.HistoryTrainingFragment"
+        android:name="com.example.globusproject.Fragments.HistoryTrainingFragment"
         android:label=" "
         tools:layout="@layout/fragment_history_training">
 
@@ -115,7 +115,7 @@
 
     <fragment
     android:id="@+id/fragment_history_approach"
-    android:name="Fragments.HistoryApproachFragment"
+    android:name="com.example.globusproject.Fragments.HistoryApproachFragment"
     android:label=" "
     tools:layout="@layout/fragment_history_approach">
 
@@ -129,7 +129,7 @@
 
     <fragment
         android:id="@+id/fragment_inline_exercises"
-        android:name="Fragments.InlineExercisesListFragment"
+        android:name="com.example.globusproject.Fragments.InlineExercisesListFragment"
         android:label="Список упражнений"
         tools:layout="@layout/fragment_exercises_list">
         <action
@@ -141,7 +141,7 @@
     </fragment>
     <fragment
         android:id="@+id/calendarTrainingFragment"
-        android:name="Fragments.CalendarTrainingFragment"
+        android:name="com.example.globusproject.Fragments.CalendarTrainingFragment"
         android:label=" "
         tools:layout="@layout/fragment_calendar_training">
         <action

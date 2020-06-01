@@ -1,4 +1,4 @@
-package Fragments;
+package com.example.globusproject.Fragments;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -52,8 +52,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import Tables.HistoryTable;
-import Tables.WeightTable;
+import com.example.globusproject.Tables.HistoryTable;
+import com.example.globusproject.Tables.WeightTable;
 import static android.content.Context.MODE_PRIVATE;
 import static android.view.View.GONE;
 
@@ -70,6 +70,7 @@ public class ProfileFragment extends Fragment {
     private TextView currentWeight, minWeight, maxWeight, bmiIndicator, bmiDescription, paramWeight, paramHeight, monthText, yearText;
     private ImageView indicator;
     private float bmi;
+    private DateFormat dateFormat;
     private SharedPreferences sPref;
     private final String BMI_PREFERENCE = "bmi_pref";
     private final String PARAM_WEIGHT = "weight_pref";
@@ -255,7 +256,7 @@ public class ProfileFragment extends Fragment {
         compactCalendar = requireActivity().findViewById(R.id.compactcalendar_view);
         compactCalendar.setFirstDayOfWeek(Calendar.MONDAY);
 
-        final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
         try {
             addTrainingInCalendar();
@@ -270,7 +271,7 @@ public class ProfileFragment extends Fragment {
                 if (events.size() != 0) {
                     Bundle bundle = new Bundle();
                     bundle.putString("date", dateFormat.format(dateClicked));
-                    final NavController navController = Navigation.findNavController(requireView());
+                    NavController navController = Navigation.findNavController(requireView());
                     navController.navigate(R.id.action_navigation_profile_to_calendarTrainingFragment, bundle);
                 }
             }
@@ -567,8 +568,8 @@ public class ProfileFragment extends Fragment {
                 null,
                 null,
                 null);
-        Float sum = 0f;
-        Float count = (float) cursor.getCount();
+        float sum = 0f;
+        float count = (float) cursor.getCount();
         Date minDate = new Date();
         if (cursor.getCount() != 0) {
             while (cursor.moveToNext()) {

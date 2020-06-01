@@ -1,4 +1,4 @@
-package Fragments;
+package com.example.globusproject.Fragments;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -19,16 +19,16 @@ import com.example.globusproject.DBHelper;
 import com.example.globusproject.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import com.example.globusproject.Adapters.HistoryTrainingAdapter;
+import com.example.globusproject.Tables.HistoryExercisesTable;
 
-import Adapters.HistoryApproachAdapter;
-import Tables.HistoryApproachesTable;
-
-public class HistoryApproachFragment extends Fragment {
+public class HistoryTrainingFragment extends Fragment implements HistoryTrainingAdapter.ClickListener {
 
     private SQLiteDatabase database;
+    private String date;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_history_approach, container, false);
+        return inflater.inflate(R.layout.fragment_history_training, container, false);
     }
 
     @Override
@@ -43,15 +43,27 @@ public class HistoryApproachFragment extends Fragment {
         database = dbHelper.getWritableDatabase();
 
         assert getArguments() != null;
-        final long arg1 = getArguments().getLong("ex_id");
-        final String arg2 = getArguments().getString("date");
+        long program_id = getArguments().getLong("prog_id");
+        date = getArguments().getString("date");
 
-
-        final RecyclerView recyclerView = view.findViewById(R.id.history_approach_recyclerview);
+        RecyclerView recyclerView = view.findViewById(R.id.history_training_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        HistoryApproachAdapter historyApproachAdapter = new HistoryApproachAdapter(requireContext(), getAllItems(arg1, arg2));
-        recyclerView.setAdapter(historyApproachAdapter);
+        HistoryTrainingAdapter historyTrainingAdapter = new HistoryTrainingAdapter(requireContext(), getAllItems(program_id), this);
+        recyclerView.setAdapter(historyTrainingAdapter);
 
+
+        historyTrainingAdapter.setOnItemClickListener(new HistoryTrainingAdapter.ClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+                Bundle bundle = new Bundle();
+                long exercise_id = (long) v.getTag();
+                bundle.putLong("ex_id", exercise_id);
+                bundle.putString("date", date);
+
+                final NavController navController = Navigation.findNavController(v);
+                navController.navigate(R.id.action_fragment_history_training_to_fragment_history_approach, bundle);
+            }
+        });
 
         androidx.appcompat.widget.Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -59,21 +71,20 @@ public class HistoryApproachFragment extends Fragment {
             public void onClick(View v) {
                 final NavController navController = Navigation.findNavController(requireView());
                 if (!navController.popBackStack()) {
-                    navController.navigate(R.id.action_fragment_history_approach_to_fragment_history_training);
+                    navController.navigate(R.id.action_fragment_history_training_to_navigation_history);
                 }
             }
         });
-
     }
 
-    private Cursor getAllItems(long ex_id, String date) {
+    private Cursor getAllItems(long id) {
 
-        String whereClause = HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_EX_ID + "=? AND " +
-                HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_DATE + "=?";
-        String[] whereArgs = new String[]{String.valueOf(ex_id), date};
+        String whereClause = HistoryExercisesTable.HistoryExercisesEntry.HISTORY_PROG_ID + "=?";
+
+        String[] whereArgs = new String[]{String.valueOf(id)};
 
         return database.query(
-                HistoryApproachesTable.HistoryApproachesEntry.TABLE_HISTORY_APPROACHES,
+                HistoryExercisesTable.HistoryExercisesEntry.TABLE_HISTORY_EXERCISES,
                 null,
                 whereClause,
                 whereArgs,
@@ -81,5 +92,9 @@ public class HistoryApproachFragment extends Fragment {
                 null,
                 null
         );
+    }
+
+    @Override
+    public void onItemClick(int position, View v) {
     }
 }

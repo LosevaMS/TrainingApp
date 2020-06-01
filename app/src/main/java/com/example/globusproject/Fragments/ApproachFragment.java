@@ -1,4 +1,4 @@
-package Fragments;
+package com.example.globusproject.Fragments;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -15,7 +15,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,10 +35,10 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
-import Adapters.ApproachAdapter;
-import Tables.ApproachesTable;
+import com.example.globusproject.Adapters.ApproachAdapter;
+import com.example.globusproject.Tables.ApproachesTable;
 
-public class ApproachFragment extends Fragment implements ApproachAdapter.OnNoteListener {
+public class ApproachFragment extends Fragment {
 
     private SQLiteDatabase database;
     private ApproachAdapter approachAdapter1, approachAdapter2;
@@ -64,13 +63,12 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
         lastTime = view.findViewById(R.id.last_time);
 
         assert getArguments() != null;
-        final long arg1 = getArguments().getLong("ex_id");
-        final int arg2 = getArguments().getInt("prog_id");
+        final long exercise_id = getArguments().getLong("ex_id");
 
         final RecyclerView recyclerView1 = view.findViewById(R.id.last_approach_recyclerview);
         recyclerView1.setLayoutManager(new LinearLayoutManager(requireContext()));
         try {
-            approachAdapter1 = new ApproachAdapter(requireContext(), getPreviousItems(arg1), this);
+            approachAdapter1 = new ApproachAdapter(requireContext(), getPreviousItems(exercise_id));
         } catch (ParseException ex) {
             ex.printStackTrace();
         }
@@ -78,7 +76,7 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
 
         final RecyclerView recyclerView2 = view.findViewById(R.id.approach_recyclerview);
         recyclerView2.setLayoutManager(new LinearLayoutManager(requireContext()));
-        approachAdapter2 = new ApproachAdapter(requireContext(), getAllItems(arg1), this);
+        approachAdapter2 = new ApproachAdapter(requireContext(), getAllItems(exercise_id));
         recyclerView2.setAdapter(approachAdapter2);
 
 
@@ -88,92 +86,7 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
 
             @Override
             public void onClick(View arg0) {
-
-                LayoutInflater li = LayoutInflater.from(requireContext());
-                View promptsView = li.inflate(R.layout.dialog_add_approach, null);
-
-                final AlertDialog.Builder mDialogBuilder = new AlertDialog.Builder(requireContext());
-
-                mDialogBuilder.setView(promptsView);
-
-                inputWeight = promptsView.findViewById(R.id.input_weight);
-                inputCount = promptsView.findViewById(R.id.input_count);
-
-                inputWeight.setImeActionLabel("", EditorInfo.IME_ACTION_NEXT);
-
-                inputWeight.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-
-                    @Override
-                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                        if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                            if (inputWeight.getText().toString().trim().equalsIgnoreCase(""))
-                                inputWeight.setError("Введите вес!");
-                        }
-                        return false;
-                    }
-                });
-                inputCount.setImeActionLabel("", EditorInfo.IME_ACTION_NEXT);
-
-                inputCount.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-
-                    @Override
-                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                        if (actionId == EditorInfo.IME_ACTION_DONE) {
-                            if (inputCount.getText().toString().trim().equalsIgnoreCase(""))
-                                inputCount.setError("Введите кол-во повторений!");
-                        }
-                        return false;
-                    }
-                });
-
-                mDialogBuilder
-                        .setCancelable(true)
-                        .setPositiveButton("OK",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                    }
-                                })
-                        .setNegativeButton("Отмена",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }
-                                });
-
-                final AlertDialog alertDialog = mDialogBuilder.create();
-                alertDialog.show();
-
-                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (inputWeight.getText().toString().isEmpty()){
-                            inputWeight.setError("Введите вес!");
-                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                        }
-                        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                        if (inputCount.getText().toString().isEmpty()){
-                            inputCount.setError("Введите кол-во повторений!");
-                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                        }
-                        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                        if (!inputCount.getText().toString().isEmpty() && !inputWeight.getText().toString().isEmpty()) {
-                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                            addItem(arg1, arg2);
-                            alertDialog.dismiss();
-                        }
-                    }
-                });
-                DisplayMetrics displayMetrics = new DisplayMetrics();
-                requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-                int displayWidth = displayMetrics.widthPixels;
-                WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
-                layoutParams.copyFrom(Objects.requireNonNull(alertDialog.getWindow()).getAttributes());
-                layoutParams.width = (int) (displayWidth * 0.75f);
-                layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                alertDialog.getWindow().setAttributes(layoutParams);
-
-                inputWeight.getText().clear();
-                inputCount.getText().clear();
+                showAlertDialog();
             }
         });
 
@@ -190,7 +103,100 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
 
     }
 
-    private void addItem(long ex_id, int prog_id) {
+    private void showAlertDialog(){
+
+        assert getArguments() != null;
+        final long exercise_id = getArguments().getLong("ex_id");
+        final int program_id = getArguments().getInt("prog_id");
+
+        LayoutInflater layoutInflater = LayoutInflater.from(requireContext());
+        View customDialogView = layoutInflater.inflate(R.layout.dialog_add_approach, null);
+
+        final AlertDialog.Builder mDialogBuilder = new AlertDialog.Builder(requireContext());
+
+        mDialogBuilder.setView(customDialogView);
+
+        inputWeight = customDialogView.findViewById(R.id.input_weight);
+        inputCount = customDialogView.findViewById(R.id.input_count);
+
+        inputWeight.setImeActionLabel("", EditorInfo.IME_ACTION_NEXT);
+
+        inputWeight.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                    if (inputWeight.getText().toString().trim().equalsIgnoreCase(""))
+                        inputWeight.setError("Введите вес!");
+                }
+                return false;
+            }
+        });
+        inputCount.setImeActionLabel("", EditorInfo.IME_ACTION_NEXT);
+
+        inputCount.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    if (inputCount.getText().toString().trim().equalsIgnoreCase(""))
+                        inputCount.setError("Введите кол-во повторений!");
+                }
+                return false;
+            }
+        });
+
+        mDialogBuilder
+                .setCancelable(true)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        })
+                .setNegativeButton("Отмена",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        final AlertDialog alertDialog = mDialogBuilder.create();
+        alertDialog.show();
+
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (inputWeight.getText().toString().isEmpty()){
+                    inputWeight.setError("Введите вес!");
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                }
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                if (inputCount.getText().toString().isEmpty()){
+                    inputCount.setError("Введите кол-во повторений!");
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                }
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                if (!inputCount.getText().toString().isEmpty() && !inputWeight.getText().toString().isEmpty()) {
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    addItem(exercise_id, program_id);
+                    alertDialog.dismiss();
+                }
+            }
+        });
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        requireActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int displayWidth = displayMetrics.widthPixels;
+        WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams();
+        layoutParams.copyFrom(Objects.requireNonNull(alertDialog.getWindow()).getAttributes());
+        layoutParams.width = (int) (displayWidth * 0.80f);
+        layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        alertDialog.getWindow().setAttributes(layoutParams);
+
+        inputWeight.getText().clear();
+        inputCount.getText().clear();
+    }
+
+    private void addItem(long exercise_id, int program_id) {
 
         if (inputWeight.getText().toString().trim().length() == 0
                 && inputCount.getText().toString().trim().length() == 0) {
@@ -206,13 +212,13 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
         ContentValues cv = new ContentValues();
         cv.put(ApproachesTable.ApproachesEntry.APP_WEIGHT, weight);
         cv.put(ApproachesTable.ApproachesEntry.APP_COUNT, count);
-        cv.put(ApproachesTable.ApproachesEntry.APP_EX_ID, (int) ex_id);
-        cv.put(ApproachesTable.ApproachesEntry.APP_PROG_ID, prog_id);
+        cv.put(ApproachesTable.ApproachesEntry.APP_EX_ID, (int) exercise_id);
+        cv.put(ApproachesTable.ApproachesEntry.APP_PROG_ID, program_id);
         cv.put(ApproachesTable.ApproachesEntry.APP_DATE, formatter.format(date));
         cv.put(ApproachesTable.ApproachesEntry.APP_IS_CURRENT, true);
 
         database.insert(ApproachesTable.ApproachesEntry.TABLE_APPROACHES, null, cv);
-        approachAdapter2.swapCursor(getAllItems(ex_id));
+        approachAdapter2.swapCursor(getAllItems(exercise_id));
 
         inputWeight.getText().clear();
         inputCount.getText().clear();
@@ -251,7 +257,6 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
         else
             lastTime.setVisibility(View.VISIBLE);
 
-
         return database.query(
                 ApproachesTable.ApproachesEntry.TABLE_APPROACHES,
                 null,
@@ -281,27 +286,22 @@ public class ApproachFragment extends Fragment implements ApproachAdapter.OnNote
                 null
         );
 
-        String a, res;
-        res = "error";
-        Date date2;
-        date2 = formatter.parse("1999-01-01 00:00");
+        String stringDate, result;
+        result = "error";
+        Date minDate;
+        minDate = formatter.parse("1999-01-01 00:00");
 
         while (c.moveToNext()) {
-            a = c.getString(c.getColumnIndex("date"));
+            stringDate = c.getString(c.getColumnIndex("date"));
 
-            assert date2 != null;
-            if (date2.getTime() < date.getTime() && date2.getTime() < Objects.requireNonNull(formatter.parse(a)).getTime()) {
-                date2.setTime(Objects.requireNonNull(formatter.parse(a)).getTime());
-                res = a;
+            assert minDate != null;
+            if (minDate.getTime() < date.getTime() && minDate.getTime() < Objects.requireNonNull(formatter.parse(stringDate)).getTime()) {
+                minDate.setTime(Objects.requireNonNull(formatter.parse(stringDate)).getTime());
+                result = stringDate;
 
             }
         }
         c.close();
-        return res;
-    }
-
-    @Override
-    public void onNoteClick(int position) {
-
+        return result;
     }
 }

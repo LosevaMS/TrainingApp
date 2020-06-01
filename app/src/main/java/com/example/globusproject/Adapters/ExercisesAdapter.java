@@ -1,18 +1,17 @@
-package Adapters;
+package com.example.globusproject.Adapters;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -21,80 +20,76 @@ import com.example.globusproject.R;
 
 import org.jetbrains.annotations.NotNull;
 
-import Tables.ExercisesTable;
+import com.example.globusproject.Tables.ExercisesTable;
 
-public class ExerciseListAdapter extends RecyclerView.Adapter<ExerciseListAdapter.ExerciseViewHolder> {
-
+public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.ExercisesViewHolder> {
     private Context mContext;
     private Cursor mCursor;
 
-    public ExerciseListAdapter(Context context, Cursor cursor) {
+    public ExercisesAdapter(Context context, Cursor cursor) {
         mContext = context;
         mCursor = cursor;
     }
 
-    class ExerciseViewHolder extends RecyclerView.ViewHolder {
+    class ExercisesViewHolder extends RecyclerView.ViewHolder {
         private TextView nameText;
         private ImageView exerciseImage;
 
-        private ExerciseViewHolder(final View itemView) {
+        private ExercisesViewHolder(final View itemView) {
             super(itemView);
-            nameText = itemView.findViewById(R.id.exercise_name_item);
-            Button deleteBtn = itemView.findViewById(R.id.delete_ex_item);
-            exerciseImage = itemView.findViewById(R.id.ex_image);
+            nameText = itemView.findViewById(R.id.ex_name_item_training);
+            exerciseImage = itemView.findViewById(R.id.ex_image_training);
 
             DBHelper dbHelper = new DBHelper(mContext);
             database = dbHelper.getWritableDatabase();
 
-            deleteBtn.setOnClickListener(new View.OnClickListener() {
+            itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AlertDialog.Builder adb = new AlertDialog.Builder(mContext);
-                    adb.setMessage("Удалить упражнение?");
-                    adb.setPositiveButton("Да", myClickListener);
-                    adb.setNegativeButton("Нет", myClickListener);
-                    adb.create();
-                    adb.show();
+                    Bundle bundle = new Bundle();
+                    long exId = (long) itemView.getTag();
+                    bundle.putLong("ex_id", exId);
+                    int progId = searchProgId(exId);
+                    bundle.putInt("prog_id", progId);
+                    final NavController navController = Navigation.findNavController(itemView);
+                    navController.navigate(R.id.action_training_to_approach, bundle);
                 }
             });
+
         }
 
-        DialogInterface.OnClickListener myClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case Dialog.BUTTON_POSITIVE:
-                        long id = (long) itemView.getTag();
-                        database.delete(ExercisesTable.ExercisesEntry.TABLE_EXERCISES,
-                                ExercisesTable.ExercisesEntry._ID + "=" + id, null);
-                        notifyItemRemoved(getAdapterPosition());
-                        break;
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        break;
-                }
-            }
-        };
+        private int searchProgId(long id) {
+            String query = "select _program_id from " + ExercisesTable.ExercisesEntry.TABLE_EXERCISES + " WHERE _id = " + id;
+            Cursor c = database.rawQuery(query, null);
 
+            int a = 0;
+            if (c.moveToFirst())
+            {
+                a = c.getInt(c.getColumnIndex("_program_id"));
+            }
+            c.close();
+            return a;
+        }
     }
 
     private SQLiteDatabase database;
 
     @NotNull
     @Override
-    public ExerciseViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
+    public ExercisesAdapter.ExercisesViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from((mContext));
-        View view = inflater.inflate(R.layout.exercise_item, parent, false);
-        return new ExerciseViewHolder(view);
+        View view = inflater.inflate(R.layout.ex_item, parent, false);
+        return new ExercisesAdapter.ExercisesViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NotNull ExerciseViewHolder holder, int position) {
+    public void onBindViewHolder(@NotNull ExercisesAdapter.ExercisesViewHolder holder, int position) {
         if (!mCursor.moveToPosition(position)) {
             return;
         }
         String name = mCursor.getString(mCursor.getColumnIndex(ExercisesTable.ExercisesEntry.EX_NAME));
-        long id = mCursor.getLong(mCursor.getColumnIndex(ExercisesTable.ExercisesEntry._ID));
         String uri = mCursor.getString(mCursor.getColumnIndex(ExercisesTable.ExercisesEntry.EX_URI));
+        long id = mCursor.getLong(mCursor.getColumnIndex(ExercisesTable.ExercisesEntry._ID));
 
         holder.nameText.setText(name);
         holder.itemView.setTag(id);
@@ -113,7 +108,6 @@ public class ExerciseListAdapter extends RecyclerView.Adapter<ExerciseListAdapte
         if (uri.equals("null"))
             Glide.with(holder.itemView.getContext()).load(R.drawable.ic_sport4).into(holder.exerciseImage);
     }
-
 
     @Override
     public int getItemCount() {

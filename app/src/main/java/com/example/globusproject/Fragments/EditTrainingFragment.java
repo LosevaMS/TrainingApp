@@ -1,4 +1,4 @@
-package Fragments;
+package com.example.globusproject.Fragments;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -45,12 +45,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
-import Adapters.ExerciseListAdapter;
-import Tables.ExercisesTable;
-import Tables.HistoryExercisesTable;
-import Tables.ProgramTable;
+import com.example.globusproject.Adapters.ExerciseListAdapter;
+import com.example.globusproject.Tables.ExercisesTable;
+import com.example.globusproject.Tables.HistoryExercisesTable;
+import com.example.globusproject.Tables.ProgramTable;
 
 import static android.app.Activity.RESULT_OK;
 import static android.view.View.GONE;
@@ -68,6 +67,7 @@ public class EditTrainingFragment extends Fragment {
     private ImageView imageView;
     private Uri uri;
     private Button loadImage_btn;
+    private RecyclerView recyclerView;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_edit_training, container, false);
@@ -88,7 +88,6 @@ public class EditTrainingFragment extends Fragment {
         FloatingActionButton createExerciseBtn = view.findViewById(R.id.menu_create_ex_btn);
         FloatingActionButton chooseFromListBtn = view.findViewById(R.id.menu_list_btn);
 
-
         chooseFromListBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,19 +96,17 @@ public class EditTrainingFragment extends Fragment {
             }
         });
 
-
         DBHelper dbHelper = new DBHelper(requireContext());
         database = dbHelper.getWritableDatabase();
 
         assert getArguments() != null;
-        final long arg1 = getArguments().getLong("prog_id");
-        final String arg2 = getArguments().getString("prog_name");
+        final long program_id = getArguments().getLong("prog_id");
+        final String program_name = getArguments().getString("prog_name");
 
-
-        final RecyclerView recyclerView2 = view.findViewById(R.id.recyclerview2);
-        recyclerView2.setLayoutManager(new LinearLayoutManager(requireContext()));
-        exerciseListAdapter = new ExerciseListAdapter(requireContext(), getAllItems(arg1));
-        recyclerView2.setAdapter(exerciseListAdapter);
+        recyclerView = view.findViewById(R.id.recyclerview2);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        exerciseListAdapter = new ExerciseListAdapter(requireContext(), getAllItems(program_id));
+        recyclerView.setAdapter(exerciseListAdapter);
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -133,8 +130,8 @@ public class EditTrainingFragment extends Fragment {
                         .setNegativeButton("Нет",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        exerciseListAdapter = new ExerciseListAdapter(requireContext(), getAllItems(arg1));
-                                        recyclerView2.setAdapter(exerciseListAdapter);
+                                        exerciseListAdapter = new ExerciseListAdapter(requireContext(), getAllItems(program_id));
+                                        recyclerView.setAdapter(exerciseListAdapter);
                                         dialog.cancel();
                                     }
                                 });
@@ -142,78 +139,14 @@ public class EditTrainingFragment extends Fragment {
                 alertDialog.show();
 
             }
-        }).attachToRecyclerView(recyclerView2);
+        }).attachToRecyclerView(recyclerView);
 
-
-        userInput.setText(arg2);
+        userInput.setText(program_name);
 
         createExerciseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LayoutInflater li = LayoutInflater.from(requireContext());
-                View promptsView = li.inflate(R.layout.dialog_add_exercises, null);
-
-                AlertDialog.Builder mDialogBuilder = new AlertDialog.Builder(requireContext());
-
-                mDialogBuilder.setView(promptsView);
-
-                userInput2 = promptsView.findViewById(R.id.input_text);
-                loadImage_btn = promptsView.findViewById(R.id.load_image_btn);
-                imageView = promptsView.findViewById(R.id.preview_image);
-
-                uri = null;
-
-                loadImage_btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                                    == PackageManager.PERMISSION_DENIED) {
-                                String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
-                                requestPermissions(permissions, PERMISSION_CODE);
-                            } else {
-                                pickImageFromGallery();
-                            }
-                        } else {
-                            pickImageFromGallery();
-                        }
-                    }
-                });
-
-                mDialogBuilder
-                        .setCancelable(true)
-                        .setPositiveButton("ОК",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                    }
-                                })
-                        .setNegativeButton("Отмена",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }
-                                });
-                final AlertDialog alertDialog = mDialogBuilder.create();
-                alertDialog.show();
-
-                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (userInput2.getText().toString().isEmpty()){
-                            userInput2.setError("Введите название!");
-                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                        }
-                        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                        if (!userInput2.getText().toString().isEmpty()){
-                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                            addItem(arg1);
-                            exerciseListAdapter = new ExerciseListAdapter(requireContext(), getAllItems(arg1));
-                            recyclerView2.setAdapter(exerciseListAdapter);
-                            alertDialog.dismiss();
-                        }
-                    }
-                });
-                userInput2.getText().clear();
+                showAlertDialog();
             }
         });
 
@@ -225,14 +158,13 @@ public class EditTrainingFragment extends Fragment {
             }
         });
 
-
         SharedViewModel viewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
         viewModel.getText().observe(getViewLifecycleOwner(), new Observer<ArrayList<InlineExercises>>() {
             @Override
             public void onChanged(@Nullable ArrayList<InlineExercises> selectedExercises) {
                 assert selectedExercises != null;
                 for (int i = 0; i < selectedExercises.size(); i++) {
-                    addFromInlineList(arg1, selectedExercises.get(i));
+                    addFromInlineList(program_id, selectedExercises.get(i));
                 }
             }
         });
@@ -272,7 +204,75 @@ public class EditTrainingFragment extends Fragment {
                 }
             }
         });
+    }
 
+    private void showAlertDialog() {
+
+        assert getArguments() != null;
+        final long program_id = getArguments().getLong("prog_id");
+
+        LayoutInflater li = LayoutInflater.from(requireContext());
+        View promptsView = li.inflate(R.layout.dialog_add_exercises, null);
+
+        AlertDialog.Builder mDialogBuilder = new AlertDialog.Builder(requireContext());
+
+        mDialogBuilder.setView(promptsView);
+
+        userInput2 = promptsView.findViewById(R.id.input_text);
+        loadImage_btn = promptsView.findViewById(R.id.load_image_btn);
+        imageView = promptsView.findViewById(R.id.preview_image);
+
+        uri = null;
+
+        loadImage_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                            == PackageManager.PERMISSION_DENIED) {
+                        String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
+                        requestPermissions(permissions, PERMISSION_CODE);
+                    } else {
+                        pickImageFromGallery();
+                    }
+                } else {
+                    pickImageFromGallery();
+                }
+            }
+        });
+
+        mDialogBuilder
+                .setCancelable(true)
+                .setPositiveButton("ОК",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        })
+                .setNegativeButton("Отмена",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+        final AlertDialog alertDialog = mDialogBuilder.create();
+        alertDialog.show();
+
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (userInput2.getText().toString().isEmpty()) {
+                    userInput2.setError("Введите название!");
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                }
+                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                if (!userInput2.getText().toString().isEmpty()) {
+                    alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    addItem(program_id);
+                    alertDialog.dismiss();
+                }
+            }
+        });
+        userInput2.getText().clear();
     }
 
     private void pickImageFromGallery() {
@@ -326,7 +326,6 @@ public class EditTrainingFragment extends Fragment {
         cv.put(ExercisesTable.ExercisesEntry.EX_NAME, item.getName());
         cv.put(ExercisesTable.ExercisesEntry.EX_PROG_ID, (int) id);
         cv.put(ExercisesTable.ExercisesEntry.EX_URI, item.getUri());
-
         database.insert(ExercisesTable.ExercisesEntry.TABLE_EXERCISES, null, cv);
         exerciseListAdapter.swapCursor(getAllItems(id));
 
@@ -334,7 +333,6 @@ public class EditTrainingFragment extends Fragment {
         cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_NAME, item.getName());
         cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_PROG_ID, (int) id);
         cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_URI, item.getUri());
-
         database.insert(HistoryExercisesTable.HistoryExercisesEntry.TABLE_HISTORY_EXERCISES, null, cv);
     }
 
@@ -343,13 +341,11 @@ public class EditTrainingFragment extends Fragment {
         if (userInput2.getText().toString().trim().length() == 0) {
             return;
         }
-
         String name = userInput2.getText().toString();
         ContentValues cv = new ContentValues();
         cv.put(ExercisesTable.ExercisesEntry.EX_NAME, name);
         cv.put(ExercisesTable.ExercisesEntry.EX_PROG_ID, (int) id);
         cv.put(ExercisesTable.ExercisesEntry.EX_URI, String.valueOf(uri));
-
         database.insert(ExercisesTable.ExercisesEntry.TABLE_EXERCISES, null, cv);
         exerciseListAdapter.swapCursor(getAllItems(id));
 
@@ -357,7 +353,6 @@ public class EditTrainingFragment extends Fragment {
         cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_NAME, name);
         cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_PROG_ID, (int) id);
         cv.put(HistoryExercisesTable.HistoryExercisesEntry.HISTORY_EX_URI, String.valueOf(uri));
-
         database.insert(HistoryExercisesTable.HistoryExercisesEntry.TABLE_HISTORY_EXERCISES, null, cv);
 
         userInput2.getText().clear();

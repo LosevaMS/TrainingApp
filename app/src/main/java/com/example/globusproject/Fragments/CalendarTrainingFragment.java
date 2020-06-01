@@ -1,4 +1,4 @@
-package Fragments;
+package com.example.globusproject.Fragments;
 
 
 import android.app.AlertDialog;
@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,17 +25,23 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
-import Adapters.HistoryListAdapter;
-import Tables.HistoryApproachesTable;
-import Tables.HistoryExercisesTable;
-import Tables.HistoryTable;
+import com.example.globusproject.Adapters.HistoryCalendarAdapter;
+import com.example.globusproject.Tables.HistoryApproachesTable;
+import com.example.globusproject.Tables.HistoryExercisesTable;
+import com.example.globusproject.Tables.HistoryTable;
 
-public class HistoryFragment extends Fragment {
+public class CalendarTrainingFragment extends Fragment {
 
     private SQLiteDatabase database;
-    private HistoryListAdapter historyListAdapter;
+    private HistoryCalendarAdapter historyListAdapter;
+    private String condition;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,7 +52,7 @@ public class HistoryFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setRetainInstance(true);
-        return inflater.inflate(R.layout.fragment_history, container, false);
+        return inflater.inflate(R.layout.fragment_calendar_training, container, false);
     }
 
     @Override
@@ -53,14 +61,23 @@ public class HistoryFragment extends Fragment {
         setRetainInstance(true);
 
         BottomNavigationView navBar = requireActivity().findViewById(R.id.nav_view);
-        navBar.setVisibility(View.VISIBLE);
+        navBar.setVisibility(View.GONE);
 
         DBHelper dbHelper = new DBHelper(requireContext());
         database = dbHelper.getWritableDatabase();
 
-        final RecyclerView recyclerView = view.findViewById(R.id.recyclerview_history);
+        assert getArguments() != null;
+        final String date = getArguments().getString("date");
+
+        try {
+            condition = searchIds(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        final RecyclerView recyclerView = view.findViewById(R.id.recyclerview_calendar_history);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        historyListAdapter = new HistoryListAdapter(requireContext(), getAllItems());
+        historyListAdapter = new HistoryCalendarAdapter(requireContext(), getAllItems());
         recyclerView.setAdapter(historyListAdapter);
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
@@ -85,7 +102,7 @@ public class HistoryFragment extends Fragment {
                         .setNegativeButton("Нет",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        historyListAdapter = new HistoryListAdapter(requireContext(), getAllItems());
+                                        historyListAdapter = new HistoryCalendarAdapter(requireContext(), getAllItems());
                                         recyclerView.setAdapter(historyListAdapter);
                                         dialog.cancel();
                                     }
@@ -95,10 +112,20 @@ public class HistoryFragment extends Fragment {
             }
         }).attachToRecyclerView(recyclerView);
 
+        androidx.appcompat.widget.Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final NavController navController = Navigation.findNavController(requireView());
+                if (!navController.popBackStack()) {
+                    navController.navigate(R.id.action_calendarTrainingFragment_to_navigation_profile);
+                }
+            }
+        });
+
         assert savedInstanceState != null;
         onSaveInstanceState(savedInstanceState);
     }
-
 
     private void removeItem(long id) {
         String date = searchDate(id);
@@ -120,7 +147,25 @@ public class HistoryFragment extends Fragment {
     }
 
     private Cursor getAllItems() {
-        return database.query(
+
+        if (condition.isEmpty()) {
+
+            return database.query(
+                    HistoryTable.HistoryEntry.TABLE_HISTORY,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    HistoryTable.HistoryEntry._ID + " DESC"
+            );
+        } else {
+            return database.rawQuery("SELECT * FROM history WHERE _id IN (" + condition + ")", null);
+        }
+    }
+
+    private String searchIds(String date) throws ParseException {
+        Cursor c = database.query(
                 HistoryTable.HistoryEntry.TABLE_HISTORY,
                 null,
                 null,
@@ -129,6 +174,21 @@ public class HistoryFragment extends Fragment {
                 null,
                 HistoryTable.HistoryEntry._ID + " DESC"
         );
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String dateString = "";
+
+        while (c.moveToNext()) {
+            Date date1 = dateFormat.parse(c.getString(c.getColumnIndex("date")));
+            assert date1 != null;
+            if (date.equals(dateFormat.format(date1))) {
+                dateString = dateString.concat(String.valueOf(c.getInt(c.getColumnIndex("_id"))));
+                dateString = dateString.concat(",");
+            }
+        }
+        dateString = dateString.substring(0, dateString.length() - 1);
+
+        c.close();
+        return dateString;
     }
 
     private int searchProgId(long id) {
@@ -166,5 +226,4 @@ public class HistoryFragment extends Fragment {
         c.close();
         return a;
     }
-
 }
