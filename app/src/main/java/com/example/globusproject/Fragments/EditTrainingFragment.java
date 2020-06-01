@@ -2,6 +2,7 @@ package com.example.globusproject.Fragments;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -37,6 +38,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.globusproject.DBHelper;
 import com.example.globusproject.InlineExercises;
+import com.example.globusproject.OnExerciseListClickListener;
 import com.example.globusproject.R;
 import com.example.globusproject.SharedViewModel;
 import com.github.clans.fab.FloatingActionButton;
@@ -54,7 +56,7 @@ import com.example.globusproject.Tables.ProgramTable;
 import static android.app.Activity.RESULT_OK;
 import static android.view.View.GONE;
 
-public class EditTrainingFragment extends Fragment {
+public class EditTrainingFragment extends Fragment  implements OnExerciseListClickListener {
 
     private static final int IMAGE_PICK_CODE = 1000;
     private static final int PERMISSION_CODE = 1001;
@@ -105,7 +107,7 @@ public class EditTrainingFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.recyclerview2);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        exerciseListAdapter = new ExerciseListAdapter(requireContext(), getAllItems(program_id));
+        exerciseListAdapter = new ExerciseListAdapter(requireContext(), getAllItems(program_id),this);
         recyclerView.setAdapter(exerciseListAdapter);
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
@@ -130,8 +132,8 @@ public class EditTrainingFragment extends Fragment {
                         .setNegativeButton("Нет",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        exerciseListAdapter = new ExerciseListAdapter(requireContext(), getAllItems(program_id));
-                                        recyclerView.setAdapter(exerciseListAdapter);
+                                        //exerciseListAdapter = new ExerciseListAdapter(requireContext(), getAllItems(program_id),this);
+                                        //recyclerView.setAdapter(exerciseListAdapter);
                                         dialog.cancel();
                                     }
                                 });
@@ -142,6 +144,32 @@ public class EditTrainingFragment extends Fragment {
         }).attachToRecyclerView(recyclerView);
 
         userInput.setText(program_name);
+
+        exerciseListAdapter.setOnExerciseListClickListener(new OnExerciseListClickListener() {
+            @Override
+            public void onClickExercise(final int position, final View v) {
+                AlertDialog.Builder mDialogBuilder = new AlertDialog.Builder(requireContext());
+                mDialogBuilder
+                        .setMessage("Удалить упражнение?")
+                        .setCancelable(false)
+                        .setPositiveButton("Да",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        removeItem((long) v.getTag());
+                                    }
+                                })
+                        .setNegativeButton("Нет",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        //exerciseListAdapter = new ExerciseListAdapter(requireContext(), getAllItems(program_id),this);
+                                        //recyclerView.setAdapter(exerciseListAdapter);
+                                        dialog.cancel();
+                                    }
+                                });
+                AlertDialog alertDialog = mDialogBuilder.create();
+                alertDialog.show();
+            }
+        });
 
         createExerciseBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -402,5 +430,10 @@ public class EditTrainingFragment extends Fragment {
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onClickExercise(int position, View v) {
+
     }
 }
