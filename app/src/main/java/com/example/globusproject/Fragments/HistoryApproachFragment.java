@@ -56,7 +56,7 @@ public class HistoryApproachFragment extends Fragment {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final NavController navController = Navigation.findNavController(requireView());
+                NavController navController = Navigation.findNavController(requireView());
                 if (!navController.popBackStack()) {
                     navController.navigate(R.id.action_fragment_history_approach_to_fragment_history_training);
                 }

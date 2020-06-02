@@ -9,6 +9,7 @@ public class ChronometerHelper {
     private static boolean mRunning;
     @Nullable
     private static Long mPause;
+    private static long mProgram_id=0;
 
     @Nullable
     public Long getStartTime() {
@@ -34,5 +35,13 @@ public class ChronometerHelper {
 
     public void setPause(final long pause) {
         mPause = pause;
+    }
+
+    public long getProgram_id() {
+        return mProgram_id;
+    }
+
+    public void setProgram_id(final long program_id) {
+        mProgram_id = program_id;
     }
 }

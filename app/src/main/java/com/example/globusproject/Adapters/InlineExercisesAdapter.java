@@ -32,7 +32,7 @@ public class InlineExercisesAdapter extends RecyclerView.Adapter implements Filt
 
     @Override
     public int getItemViewType(int position) {
-        if (inlineExercisesList.get(position).getUri()==null) {
+        if (inlineExercisesList.get(position).getUri() == null) {
             return 0; //header
         }
         return 1; //item
@@ -49,7 +49,6 @@ public class InlineExercisesAdapter extends RecyclerView.Adapter implements Filt
             view = layoutInflater.inflate(R.layout.header_item, parent, false);
             return new ViewHolderOne(view, mClickListener);
         }
-
         view = layoutInflater.inflate(R.layout.inline_ex_item, parent, false);
         return new ViewHolderTwo(view, mClickListener);
     }
@@ -57,10 +56,10 @@ public class InlineExercisesAdapter extends RecyclerView.Adapter implements Filt
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
 
-        if (inlineExercisesList.get(position).getUri()==null) {
+        if (inlineExercisesList.get(position).getUri() == null) {
             ViewHolderOne viewHolderOne = (ViewHolderOne) holder;
             viewHolderOne.headerName.setText(inlineExercisesList.get(position).getName());
-        }else {
+        } else {
             final ViewHolderTwo viewHolderTwo = (ViewHolderTwo) holder;
             viewHolderTwo.exerciseName.setText(inlineExercisesList.get(position).getName());
             Glide
@@ -70,25 +69,23 @@ public class InlineExercisesAdapter extends RecyclerView.Adapter implements Filt
                     .error(R.drawable.delete)
                     .into(viewHolderTwo.exerciseImage);
 
-            if(inlineExercisesList.get(position).isSelect()){
+            if (inlineExercisesList.get(position).isSelect()) {
                 viewHolderTwo.onOffImage.setImageResource(R.drawable.add_custom_btn2);
-            }else{
+            } else {
                 viewHolderTwo.onOffImage.setImageResource(R.drawable.add_custom_btn1);
             }
-
             viewHolderTwo.toggleLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (inlineExercisesList.get(position).isSelect()){
+                    if (inlineExercisesList.get(position).isSelect()) {
                         inlineExercisesList.get(position).setSelect(false);
                         viewHolderTwo.onOffImage.setImageResource(R.drawable.add_custom_btn1);
-                    } else{
+                    } else {
                         inlineExercisesList.get(position).setSelect(true);
                         viewHolderTwo.onOffImage.setImageResource(R.drawable.add_custom_btn2);
                     }
                 }
             });
-
         }
     }
 
@@ -98,9 +95,9 @@ public class InlineExercisesAdapter extends RecyclerView.Adapter implements Filt
     }
 
 
-    public ArrayList<InlineExercises> getSelected(){
+    public ArrayList<InlineExercises> getSelected() {
         ArrayList<InlineExercises> selectedExercises = new ArrayList<>();
-        for (int i=0; i<inlineExercisesList.size();i++){
+        for (int i = 0; i < inlineExercisesList.size(); i++) {
             if (inlineExercisesList.get(i).isSelect())
                 selectedExercises.add(inlineExercisesList.get(i));
         }
@@ -111,17 +108,18 @@ public class InlineExercisesAdapter extends RecyclerView.Adapter implements Filt
     public Filter getFilter() {
         return filter;
     }
+
     private Filter filter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             ArrayList<InlineExercises> filteredList = new ArrayList<>();
             if (constraint == null || constraint.length() == 0) {
                 filteredList.addAll(inlineExercisesListAll);
-            } else{
+            } else {
                 String filterPattern = constraint.toString().toLowerCase().trim();
 
-                for (InlineExercises item : inlineExercisesListAll){
-                    if (item.getName().toLowerCase().contains(filterPattern)){
+                for (InlineExercises item : inlineExercisesListAll) {
+                    if (item.getName().toLowerCase().contains(filterPattern)) {
                         filteredList.add(item);
                     }
                 }
@@ -135,7 +133,7 @@ public class InlineExercisesAdapter extends RecyclerView.Adapter implements Filt
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             inlineExercisesList.clear();
-            inlineExercisesList.addAll((ArrayList)results.values);
+            inlineExercisesList.addAll((ArrayList) results.values);
             notifyDataSetChanged();
         }
     };
@@ -145,6 +143,7 @@ public class InlineExercisesAdapter extends RecyclerView.Adapter implements Filt
         ClickListener clickListener;
 
         TextView headerName;
+
         ViewHolderOne(@NonNull final View itemView, ClickListener clickListener) {
             super(itemView);
             headerName = itemView.findViewById(R.id.header_name);
@@ -153,6 +152,7 @@ public class InlineExercisesAdapter extends RecyclerView.Adapter implements Filt
             itemView.setOnClickListener(this);
 
         }
+
         @Override
         public void onClick(View v) {
             clickListener.onItemClick(getAdapterPosition(), v);
@@ -176,13 +176,11 @@ public class InlineExercisesAdapter extends RecyclerView.Adapter implements Filt
 
             this.clickListener = clickListener;
             itemView.setOnClickListener(this);
-
         }
 
         @Override
         public void onClick(View v) {
-                clickListener.onItemClick(getAdapterPosition(), v);
-
+            clickListener.onItemClick(getAdapterPosition(), v);
         }
     }
 

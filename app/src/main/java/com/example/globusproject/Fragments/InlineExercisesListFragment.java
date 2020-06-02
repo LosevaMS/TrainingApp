@@ -61,7 +61,7 @@ public class InlineExercisesListFragment extends Fragment implements InlineExerc
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                final NavController navController = Navigation.findNavController(requireView());
+                NavController navController = Navigation.findNavController(requireView());
                 if (!navController.popBackStack()) {
                     navController.navigate(R.id.action_fragment_inline_exercises_to_edit_training);
                 }
@@ -73,7 +73,7 @@ public class InlineExercisesListFragment extends Fragment implements InlineExerc
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final NavController navController = Navigation.findNavController(requireView());
+                NavController navController = Navigation.findNavController(requireView());
                 if (!navController.popBackStack()) {
                     navController.navigate(R.id.action_fragment_inline_exercises_to_edit_training);
                 }
@@ -93,9 +93,9 @@ public class InlineExercisesListFragment extends Fragment implements InlineExerc
                 ArrayList<InlineExercises> selectedExercises = inlineExercisesAdapter.getSelected();
 
                 viewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
-
                 viewModel.setText(selectedExercises);
-                final NavController navController = Navigation.findNavController(requireView());
+
+                NavController navController = Navigation.findNavController(requireView());
                 if (!navController.popBackStack()) {
                     navController.navigate(R.id.action_fragment_inline_exercises_to_edit_training);
                 }
@@ -111,7 +111,6 @@ public class InlineExercisesListFragment extends Fragment implements InlineExerc
             public boolean onQueryTextSubmit(String query) {
                 return false;
             }
-
             @Override
             public boolean onQueryTextChange(String newText) {
                 inlineExercisesAdapter.getFilter().filter(newText);

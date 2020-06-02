@@ -10,6 +10,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,12 +29,15 @@ import com.example.globusproject.R;
 import org.jetbrains.annotations.NotNull;
 
 import com.example.globusproject.Tables.ProgramTable;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.sundeepk.compactcalendarview.AnimationListener;
 
 
 public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.ProgramListViewHolder> {
 
     private Context mContext;
     private Cursor mCursor;
+    private SQLiteDatabase database;
 
     public ProgramListAdapter(Context context, Cursor cursor) {
         mContext = context;
@@ -43,12 +49,12 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
         private TextView program_name_item;
         private ImageView gym;
 
-
         private ProgramListViewHolder(final View itemView) {
             super(itemView);
             program_name_item = itemView.findViewById(R.id.program_name_item);
             ImageView delete_item = itemView.findViewById(R.id.delete_item);
             ImageView edit_item = itemView.findViewById(R.id.edit_item);
+            ImageView play_item = itemView.findViewById(R.id.play_item);
             gym = itemView.findViewById(R.id.gym);
             CardView cardView = itemView.findViewById(R.id.cv);
 
@@ -86,11 +92,24 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
                     bundle.putLong("prog_id", id);
                     String name = searchName(id);
                     bundle.putString("prog_name", name);
+                    bundle.putBoolean("is_started", false);
                     NavController navController = Navigation.findNavController(itemView);
                     navController.navigate(R.id.action_navigation_list_to_training, bundle);
                 }
             });
-
+            play_item.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Bundle bundle = new Bundle();
+                    long id = (long) itemView.getTag();
+                    bundle.putLong("prog_id", id);
+                    String name = searchName(id);
+                    bundle.putString("prog_name", name);
+                    bundle.putBoolean("is_started", true);
+                    NavController navController = Navigation.findNavController(itemView);
+                    navController.navigate(R.id.action_navigation_list_to_training, bundle);
+                }
+            });
         }
 
         DialogInterface.OnClickListener myClickListener = new DialogInterface.OnClickListener() {
@@ -112,20 +131,18 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
 
         private String searchName(long id) {
             String query = "select name from " + ProgramTable.ProgramEntry.TABLE_PROGRAMS + " WHERE _id = " + id;
-            Cursor c = database.rawQuery(query, null);
+            Cursor cursor = database.rawQuery(query, null);
 
-            String a = "not found";
-            if (c.moveToFirst())
+            String name = "not found";
+            if (cursor.moveToFirst())
             {
-                a = c.getString(c.getColumnIndex("name"));
+                name = cursor.getString(cursor.getColumnIndex("name"));
             }
-            c.close();
-            return a;
+            cursor.close();
+            return name;
         }
-
     }
 
-    private SQLiteDatabase database;
 
     @NotNull
     @Override
@@ -153,7 +170,6 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
         if (!mCursor.moveToPosition(position)) {
             return;
         }
-
         long id = mCursor.getLong(mCursor.getColumnIndex(ProgramTable.ProgramEntry._ID));
         String uri = mCursor.getString(mCursor.getColumnIndex(ProgramTable.ProgramEntry.PROG_URI));
         String name = mCursor.getString(mCursor.getColumnIndex(ProgramTable.ProgramEntry.PROG_NAME));
@@ -165,7 +181,6 @@ public class ProgramListAdapter extends RecyclerView.Adapter<ProgramListAdapter.
             holder.gym.setImageResource(R.drawable.gym4app6);
         else
             Glide.with(holder.itemView.getContext()).load(uri).into(holder.gym);
-
     }
 
     @Override

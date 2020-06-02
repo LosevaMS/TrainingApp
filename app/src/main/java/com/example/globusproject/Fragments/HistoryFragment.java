@@ -105,14 +105,14 @@ public class HistoryFragment extends Fragment {
         String date = searchDate(id);
         int program_id = searchProgId(id);
 
-        ArrayList<Integer> exIdArray = searchExId(program_id);
+        ArrayList<Integer> exerciseIdArray = searchExId(program_id);
 
-        for (int i = 0; i < exIdArray.size(); i++) {
+        for (int i = 0; i < exerciseIdArray.size(); i++) {
             database.delete(HistoryApproachesTable.HistoryApproachesEntry.TABLE_HISTORY_APPROACHES,
                     HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_EX_ID + "=? and "
                             + HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_PROG_ID + "=? and "
                             + HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_DATE + "=?",
-                    new String[]{exIdArray.get(i).toString(), String.valueOf(program_id), date});
+                    new String[]{exerciseIdArray.get(i).toString(), String.valueOf(program_id), date});
         }
 
         database.delete(HistoryTable.HistoryEntry.TABLE_HISTORY,
@@ -134,38 +134,38 @@ public class HistoryFragment extends Fragment {
 
     private int searchProgId(long id) {
         String query = "select prog_id from " + HistoryTable.HistoryEntry.TABLE_HISTORY + " WHERE _id = " + id;
-        Cursor c = database.rawQuery(query, null);
+        Cursor cursor = database.rawQuery(query, null);
 
-        int a = 0;
-        if (c.moveToFirst()) {
-            a = c.getInt(c.getColumnIndex("prog_id"));
+        int program_id = 0;
+        if (cursor.moveToFirst()) {
+            program_id = cursor.getInt(cursor.getColumnIndex("prog_id"));
         }
-        c.close();
-        return a;
+        cursor.close();
+        return program_id;
     }
 
     private String searchDate(long id) {
         String query = "select date from " + HistoryTable.HistoryEntry.TABLE_HISTORY + " WHERE _id = " + id;
-        Cursor c = database.rawQuery(query, null);
+        Cursor cursor = database.rawQuery(query, null);
 
-        String a = " ";
-        if (c.moveToFirst()) {
-            a = c.getString(c.getColumnIndex("date"));
+        String date = " ";
+        if (cursor.moveToFirst()) {
+            date = cursor.getString(cursor.getColumnIndex("date"));
         }
-        c.close();
-        return a;
+        cursor.close();
+        return date;
     }
 
     private ArrayList<Integer> searchExId(int id) {
         String query = "select _id from " + HistoryExercisesTable.HistoryExercisesEntry.TABLE_HISTORY_EXERCISES + " WHERE prog_id = " + id;
-        Cursor c = database.rawQuery(query, null);
+        Cursor cursor = database.rawQuery(query, null);
 
-        ArrayList<Integer> a = new ArrayList<>();
-        while (c.moveToNext()) {
-            a.add(c.getInt(c.getColumnIndex("_id")));
+        ArrayList<Integer> id_array = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            id_array.add(cursor.getInt(cursor.getColumnIndex("_id")));
         }
-        c.close();
-        return a;
+        cursor.close();
+        return id_array;
     }
 
 }

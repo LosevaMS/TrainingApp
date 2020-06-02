@@ -94,7 +94,7 @@ public class ApproachFragment extends Fragment {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final NavController navController = Navigation.findNavController(requireView());
+                NavController navController = Navigation.findNavController(requireView());
                 if (!navController.popBackStack()) {
                     navController.navigate(R.id.action_approach_to_training);
                 }
@@ -276,7 +276,7 @@ public class ApproachFragment extends Fragment {
                 ApproachesTable.ApproachesEntry.APP_IS_CURRENT + "=?";
         String[] whereArgs = new String[]{String.valueOf(id), String.valueOf(0)};
 
-        Cursor c = database.query(
+        Cursor cursor = database.query(
                 ApproachesTable.ApproachesEntry.TABLE_APPROACHES,
                 new String[]{"date"},
                 whereClause,
@@ -291,8 +291,8 @@ public class ApproachFragment extends Fragment {
         Date minDate;
         minDate = formatter.parse("1999-01-01 00:00");
 
-        while (c.moveToNext()) {
-            stringDate = c.getString(c.getColumnIndex("date"));
+        while (cursor.moveToNext()) {
+            stringDate = cursor.getString(cursor.getColumnIndex("date"));
 
             assert minDate != null;
             if (minDate.getTime() < date.getTime() && minDate.getTime() < Objects.requireNonNull(formatter.parse(stringDate)).getTime()) {
@@ -301,7 +301,7 @@ public class ApproachFragment extends Fragment {
 
             }
         }
-        c.close();
+        cursor.close();
         return result;
     }
 }

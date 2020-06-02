@@ -60,7 +60,7 @@ public class HistoryTrainingFragment extends Fragment implements HistoryTraining
                 bundle.putLong("ex_id", exercise_id);
                 bundle.putString("date", date);
 
-                final NavController navController = Navigation.findNavController(v);
+                NavController navController = Navigation.findNavController(v);
                 navController.navigate(R.id.action_fragment_history_training_to_fragment_history_approach, bundle);
             }
         });
@@ -69,7 +69,7 @@ public class HistoryTrainingFragment extends Fragment implements HistoryTraining
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final NavController navController = Navigation.findNavController(requireView());
+                NavController navController = Navigation.findNavController(requireView());
                 if (!navController.popBackStack()) {
                     navController.navigate(R.id.action_fragment_history_training_to_navigation_history);
                 }

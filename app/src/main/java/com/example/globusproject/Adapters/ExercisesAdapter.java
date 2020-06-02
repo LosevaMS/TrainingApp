@@ -25,6 +25,7 @@ import com.example.globusproject.Tables.ExercisesTable;
 public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.ExercisesViewHolder> {
     private Context mContext;
     private Cursor mCursor;
+    private SQLiteDatabase database;
 
     public ExercisesAdapter(Context context, Cursor cursor) {
         mContext = context;
@@ -47,32 +48,31 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
                 @Override
                 public void onClick(View v) {
                     Bundle bundle = new Bundle();
-                    long exId = (long) itemView.getTag();
-                    bundle.putLong("ex_id", exId);
-                    int progId = searchProgId(exId);
-                    bundle.putInt("prog_id", progId);
-                    final NavController navController = Navigation.findNavController(itemView);
+                    long exercise_id = (long) itemView.getTag();
+                    bundle.putLong("ex_id", exercise_id);
+                    int program_id = searchProgramId(exercise_id);
+                    bundle.putInt("prog_id", program_id);
+
+                    NavController navController = Navigation.findNavController(itemView);
                     navController.navigate(R.id.action_training_to_approach, bundle);
                 }
             });
 
         }
 
-        private int searchProgId(long id) {
+        private int searchProgramId(long id) {
             String query = "select _program_id from " + ExercisesTable.ExercisesEntry.TABLE_EXERCISES + " WHERE _id = " + id;
-            Cursor c = database.rawQuery(query, null);
+            Cursor cursor = database.rawQuery(query, null);
 
-            int a = 0;
-            if (c.moveToFirst())
+            int program_id = 0;
+            if (cursor.moveToFirst())
             {
-                a = c.getInt(c.getColumnIndex("_program_id"));
+                program_id = cursor.getInt(cursor.getColumnIndex("_program_id"));
             }
-            c.close();
-            return a;
+            cursor.close();
+            return program_id;
         }
     }
-
-    private SQLiteDatabase database;
 
     @NotNull
     @Override
@@ -99,7 +99,7 @@ public class ExercisesAdapter extends RecyclerView.Adapter<ExercisesAdapter.Exer
                     .with(holder.itemView.getContext())
                     .asGif()
                     .load(uri)
-                    .error(R.drawable.delete)
+                    .error(R.drawable.ic_sport4)
                     .into(holder.exerciseImage);
 
         if (!uri.equals("null") && !uri.contains(".gif"))

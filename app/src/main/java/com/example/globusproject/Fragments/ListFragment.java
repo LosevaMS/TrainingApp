@@ -88,7 +88,6 @@ public class ListFragment extends Fragment {
         programListAdapter = new ProgramListAdapter(requireContext(), getAllItems());
         recyclerView.setAdapter(programListAdapter);
 
-        FloatingActionButton add_program_button = view.findViewById(R.id.add_btn);
         userInput = view.findViewById(R.id.input_text);
         loadImage_btn = view.findViewById(R.id.load_image_btn);
 
@@ -123,90 +122,6 @@ public class ListFragment extends Fragment {
                 alertDialog.show();
             }
         }).attachToRecyclerView(recyclerView);
-
-        add_program_button.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View arg0) {
-
-                LayoutInflater li = LayoutInflater.from(requireContext());
-                View promptsView = li.inflate(R.layout.dialog_add_program, null);
-
-                AlertDialog.Builder mDialogBuilder = new AlertDialog.Builder(requireContext());
-
-                mDialogBuilder.setView(promptsView);
-
-                userInput = promptsView.findViewById(R.id.input_text);
-                loadImage_btn = promptsView.findViewById(R.id.load_image_btn);
-                imageView = promptsView.findViewById(R.id.preview_image);
-
-                userInput.setImeActionLabel("", EditorInfo.IME_ACTION_NEXT);
-
-                userInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-
-                    @Override
-                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                        if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                            if (userInput.getText().toString().trim().equalsIgnoreCase(""))
-                                userInput.setError("Введите название!");
-                        }
-                        return false;
-                    }
-                });
-
-                uri = null;
-
-                loadImage_btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                                    == PackageManager.PERMISSION_DENIED) {
-                                String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
-                                requestPermissions(permissions, PERMISSION_CODE);
-                            } else {
-                                pickImageFromGallery();
-                            }
-                        } else {
-                            pickImageFromGallery();
-                        }
-                    }
-                });
-
-                mDialogBuilder
-                        .setCancelable(true)
-                        .setPositiveButton("ОК",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                    }
-                                })
-                        .setNegativeButton("Отмена",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }
-                                });
-                final AlertDialog alertDialog = mDialogBuilder.create();
-                alertDialog.show();
-
-                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (userInput.getText().toString().isEmpty()) {
-                            userInput.setError("Введите название!");
-                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                        }
-                        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                        if (!userInput.getText().toString().isEmpty()) {
-                            alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                            addItem();
-                            alertDialog.dismiss();
-                        }
-                    }
-                });
-                userInput.getText().clear();
-            }
-        });
 
         assert savedInstanceState != null;
         onSaveInstanceState(savedInstanceState);

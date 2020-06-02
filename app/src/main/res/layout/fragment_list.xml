@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:id="@+id/list_fragment"
@@ -17,25 +16,5 @@
         android:paddingBottom="5dp"
         android:layout_marginBottom="55dp"
         android:clipToPadding="false"/>
-
-
-    <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/add_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/recyclerview"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:src="@drawable/fab_add"
-        app:fab_colorNormal="#2C98F0"
-        app:fab_colorPressed="#E867B9FA"
-        app:fab_showShadow="true"
-        app:fab_shadowColor="#59000000"
-        app:fab_shadowRadius="4dp"
-        app:fab_shadowXOffset="0dp"
-        app:fab_shadowYOffset="1.5dp"
-        app:fab_size="normal"/>
-
 
 </RelativeLayout>

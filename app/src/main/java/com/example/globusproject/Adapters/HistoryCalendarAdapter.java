@@ -62,7 +62,7 @@ public class HistoryCalendarAdapter extends RecyclerView.Adapter<HistoryCalendar
                     bundle.putLong("prog_id", searchProgId(id));
                     bundle.putString("date", searchDate(id));
 
-                    final NavController navController = Navigation.findNavController(itemView);
+                    NavController navController = Navigation.findNavController(itemView);
                     navController.navigate(R.id.action_calendarTrainingFragment_to_fragment_history_training, bundle);
                 }
             });
@@ -83,14 +83,14 @@ public class HistoryCalendarAdapter extends RecyclerView.Adapter<HistoryCalendar
 
         private String searchDate(long id) {
             String query = "select date from " + HistoryTable.HistoryEntry.TABLE_HISTORY + " WHERE _id = " + id;
-            Cursor c = database.rawQuery(query, null);
+            Cursor cursor = database.rawQuery(query, null);
 
-            String a = " ";
-            if (c.moveToFirst()) {
-                a = c.getString(c.getColumnIndex("date"));
+            String dateString = " ";
+            if (cursor.moveToFirst()) {
+                dateString = cursor.getString(cursor.getColumnIndex("date"));
             }
-            c.close();
-            return a;
+            cursor.close();
+            return dateString;
         }
 
     }

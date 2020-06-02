@@ -50,7 +50,6 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
             DBHelper dbHelper = new DBHelper(mContext);
             database = dbHelper.getWritableDatabase();
 
-
             cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -60,36 +59,34 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
                     bundle.putLong("prog_id", searchProgId(id));
                     bundle.putString("date", searchDate(id));
 
-                    final NavController navController = Navigation.findNavController(itemView);
+                    NavController navController = Navigation.findNavController(itemView);
                     navController.navigate(R.id.action_navigation_history_to_fragment_history_training, bundle);
                 }
             });
-
         }
-
 
         private int searchProgId(long id) {
             String query = "select prog_id from " + HistoryTable.HistoryEntry.TABLE_HISTORY + " WHERE _id = " + id;
-            Cursor c = database.rawQuery(query, null);
+            Cursor cursor = database.rawQuery(query, null);
 
-            int a = 0;
-            if (c.moveToFirst()) {
-                a = c.getInt(c.getColumnIndex("prog_id"));
+            int program_id = 0;
+            if (cursor.moveToFirst()) {
+                program_id = cursor.getInt(cursor.getColumnIndex("prog_id"));
             }
-            c.close();
-            return a;
+            cursor.close();
+            return program_id;
         }
 
         private String searchDate(long id) {
             String query = "select date from " + HistoryTable.HistoryEntry.TABLE_HISTORY + " WHERE _id = " + id;
-            Cursor c = database.rawQuery(query, null);
+            Cursor cursor = database.rawQuery(query, null);
 
-            String a = " ";
-            if (c.moveToFirst()) {
-                a = c.getString(c.getColumnIndex("date"));
+            String dateString = " ";
+            if (cursor.moveToFirst()) {
+                dateString = cursor.getString(cursor.getColumnIndex("date"));
             }
-            c.close();
-            return a;
+            cursor.close();
+            return dateString;
         }
     }
 
@@ -103,19 +100,6 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
 
         return new HistoryListViewHolder(view);
     }
-
-    private Cursor getAllItems() {
-        return database.query(
-                HistoryTable.HistoryEntry.TABLE_HISTORY,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-        );
-    }
-
 
     @Override
     public void onBindViewHolder(@NotNull HistoryListViewHolder holder, int position) {

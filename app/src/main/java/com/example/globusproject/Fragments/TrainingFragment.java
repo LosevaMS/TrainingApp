@@ -49,7 +49,7 @@ public class TrainingFragment extends Fragment {
     private String program_name;
     static private boolean btnPause = true;
     private SimpleDateFormat formatter;
-    private  Date date;
+    private Date date;
 
     private ChronometerHelper chronometerHelper;
 
@@ -91,6 +91,7 @@ public class TrainingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 chronometer.stop();
+                chronometerHelper.setProgram_id(0);
                 int elapsed;
                 if (chronometerHelper.getPause() != null && !chronometerHelper.isRunning())
                     elapsed = chronometerHelper.getPause().intValue();
@@ -181,14 +182,14 @@ public class TrainingFragment extends Fragment {
 
     private String searchUri(long id) {
         String query = "select uri from " + ProgramTable.ProgramEntry.TABLE_PROGRAMS + " WHERE _id = " + id;
-        Cursor c = database.rawQuery(query, null);
+        Cursor cursor = database.rawQuery(query, null);
 
-        String a = "not found";
-        if (c.moveToFirst()) {
-            a = c.getString(c.getColumnIndex("uri"));
+        String uri = "not found";
+        if (cursor.moveToFirst()) {
+            uri = cursor.getString(cursor.getColumnIndex("uri"));
         }
-        c.close();
-        return a;
+        cursor.close();
+        return uri;
     }
 
     private Cursor getAllItems(long id) {
@@ -215,6 +216,8 @@ public class TrainingFragment extends Fragment {
             chronometerHelper.setRunning(true);
             chronometer.start();
         }
+        assert getArguments() != null;
+        chronometerHelper.setProgram_id(getArguments().getLong("prog_id"));
     }
 
     private void pauseChronometer() {
@@ -243,6 +246,7 @@ public class TrainingFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull final MenuItem item) {
 
+        assert getArguments() != null;
         if (btnPause) {
             item.setIcon(R.drawable.ic_pause);
             startChronometer();
@@ -261,8 +265,25 @@ public class TrainingFragment extends Fragment {
         FrameLayout rootView = (FrameLayout) menuItem.getActionView();
         chronometer = rootView.findViewById(R.id.chronometer2);
         chronometerHelper = new ChronometerHelper();
-
         MenuItem playPauseBtn = menu.findItem(R.id.play_item);
+
+        assert getArguments() != null;
+        if(getArguments().getBoolean("is_started") && (chronometerHelper.getProgram_id() == getArguments().getLong("prog_id")
+                || chronometerHelper.getProgram_id() == 0) && chronometerHelper.getPause()==null) {
+            startChronometer();
+            btnPause = false;
+        }
+
+        assert getArguments() != null;
+        if (chronometerHelper.getProgram_id() == getArguments().getLong("prog_id")
+                || chronometerHelper.getProgram_id() == 0) {
+            chronometer.setVisibility(View.VISIBLE);
+            playPauseBtn.setVisible(true);
+        } else {
+            chronometer.setVisibility(View.GONE);
+            playPauseBtn.setVisible(false);
+        }
+
         if (chronometerHelper.isRunning()) playPauseBtn.setIcon(R.drawable.ic_pause);
 
         if (chronometerHelper.getStartTime() != null) {

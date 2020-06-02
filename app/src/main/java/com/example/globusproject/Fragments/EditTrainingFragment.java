@@ -180,7 +180,7 @@ public class EditTrainingFragment extends Fragment {
                 database.update(ProgramTable.ProgramEntry.TABLE_PROGRAMS, cv,
                         ProgramTable.ProgramEntry._ID + "=" + (int) (getArguments().getLong("prog_id")), null);
 
-                final NavController navController = Navigation.findNavController(requireView());
+                NavController navController = Navigation.findNavController(requireView());
                 if (!navController.popBackStack()) {
                     navController.navigate(R.id.action_edit_training_to_navigation_list);
                 }
@@ -198,7 +198,7 @@ public class EditTrainingFragment extends Fragment {
                 assert getArguments() != null;
                 database.update(ProgramTable.ProgramEntry.TABLE_PROGRAMS, cv,
                         ProgramTable.ProgramEntry._ID + "=" + (int) (getArguments().getLong("prog_id")), null);
-                final NavController navController = Navigation.findNavController(requireView());
+                NavController navController = Navigation.findNavController(requireView());
                 if (!navController.popBackStack()) {
                     navController.navigate(R.id.action_edit_training_to_navigation_list);
                 }

@@ -65,11 +65,11 @@ public class ExerciseListAdapter extends RecyclerView.Adapter<ExerciseListAdapte
                 switch (which) {
                     case Dialog.BUTTON_POSITIVE:
                         long id = (long) itemView.getTag();
-                        long prog_id = searchId(id);
+                        long program_id = searchId(id);
                         database.delete(ExercisesTable.ExercisesEntry.TABLE_EXERCISES,
                                 ExercisesTable.ExercisesEntry._ID + "=" + id, null);
                         notifyItemRemoved(getAdapterPosition());
-                        swapCursor(getAllItems(prog_id));
+                        swapCursor(getAllItems(program_id));
                         break;
                     case DialogInterface.BUTTON_NEGATIVE:
                         break;
@@ -79,15 +79,15 @@ public class ExerciseListAdapter extends RecyclerView.Adapter<ExerciseListAdapte
         public long searchId (long id)
         {
             String query = "select _program_id from " + ExercisesTable.ExercisesEntry.TABLE_EXERCISES + " WHERE _id = " + id;
-            Cursor c = database.rawQuery(query , null);
+            Cursor cursor = database.rawQuery(query , null);
 
-            long a;
-            if (c.moveToFirst());
+            long program_id = 0;
+            if (cursor.moveToFirst())
             {
-                a = c.getLong(c.getColumnIndex("_program_id"));
+                program_id = cursor.getLong(cursor.getColumnIndex("_program_id"));
             }
-            c.close();
-            return a;
+            cursor.close();
+            return program_id;
         }
 
         private Cursor getAllItems(long prog_id) {
@@ -130,7 +130,7 @@ public class ExerciseListAdapter extends RecyclerView.Adapter<ExerciseListAdapte
                     .with(holder.itemView.getContext())
                     .asGif()
                     .load(uri)
-                    .error(R.drawable.delete)
+                    .error(R.drawable.ic_sport4)
                     .into(holder.exerciseImage);
 
         if (!uri.equals("null") && !uri.contains(".gif"))
