@@ -175,20 +175,20 @@ public class CalendarTrainingFragment extends Fragment {
                 HistoryTable.HistoryEntry._ID + " DESC"
         );
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        String dateString = "";
+        String idString = "";
 
         while (cursor.moveToNext()) {
             Date date1 = dateFormat.parse(cursor.getString(cursor.getColumnIndex("date")));
             assert date1 != null;
             if (date.equals(dateFormat.format(date1))) {
-                dateString = dateString.concat(String.valueOf(cursor.getInt(cursor.getColumnIndex("_id"))));
-                dateString = dateString.concat(",");
+                idString = idString.concat(String.valueOf(cursor.getInt(cursor.getColumnIndex("_id"))));
+                idString = idString.concat(",");
             }
         }
-        dateString = dateString.substring(0, dateString.length() - 1);
+        idString = idString.substring(0, idString.length() - 1);
 
         cursor.close();
-        return dateString;
+        return idString;
     }
 
     private int searchProgId(long id) {

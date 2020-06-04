@@ -46,7 +46,7 @@ import static com.example.globusproject.Tables.WeightTable.WeightEntry.WEIGHT;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 11;
     private static final String DATABASE_NAME = "training";
 
     public DBHelper(Context context) {

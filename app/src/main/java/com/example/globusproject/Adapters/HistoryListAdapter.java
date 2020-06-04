@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
 import androidx.navigation.NavController;
@@ -21,6 +22,7 @@ import com.example.globusproject.R;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.example.globusproject.Tables.HistoryApproachesTable;
 import com.example.globusproject.Tables.HistoryTable;
 
 
@@ -53,14 +55,21 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
             cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Bundle bundle = new Bundle();
+
                     long id = (long) itemView.getTag();
 
-                    bundle.putLong("prog_id", searchProgId(id));
-                    bundle.putString("date", searchDate(id));
+                    if (searchIds(searchDate(id), searchProgId(id)) != null) {
 
-                    NavController navController = Navigation.findNavController(itemView);
-                    navController.navigate(R.id.action_navigation_history_to_fragment_history_training, bundle);
+                        Bundle bundle = new Bundle();
+
+                        bundle.putLong("prog_id", searchProgId(id));
+                        bundle.putString("date", searchDate(id));
+
+                        NavController navController = Navigation.findNavController(itemView);
+                        navController.navigate(R.id.action_navigation_history_to_fragment_history_training, bundle);
+                    }
+                    else Toast.makeText(mContext, "Пустая тренировка",
+                            Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -87,6 +96,31 @@ public class HistoryListAdapter extends RecyclerView.Adapter<HistoryListAdapter.
             }
             cursor.close();
             return dateString;
+        }
+
+        private String searchIds(String date, long program_id) {
+
+            String whereClause = HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_DATE + "=? AND " +
+                    HistoryApproachesTable.HistoryApproachesEntry.HISTORY_APP_PROG_ID + "=?";
+
+            String[] whereArgs = new String[]{date, String.valueOf(program_id)};
+
+            Cursor cursor = database.query(
+                    HistoryApproachesTable.HistoryApproachesEntry.TABLE_HISTORY_APPROACHES,
+                    null,
+                    whereClause,
+                    whereArgs,
+                    null,
+                    null,
+                    HistoryTable.HistoryEntry._ID + " DESC"
+            );
+            String idString = "";
+            if (cursor.getCount() == 0) {
+                cursor.close();
+                return null;
+            }
+            cursor.close();
+            return idString;
         }
     }
 

@@ -1,12 +1,14 @@
 package com.example.globusproject.Fragments;
 
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -19,6 +21,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.globusproject.ChronometerHelper;
 import com.example.globusproject.InlineExercises;
 import com.example.globusproject.R;
 import com.example.globusproject.SharedViewModel;
@@ -33,6 +36,7 @@ public class InlineExercisesListFragment extends Fragment implements InlineExerc
     private ArrayList<InlineExercises> inlineExercisesList = new ArrayList<>();
     private SharedViewModel viewModel;
     private InlineExercisesAdapter inlineExercisesAdapter;
+    private SearchView searchView;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -85,26 +89,11 @@ public class InlineExercisesListFragment extends Fragment implements InlineExerc
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.search_menu, menu);
-        MenuItem doneItem = menu.findItem(R.id.done_item);
-
-        doneItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                ArrayList<InlineExercises> selectedExercises = inlineExercisesAdapter.getSelected();
-
-                viewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
-                viewModel.setText(selectedExercises);
-
-                NavController navController = Navigation.findNavController(requireView());
-                if (!navController.popBackStack()) {
-                    navController.navigate(R.id.action_fragment_inline_exercises_to_edit_training);
-                }
-                return false;
-            }
-        });
 
         MenuItem searchItem = menu.findItem(R.id.search_item);
-        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView = (SearchView) searchItem.getActionView();
+
+        MenuItem doneItem = menu.findItem(R.id.done_item);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -117,8 +106,28 @@ public class InlineExercisesListFragment extends Fragment implements InlineExerc
                 return false;
             }
         });
+
+        doneItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                ArrayList<InlineExercises> selectedExercises = inlineExercisesAdapter.getSelected();
+
+                viewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+                viewModel.setText(selectedExercises);
+
+                searchView.setVisibility(View.GONE);
+
+                NavController navController = Navigation.findNavController(requireView());
+                if (!navController.popBackStack()) {
+                    navController.navigate(R.id.action_fragment_inline_exercises_to_edit_training);
+                }
+                return false;
+            }
+        });
+
         super.onCreateOptionsMenu(menu, inflater);
     }
+
 
     @Override
     public void onItemClick(int position, View v) {

@@ -52,4 +52,10 @@
     </LinearLayout>
 
 
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:button="@drawable/checkbox" />
+
+
 </RelativeLayout>
